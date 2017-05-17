@@ -35,8 +35,8 @@
     textFieldArray = @[_nameTextField,_emailTextField,_passwordTextField,_phoneNumberTextField];
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
     [self.keyboardControls setDelegate:self];
-    //Add textfield padding
-    [self addPadding];
+    //UI customisation
+    [self customiseView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -51,13 +51,17 @@
 }
 #pragma mark - end
 
-#pragma mark - Add padding and corner radius
-- (void)addPadding {
+#pragma mark - UI customisation
+- (void)customiseView {
     [_nameTextField addTextFieldPadding:_nameTextField];
     [_emailTextField addTextFieldPadding:_emailTextField];
     [_passwordTextField addTextFieldPadding:_passwordTextField];
     [_phoneNumberTextField addTextFieldPadding:_phoneNumberTextField];
     [_signUpButton setCornerRadius:3];
+    [_nameTextField setBottomBorder:_nameTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_passwordTextField setBottomBorder:_passwordTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_phoneNumberTextField setBottomBorder:_phoneNumberTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
 }
 #pragma mark - end
 
@@ -71,21 +75,18 @@
     [_registerScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     [keyboardControls.activeField resignFirstResponder];
 }
+#pragma mark - end
 
 #pragma mark - Textfield delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self.keyboardControls setActiveField:textField];
-    if (textField==_emailTextField) {
-        if([[UIScreen mainScreen] bounds].size.height<568) {
-            [_registerScrollView setContentOffset:CGPointMake(0, 45) animated:YES];
-        }
-    }
-    else if (textField==_passwordTextField) {
-        if([[UIScreen mainScreen] bounds].size.height<568) {
-            [_registerScrollView setContentOffset:CGPointMake(0, 90) animated:YES];
-        }
-        else  if([[UIScreen mainScreen] bounds].size.height==568) {
-            [_registerScrollView setContentOffset:CGPointMake(0, 75) animated:YES];
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        if (textField==_emailTextField) {
+            [_registerScrollView setContentOffset:CGPointMake(0, 20) animated:YES];
+        } else if (textField==_passwordTextField) {
+            [_registerScrollView setContentOffset:CGPointMake(0, 68) animated:YES];
+        } else if (textField==_phoneNumberTextField) {
+            [_registerScrollView setContentOffset:CGPointMake(0, 115) animated:YES];
         }
     }
 }
@@ -172,6 +173,7 @@
         }
     }
 }
+#pragma mark - end
 
 #pragma mark - IBActions
 - (IBAction)selectImageButtonAction:(id)sender {
@@ -188,8 +190,8 @@
     [self.keyboardControls.activeField resignFirstResponder];
     [_registerScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     if([self performValidationsForRegister]) {
-        [myDelegate showIndicator];
-        [self performSelector:@selector(registerUser) withObject:nil afterDelay:.1];
+        //        [myDelegate showIndicator];
+        //        [self performSelector:@selector(registerUser) withObject:nil afterDelay:.1];
     }
 }
 #pragma mark - end

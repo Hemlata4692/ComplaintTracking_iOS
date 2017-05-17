@@ -10,7 +10,9 @@
 #import "UserService.h"
 
 @interface ForgotPasswordViewController ()<UITextFieldDelegate>
+@property (strong, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
+@property (weak, nonatomic) IBOutlet UIButton *sendPasswordButton;
 
 @end
 
@@ -20,8 +22,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"Forgot Password";
-    //Add padding
-    [self addPadding];
+    //UI customisation
+    [self customiseView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -36,9 +38,11 @@
 }
 #pragma mark - end
 
-#pragma mark - Add padding
-- (void)addPadding {
-    [_emailTextField addTextFieldPadding:_emailTextField];
+#pragma mark - UI customisation
+- (void)customiseView {
+    [_emailTextField addTextFieldPaddingWithoutImages:_emailTextField];
+    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_sendPasswordButton setCornerRadius:3];
 }
 #pragma mark - end
 
@@ -46,13 +50,29 @@
 - (IBAction)forgotPasswordAction:(id)sender {
     [_emailTextField resignFirstResponder];
     if([self performValidationsForForgotPassword]) {
-        [myDelegate showIndicator];
-        [self performSelector:@selector(forgotPassword) withObject:nil afterDelay:.1];
+//        [myDelegate showIndicator];
+//        [self performSelector:@selector(forgotPassword) withObject:nil afterDelay:.1];
     }
 }
 #pragma mark - end
 
 #pragma mark - Textfield delegates
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        [UIView animateWithDuration:0.5f animations:^{
+            _mainView.frame = CGRectOffset(_mainView.frame, 0, -30);
+        }];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        [UIView animateWithDuration:0.5f animations:^{
+            _mainView.frame = CGRectOffset(_mainView.frame, 0, 30);
+        }];
+    }
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;

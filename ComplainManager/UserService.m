@@ -34,8 +34,8 @@
 
 #pragma mark- Login
 //Login
-- (void)userLogin:(NSString *)email password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    NSDictionary *requestDict = @{@"email":email,@"password":password};
+- (void)userLogin:(NSString *)username password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    NSDictionary *requestDict = @{@"username":username,@"password":password};
     [[Webservice sharedManager] post:kUrlLogin parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         if([[Webservice sharedManager] isStatusOK:responseObject]) {

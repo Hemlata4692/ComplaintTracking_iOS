@@ -79,6 +79,7 @@
 		5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		5D8F63BD1EC9C73000111138 /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
 		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		5DBE04981ECC1F1D005EC7A2 /* ComplainManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ComplainManager.entitlements; sourceTree = "<group>"; };
 		5DD3160C1EC5AC80008FF487 /* ComplainManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComplainManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DD316101EC5AC80008FF487 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DD316121EC5AC80008FF487 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -235,6 +236,7 @@
 		5DD3160E1EC5AC80008FF487 /* ComplainManager */ = {
 			isa = PBXGroup;
 			children = (
+				5DBE04981ECC1F1D005EC7A2 /* ComplainManager.entitlements */,
 				5DD316261EC5AC87008FF487 /* AppDelegate */,
 				5DD316291EC5ACC1008FF487 /* Classes */,
 				5DD316281EC5ACBF008FF487 /* Supporting Files */,
@@ -509,6 +511,11 @@
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = M8A7BYS443;
 						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -747,16 +754,17 @@
 			baseConfigurationReference = 6ADE74EED77968A5D6227DF3 /* Pods-ComplainManager.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ComplainManager/ComplainManager.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = M8A7BYS443;
 				GCC_PREFIX_HEADER = ComplainManager/ComplainManager.pch;
 				INFOPLIST_FILE = ComplainManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranosys.ComplainManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranosys.ComplaintsTracking;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5d36d161-4eab-49e9-b4bd-cc5088e93d30";
-				PROVISIONING_PROFILE_SPECIFIER = RanosysWildcard;
+				PROVISIONING_PROFILE = "eda3715b-8ba3-484d-9bb6-0bca581c3d52";
+				PROVISIONING_PROFILE_SPECIFIER = Complaints_Tracking_iPhone_App_17May2017;
 			};
 			name = Debug;
 		};
@@ -765,16 +773,17 @@
 			baseConfigurationReference = C2227B00158D3FC418BA2FE7 /* Pods-ComplainManager.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ComplainManager/ComplainManager.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = M8A7BYS443;
 				GCC_PREFIX_HEADER = ComplainManager/ComplainManager.pch;
 				INFOPLIST_FILE = ComplainManager/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ranosys.ComplainManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ranosys.ComplaintsTracking;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "5d36d161-4eab-49e9-b4bd-cc5088e93d30";
-				PROVISIONING_PROFILE_SPECIFIER = RanosysWildcard;
+				PROVISIONING_PROFILE = "eda3715b-8ba3-484d-9bb6-0bca581c3d52";
+				PROVISIONING_PROFILE_SPECIFIER = Complaints_Tracking_iPhone_App_17May2017;
 			};
 			name = Release;
 		};

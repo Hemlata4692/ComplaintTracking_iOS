@@ -824,7 +824,7 @@ SCLTimerDisplay *buttonTimer;
     switch (style)
     {
         case Success:
-            viewColor = [UIColor colorWithRed:237.0/255.0 green:120.0/255.0 blue:0.0/255.0 alpha:1.0];
+            viewColor = [UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0];
             iconImage = SCLAlertViewStyleKit.imageOfCheckmark;
             break;
             
@@ -839,12 +839,12 @@ SCLTimerDisplay *buttonTimer;
             break;
             
         case Warning:
-            viewColor = [UIColor colorWithRed:237.0/255.0 green:120.0/255.0 blue:0.0/255.0 alpha:1.0];
+            viewColor = [UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0];
             iconImage = SCLAlertViewStyleKit.imageOfInfo;
             break;
             
         case Info:
-            viewColor = [UIColor colorWithRed:237.0/255.0 green:120.0/255.0 blue:0.0/255.0 alpha:1.0];
+            viewColor = [UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0];
             iconImage = SCLAlertViewStyleKit.imageOfInfo;
             break;
             
