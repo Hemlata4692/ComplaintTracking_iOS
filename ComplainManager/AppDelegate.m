@@ -36,7 +36,7 @@
     loaderView.backgroundColor=[UIColor colorWithRed:63.0/255.0 green:63.0/255.0 blue:63.0/255.0 alpha:0.3];
     [loaderView addSubview:logoImage];
     self.spinnerView = [[MMMaterialDesignSpinner alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
-    self.spinnerView.tintColor = [UIColor colorWithRed:237.0/255.0 green:120.0/255.0 blue:0.0/255.0 alpha:1.0];
+    self.spinnerView.tintColor = [UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0];
     self.spinnerView.center = CGPointMake(CGRectGetMidX(self.window.bounds), CGRectGetMidY(self.window.bounds));
     self.spinnerView.lineWidth=3.0f;
     [self.window addSubview:loaderView];
@@ -108,13 +108,13 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:237.0/255.0 green:120.0/255.0 blue:0.0/255.0 alpha:1.0]];
-    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"Roboto-Regular" size:19.0], NSFontAttributeName, nil]];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0]];
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"Roboto-Regular" size:17.0], NSFontAttributeName, nil]];
     //Push notification
     deviceToken = @"";
     [self registerForRemoteNotification];
     //Call crashlytics method
-    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
+//    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
     return YES;
 }
 

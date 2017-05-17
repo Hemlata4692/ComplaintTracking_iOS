@@ -16,7 +16,7 @@
 //end
 
 //Login screen method
-- (void)userLogin:(NSString *)email password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+- (void)userLogin:(NSString *)username password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
 //Forgot password method
