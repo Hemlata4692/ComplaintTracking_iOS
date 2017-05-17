@@ -150,8 +150,8 @@
     [self.keyboardControls.activeField resignFirstResponder];
     [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     if([self performValidationsForLogin]) {
-//        [myDelegate showIndicator];
-//        [self performSelector:@selector(loginUser) withObject:nil afterDelay:.1];
+        [myDelegate showIndicator];
+        [self performSelector:@selector(loginUser) withObject:nil afterDelay:.1];
     }
 }
 

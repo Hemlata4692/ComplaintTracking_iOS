@@ -115,6 +115,20 @@
     [self registerForRemoteNotification];
     //Call crashlytics method
 //    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
+    //Navigation to view
+    NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
+    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userId"]!=nil) {
+        UIViewController * navView = [storyboard instantiateViewControllerWithIdentifier:@"ComplainListing"];
+        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [self.window setRootViewController:navView];
+        [self.window makeKeyAndVisible];
+    }
+    else {
+        UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        [self.navigationController setViewControllers: [NSArray arrayWithObject:loginView]
+                                             animated: YES];
+    }
     return YES;
 }
 
