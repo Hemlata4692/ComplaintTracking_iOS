@@ -27,15 +27,17 @@
 		5D8F63BA1EC9BADD00111138 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B41EC9BADD00111138 /* Roboto-Medium.ttf */; };
 		5D8F63BB1EC9BADD00111138 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */; };
 		5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F63BE1EC9C73000111138 /* RegisterViewController.m */; };
+		5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D965A801ECD57D900748EAC /* AddComplainCell.m */; };
 		5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */; };
 		5DBE04A01ECC54DE005EC7A2 /* ComplainListingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049E1ECC54DE005EC7A2 /* ComplainListingCell.m */; };
 		5DBE04A51ECC560B005EC7A2 /* logout.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE04A31ECC560B005EC7A2 /* logout.png */; };
 		5DBE04A61ECC560B005EC7A2 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE04A41ECC560B005EC7A2 /* back.png */; };
+		5DCE18571ECC79E900F542BE /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCE18561ECC79E900F542BE /* UserProfileViewController.m */; };
+		5DCE185B1ECC7A8F00F542BE /* AddComplainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */; };
 		5DD316111EC5AC80008FF487 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316101EC5AC80008FF487 /* main.m */; };
 		5DD316141EC5AC80008FF487 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316131EC5AC80008FF487 /* AppDelegate.m */; };
 		5DD3161A1EC5AC80008FF487 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DD316181EC5AC80008FF487 /* Main.storyboard */; };
 		5DD3161C1EC5AC80008FF487 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5DD3161B1EC5AC80008FF487 /* Assets.xcassets */; };
-		5DD3161F1EC5AC80008FF487 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DD3161D1EC5AC80008FF487 /* LaunchScreen.storyboard */; };
 		5DD316341EC5ADF8008FF487 /* UserDefaultManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316331EC5ADF8008FF487 /* UserDefaultManager.m */; };
 		5DD316371EC5AE04008FF487 /* UncaughtExceptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316361EC5AE04008FF487 /* UncaughtExceptionHandler.m */; };
 		5DD3163A1EC5AE1E008FF487 /* NullValueChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316391EC5AE1E008FF487 /* NullValueChecker.m */; };
@@ -86,6 +88,8 @@
 		5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		5D8F63BD1EC9C73000111138 /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
 		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		5D965A7F1ECD57D900748EAC /* AddComplainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainCell.h; sourceTree = "<group>"; };
+		5D965A801ECD57D900748EAC /* AddComplainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainCell.m; sourceTree = "<group>"; };
 		5DBE04981ECC1F1D005EC7A2 /* ComplainManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ComplainManager.entitlements; sourceTree = "<group>"; };
 		5DBE049B1ECC54DE005EC7A2 /* ComplainListingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainListingViewController.h; sourceTree = "<group>"; };
 		5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainListingViewController.m; sourceTree = "<group>"; };
@@ -93,13 +97,16 @@
 		5DBE049E1ECC54DE005EC7A2 /* ComplainListingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainListingCell.m; sourceTree = "<group>"; };
 		5DBE04A31ECC560B005EC7A2 /* logout.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logout.png; sourceTree = "<group>"; };
 		5DBE04A41ECC560B005EC7A2 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
+		5DCE18551ECC79E900F542BE /* UserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileViewController.h; sourceTree = "<group>"; };
+		5DCE18561ECC79E900F542BE /* UserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileViewController.m; sourceTree = "<group>"; };
+		5DCE18591ECC7A8F00F542BE /* AddComplainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainViewController.h; sourceTree = "<group>"; };
+		5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainViewController.m; sourceTree = "<group>"; };
 		5DD3160C1EC5AC80008FF487 /* ComplainManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComplainManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DD316101EC5AC80008FF487 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DD316121EC5AC80008FF487 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5DD316131EC5AC80008FF487 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		5DD316191EC5AC80008FF487 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5DD3161B1EC5AC80008FF487 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5DD3161E1EC5AC80008FF487 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5DD316201EC5AC80008FF487 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DD316321EC5ADF8008FF487 /* UserDefaultManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDefaultManager.h; sourceTree = "<group>"; };
 		5DD316331EC5ADF8008FF487 /* UserDefaultManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDefaultManager.m; sourceTree = "<group>"; };
@@ -281,6 +288,41 @@
 			name = OtherImages;
 			sourceTree = "<group>";
 		};
+		5DCE18541ECC76E700F542BE /* UserProfileModule */ = {
+			isa = PBXGroup;
+			children = (
+				5DCE18551ECC79E900F542BE /* UserProfileViewController.h */,
+				5DCE18561ECC79E900F542BE /* UserProfileViewController.m */,
+			);
+			name = UserProfileModule;
+			sourceTree = "<group>";
+		};
+		5DCE18581ECC7A7200F542BE /* AddComplainModule */ = {
+			isa = PBXGroup;
+			children = (
+				5DCE185E1ECC7F2700F542BE /* AddComplain */,
+			);
+			name = AddComplainModule;
+			sourceTree = "<group>";
+		};
+		5DCE185C1ECC7E4A00F542BE /* MultipleImagePicker */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = MultipleImagePicker;
+			sourceTree = "<group>";
+		};
+		5DCE185E1ECC7F2700F542BE /* AddComplain */ = {
+			isa = PBXGroup;
+			children = (
+				5DCE18591ECC7A8F00F542BE /* AddComplainViewController.h */,
+				5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */,
+				5D965A7F1ECD57D900748EAC /* AddComplainCell.h */,
+				5D965A801ECD57D900748EAC /* AddComplainCell.m */,
+			);
+			name = AddComplain;
+			sourceTree = "<group>";
+		};
 		5DD316031EC5AC80008FF487 = {
 			isa = PBXGroup;
 			children = (
@@ -326,7 +368,6 @@
 			children = (
 				5D8F63AF1EC9BACD00111138 /* Font */,
 				5DD316671EC5BDAF008FF487 /* ComplainManager.pch */,
-				5DD3161D1EC5AC80008FF487 /* LaunchScreen.storyboard */,
 				5DD316101EC5AC80008FF487 /* main.m */,
 				5DD3161B1EC5AC80008FF487 /* Assets.xcassets */,
 				5DD316201EC5AC80008FF487 /* Info.plist */,
@@ -348,6 +389,8 @@
 		5DD3162B1EC5AD83008FF487 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
+				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE04991ECC54AB005EC7A2 /* DashboardModule */,
 				5D864D0F1ECB0D08007FFC16 /* GlobalViewController */,
 				5DD316561EC5AF48008FF487 /* LoginModule */,
@@ -358,6 +401,7 @@
 		5DD3162C1EC5AD86008FF487 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5DCE185C1ECC7E4A00F542BE /* MultipleImagePicker */,
 				5D7549821ECC5FDB00A775E4 /* CustomString */,
 				5D8F63951EC9B21800111138 /* AlertView */,
 				5DD316521EC5AF1D008FF487 /* BSKeyboardControls */,
@@ -612,7 +656,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D8F63BA1EC9BADD00111138 /* Roboto-Medium.ttf in Resources */,
-				5DD3161F1EC5AC80008FF487 /* LaunchScreen.storyboard in Resources */,
 				5D8F63B81EC9BADD00111138 /* Roboto-Italic.ttf in Resources */,
 				5DD3161C1EC5AC80008FF487 /* Assets.xcassets in Resources */,
 				5D8F63B71EC9BADD00111138 /* Roboto-Bold.ttf in Resources */,
@@ -689,13 +732,16 @@
 				5DD316481EC5AEE4008FF487 /* UITextField+Padding.m in Sources */,
 				5D8F63AA1EC9B22A00111138 /* SCLTextView.m in Sources */,
 				5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */,
+				5DCE18571ECC79E900F542BE /* UserProfileViewController.m in Sources */,
 				5D8F63A81EC9B22A00111138 /* SCLAlertViewStyleKit.m in Sources */,
 				5D8F63A71EC9B22A00111138 /* SCLAlertViewResponder.m in Sources */,
+				5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */,
 				5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */,
 				5DD3165F1EC5AF91008FF487 /* ForgotPasswordViewController.m in Sources */,
 				5DD316371EC5AE04008FF487 /* UncaughtExceptionHandler.m in Sources */,
 				5D864D0E1ECAFEA5007FFC16 /* ComplainService.m in Sources */,
 				5D864D191ECB170C007FFC16 /* GlobalViewController.m in Sources */,
+				5DCE185B1ECC7A8F00F542BE /* AddComplainViewController.m in Sources */,
 				5D8F63A91EC9B22A00111138 /* SCLTimerDisplay.m in Sources */,
 				5D7549811ECC5FBA00A775E4 /* NSString+CustomString.m in Sources */,
 				5DD316551EC5AF25008FF487 /* BSKeyboardControls.m in Sources */,
@@ -722,14 +768,6 @@
 				5DD316191EC5AC80008FF487 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		5DD3161D1EC5AC80008FF487 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5DD3161E1EC5AC80008FF487 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -828,6 +866,7 @@
 			baseConfigurationReference = 6ADE74EED77968A5D6227DF3 /* Pods-ComplainManager.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ComplainManager/ComplainManager.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = M8A7BYS443;
@@ -847,6 +886,7 @@
 			baseConfigurationReference = C2227B00158D3FC418BA2FE7 /* Pods-ComplainManager.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ComplainManager/ComplainManager.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				DEVELOPMENT_TEAM = M8A7BYS443;

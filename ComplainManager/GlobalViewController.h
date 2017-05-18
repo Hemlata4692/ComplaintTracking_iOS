@@ -10,12 +10,4 @@
 
 @interface GlobalViewController : UIViewController
 
-//Add back button
-- (void)addBackButtonWithImage:(UIImage *)buttonImage;
-//end
-
-//Add logout button
-- (void)addLogoutButtonWithImage:(UIImage *)logoutImage;
-//end
-
 @end

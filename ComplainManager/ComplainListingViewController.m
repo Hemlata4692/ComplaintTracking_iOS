@@ -26,8 +26,6 @@
     [super viewDidLoad];
     self.navigationItem.title=@"My Complaints";
     complainListArray=[[NSMutableArray alloc]init];
-    //Add logout button on navigation bar
-    [myDelegate.superViewController addLogoutButtonWithImage:[UIImage imageNamed:@"logout.png"]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -78,8 +76,7 @@
 
 #pragma mark - Table view delegate and datasource methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    //    return complainListArray.count;
-    return 4;
+    return complainListArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -103,8 +100,8 @@
     //    }
     
     //display data on cells
-//    ComplainListDataModel *data=[complainListArray objectAtIndex:indexPath.row];
-//    [complainCell displayComplainListData:data indexPath:(int)indexPath.row rectSize:_complainListingTable.frame.size];
+    ComplainListDataModel *data=[complainListArray objectAtIndex:indexPath.row];
+    [complainCell displayComplainListData:data indexPath:(int)indexPath.row rectSize:_complainListingTable.frame.size];
     return complainCell;
 }
 

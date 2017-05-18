@@ -20,8 +20,7 @@
 #pragma mark - View life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    myDelegate.superViewController=self;
+    [self addBackButtonWithImage:[UIImage imageNamed:@"back.png"]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -47,26 +46,4 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark - end
-
-#pragma mark - Add logout button
-- (void)addLogoutButtonWithImage:(UIImage *)logoutImage {
-    //    CGRect framing = CGRectMake(0, 0, logoutImage.size.width, logoutImage.size.height);
-    CGRect framing = CGRectMake(0, 0, 20, 20);
-    UIButton *button = [[UIButton alloc] initWithFrame:framing];
-    [button setBackgroundImage:logoutImage forState:UIControlStateNormal];
-    logoutButton =[[UIBarButtonItem alloc] initWithCustomView:button];
-    [button addTarget:self action:@selector(logoutButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItems=[NSArray arrayWithObjects:logoutButton, nil];
-}
-
-//Logout button action
-- (void)logoutButtonAction :(id)sender{
-    [UserDefaultManager removeValue:@"userId"];
-    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    [self.navigationController setViewControllers: [NSArray arrayWithObject:loginView]
-                                         animated: NO];
-}
-#pragma mark - end
-
 @end

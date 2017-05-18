@@ -39,8 +39,8 @@
 //Set bottom border
 - (void)setBottomBorder: (UIView *)view color:(UIColor *)color {
     CALayer *bottomBorder = [CALayer layer];
-    bottomBorder.frame = CGRectMake(0, view.frame.size.height-2, view.frame.size.width, 1.5f);
-    bottomBorder.backgroundColor = color.CGColor;
+    bottomBorder.frame = CGRectMake(0, view.frame.size.height-2, view.frame.size.width, 1.0f);
+    bottomBorder.backgroundColor = [UIColor colorWithRed:206/255.0 green:206/255.0 blue:206/255.0 alpha:1.0].CGColor;
     [view.layer addSublayer:bottomBorder];
 }
 //Add shadow to view
