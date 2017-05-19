@@ -119,10 +119,16 @@
     NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userId"]!=nil) {
-        UIViewController * navView = [storyboard instantiateViewControllerWithIdentifier:@"ComplainListing"];
-        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        [self.window setRootViewController:navView];
-        [self.window makeKeyAndVisible];
+        UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+        myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [myDelegate.window setRootViewController:objReveal];
+        [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+        [myDelegate.window makeKeyAndVisible];
+
+//        UIViewController * navView = [storyboard instantiateViewControllerWithIdentifier:@"ComplainListing"];
+//        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+//        [self.window setRootViewController:navView];
+//        [self.window makeKeyAndVisible];
     }
     else {
         UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];

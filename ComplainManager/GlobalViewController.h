@@ -10,4 +10,7 @@
 
 @interface GlobalViewController : UIViewController
 
+- (void)addBackButtonWithImage;
+- (void)addMenuButtonWithImage;
+
 @end

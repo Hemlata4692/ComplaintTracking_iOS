@@ -28,6 +28,9 @@
 		5D8F63BB1EC9BADD00111138 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */; };
 		5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F63BE1EC9C73000111138 /* RegisterViewController.m */; };
 		5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D965A801ECD57D900748EAC /* AddComplainCell.m */; };
+		5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */; };
+		5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */; };
+		5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */; };
 		5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */; };
 		5DBE04A01ECC54DE005EC7A2 /* ComplainListingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049E1ECC54DE005EC7A2 /* ComplainListingCell.m */; };
 		5DBE04A51ECC560B005EC7A2 /* logout.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE04A31ECC560B005EC7A2 /* logout.png */; };
@@ -90,6 +93,12 @@
 		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
 		5D965A7F1ECD57D900748EAC /* AddComplainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainCell.h; sourceTree = "<group>"; };
 		5D965A801ECD57D900748EAC /* AddComplainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainCell.m; sourceTree = "<group>"; };
+		5DB168941ECE9DCC00E0A8E2 /* SidebarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarViewController.h; sourceTree = "<group>"; };
+		5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarViewController.m; sourceTree = "<group>"; };
+		5DB168991ECE9DF300E0A8E2 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
+		5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		5DB1689D1ECEB46B00E0A8E2 /* ChangePasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePasswordViewController.h; sourceTree = "<group>"; };
+		5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangePasswordViewController.m; sourceTree = "<group>"; };
 		5DBE04981ECC1F1D005EC7A2 /* ComplainManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ComplainManager.entitlements; sourceTree = "<group>"; };
 		5DBE049B1ECC54DE005EC7A2 /* ComplainListingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainListingViewController.h; sourceTree = "<group>"; };
 		5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainListingViewController.m; sourceTree = "<group>"; };
@@ -244,9 +253,37 @@
 			name = RegisterView;
 			sourceTree = "<group>";
 		};
+		5DB168971ECE9DCF00E0A8E2 /* SideBar */ = {
+			isa = PBXGroup;
+			children = (
+				5DB168941ECE9DCC00E0A8E2 /* SidebarViewController.h */,
+				5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */,
+			);
+			name = SideBar;
+			sourceTree = "<group>";
+		};
+		5DB168981ECE9DE900E0A8E2 /* SWRevealViewController */ = {
+			isa = PBXGroup;
+			children = (
+				5DB168991ECE9DF300E0A8E2 /* SWRevealViewController.h */,
+				5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */,
+			);
+			name = SWRevealViewController;
+			sourceTree = "<group>";
+		};
+		5DB1689C1ECEB44400E0A8E2 /* ChangePassword */ = {
+			isa = PBXGroup;
+			children = (
+				5DB1689D1ECEB46B00E0A8E2 /* ChangePasswordViewController.h */,
+				5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */,
+			);
+			name = ChangePassword;
+			sourceTree = "<group>";
+		};
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5DB1689C1ECEB44400E0A8E2 /* ChangePassword */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 			);
 			name = DashboardModule;
@@ -389,6 +426,8 @@
 		5DD3162B1EC5AD83008FF487 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5DB168981ECE9DE900E0A8E2 /* SWRevealViewController */,
+				5DB168971ECE9DCF00E0A8E2 /* SideBar */,
 				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
 				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE04991ECC54AB005EC7A2 /* DashboardModule */,
@@ -730,6 +769,8 @@
 				5D8F63AB1EC9B22A00111138 /* SCLSwitchView.m in Sources */,
 				5DD3165A1EC5AF6A008FF487 /* LoginViewController.m in Sources */,
 				5DD316481EC5AEE4008FF487 /* UITextField+Padding.m in Sources */,
+				5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */,
+				5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */,
 				5D8F63AA1EC9B22A00111138 /* SCLTextView.m in Sources */,
 				5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */,
 				5DCE18571ECC79E900F542BE /* UserProfileViewController.m in Sources */,
@@ -746,6 +787,7 @@
 				5D7549811ECC5FBA00A775E4 /* NSString+CustomString.m in Sources */,
 				5DD316551EC5AF25008FF487 /* BSKeyboardControls.m in Sources */,
 				5D8F63A61EC9B22A00111138 /* SCLButton.m in Sources */,
+				5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */,
 				5DD316141EC5AC80008FF487 /* AppDelegate.m in Sources */,
 				5D864D0A1ECADE97007FFC16 /* ComplainListDataModel.m in Sources */,
 				5D8F63AE1EC9B35B00111138 /* UIImage+ImageEffects.m in Sources */,

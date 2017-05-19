@@ -26,6 +26,8 @@
     [super viewDidLoad];
     self.navigationItem.title=@"My Complaints";
     complainListArray=[[NSMutableArray alloc]init];
+//    [myDelegate.superViewController addMenuButtonWithImage];
+    [self addMenuButtonWithImage];
 }
 
 - (void)didReceiveMemoryWarning {
