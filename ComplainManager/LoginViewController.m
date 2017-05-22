@@ -95,12 +95,12 @@
 #pragma mark - Login validation
 - (BOOL)performValidationsForLogin{
     if ([_usernameTextField isEmpty] || [_passwordTextField isEmpty]) {
-        SCLAlertView *alert = [[SCLAlertView alloc] init];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email and password." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }
     else  if (_passwordTextField.text.length < 6) {
-        SCLAlertView *alert = [[SCLAlertView alloc] init];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Your password must be atleast 6 characters long." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }

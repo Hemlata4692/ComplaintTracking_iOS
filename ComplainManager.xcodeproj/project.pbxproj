@@ -31,6 +31,7 @@
 		5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */; };
 		5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */; };
 		5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */; };
+		5DB168A31ECEF63200E0A8E2 /* ComplaintDetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB168A21ECEF63200E0A8E2 /* ComplaintDetailsViewController.m */; };
 		5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */; };
 		5DBE04A01ECC54DE005EC7A2 /* ComplainListingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049E1ECC54DE005EC7A2 /* ComplainListingCell.m */; };
 		5DBE04A51ECC560B005EC7A2 /* logout.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE04A31ECC560B005EC7A2 /* logout.png */; };
@@ -67,7 +68,7 @@
 		5D864D171ECB170C007FFC16 /* GlobalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalViewController.h; sourceTree = "<group>"; };
 		5D864D181ECB170C007FFC16 /* GlobalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalViewController.m; sourceTree = "<group>"; };
 		5D8F63961EC9B22A00111138 /* SCLAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertView.h; sourceTree = "<group>"; };
-		5D8F63971EC9B22A00111138 /* SCLAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLAlertView.m; sourceTree = "<group>"; };
+		5D8F63971EC9B22A00111138 /* SCLAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SCLAlertView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5D8F63981EC9B22A00111138 /* SCLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLButton.h; sourceTree = "<group>"; };
 		5D8F63991EC9B22A00111138 /* SCLButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCLButton.m; sourceTree = "<group>"; };
 		5D8F639A1EC9B22A00111138 /* SCLAlertViewResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertViewResponder.h; sourceTree = "<group>"; };
@@ -90,7 +91,7 @@
 		5D8F63B41EC9BADD00111138 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		5D8F63BD1EC9C73000111138 /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
-		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterViewController.m; sourceTree = "<group>"; };
+		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RegisterViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5D965A7F1ECD57D900748EAC /* AddComplainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainCell.h; sourceTree = "<group>"; };
 		5D965A801ECD57D900748EAC /* AddComplainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainCell.m; sourceTree = "<group>"; };
 		5DB168941ECE9DCC00E0A8E2 /* SidebarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarViewController.h; sourceTree = "<group>"; };
@@ -98,7 +99,9 @@
 		5DB168991ECE9DF300E0A8E2 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
 		5DB1689D1ECEB46B00E0A8E2 /* ChangePasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePasswordViewController.h; sourceTree = "<group>"; };
-		5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangePasswordViewController.m; sourceTree = "<group>"; };
+		5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ChangePasswordViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5DB168A11ECEF63200E0A8E2 /* ComplaintDetailsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplaintDetailsViewController.h; sourceTree = "<group>"; };
+		5DB168A21ECEF63200E0A8E2 /* ComplaintDetailsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplaintDetailsViewController.m; sourceTree = "<group>"; };
 		5DBE04981ECC1F1D005EC7A2 /* ComplainManager.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ComplainManager.entitlements; sourceTree = "<group>"; };
 		5DBE049B1ECC54DE005EC7A2 /* ComplainListingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainListingViewController.h; sourceTree = "<group>"; };
 		5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainListingViewController.m; sourceTree = "<group>"; };
@@ -109,7 +112,7 @@
 		5DCE18551ECC79E900F542BE /* UserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfileViewController.h; sourceTree = "<group>"; };
 		5DCE18561ECC79E900F542BE /* UserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileViewController.m; sourceTree = "<group>"; };
 		5DCE18591ECC7A8F00F542BE /* AddComplainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainViewController.h; sourceTree = "<group>"; };
-		5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainViewController.m; sourceTree = "<group>"; };
+		5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AddComplainViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5DD3160C1EC5AC80008FF487 /* ComplainManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComplainManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DD316101EC5AC80008FF487 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DD316121EC5AC80008FF487 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -136,9 +139,9 @@
 		5DD316531EC5AF25008FF487 /* BSKeyboardControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSKeyboardControls.h; sourceTree = "<group>"; };
 		5DD316541EC5AF25008FF487 /* BSKeyboardControls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSKeyboardControls.m; sourceTree = "<group>"; };
 		5DD316581EC5AF6A008FF487 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
-		5DD316591EC5AF6A008FF487 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		5DD316591EC5AF6A008FF487 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = LoginViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5DD3165D1EC5AF91008FF487 /* ForgotPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForgotPasswordViewController.h; sourceTree = "<group>"; };
-		5DD3165E1EC5AF91008FF487 /* ForgotPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ForgotPasswordViewController.m; sourceTree = "<group>"; };
+		5DD3165E1EC5AF91008FF487 /* ForgotPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ForgotPasswordViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5DD316611EC5AFF9008FF487 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		5DD316631EC5B15C008FF487 /* Webservice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Webservice.h; sourceTree = "<group>"; };
 		5DD316641EC5B15C008FF487 /* Webservice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Webservice.m; sourceTree = "<group>"; };
@@ -280,9 +283,29 @@
 			name = ChangePassword;
 			sourceTree = "<group>";
 		};
+		5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */ = {
+			isa = PBXGroup;
+			children = (
+				5DB168A11ECEF63200E0A8E2 /* ComplaintDetailsViewController.h */,
+				5DB168A21ECEF63200E0A8E2 /* ComplaintDetailsViewController.m */,
+			);
+			name = ComplainDetails;
+			sourceTree = "<group>";
+		};
+		5DB168A41ECEF66100E0A8E2 /* AddComplainCell */ = {
+			isa = PBXGroup;
+			children = (
+				5D965A7F1ECD57D900748EAC /* AddComplainCell.h */,
+				5D965A801ECD57D900748EAC /* AddComplainCell.m */,
+			);
+			name = AddComplainCell;
+			sourceTree = "<group>";
+		};
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
+				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
 				5DB1689C1ECEB44400E0A8E2 /* ChangePassword */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 			);
@@ -337,7 +360,8 @@
 		5DCE18581ECC7A7200F542BE /* AddComplainModule */ = {
 			isa = PBXGroup;
 			children = (
-				5DCE185E1ECC7F2700F542BE /* AddComplain */,
+				5DCE185E1ECC7F2700F542BE /* AddComplainView */,
+				5DB168A41ECEF66100E0A8E2 /* AddComplainCell */,
 			);
 			name = AddComplainModule;
 			sourceTree = "<group>";
@@ -349,15 +373,13 @@
 			name = MultipleImagePicker;
 			sourceTree = "<group>";
 		};
-		5DCE185E1ECC7F2700F542BE /* AddComplain */ = {
+		5DCE185E1ECC7F2700F542BE /* AddComplainView */ = {
 			isa = PBXGroup;
 			children = (
 				5DCE18591ECC7A8F00F542BE /* AddComplainViewController.h */,
 				5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */,
-				5D965A7F1ECD57D900748EAC /* AddComplainCell.h */,
-				5D965A801ECD57D900748EAC /* AddComplainCell.m */,
 			);
-			name = AddComplain;
+			name = AddComplainView;
 			sourceTree = "<group>";
 		};
 		5DD316031EC5AC80008FF487 = {
@@ -426,12 +448,11 @@
 		5DD3162B1EC5AD83008FF487 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5D864D0F1ECB0D08007FFC16 /* GlobalViewController */,
 				5DB168981ECE9DE900E0A8E2 /* SWRevealViewController */,
 				5DB168971ECE9DCF00E0A8E2 /* SideBar */,
-				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
 				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE04991ECC54AB005EC7A2 /* DashboardModule */,
-				5D864D0F1ECB0D08007FFC16 /* GlobalViewController */,
 				5DD316561EC5AF48008FF487 /* LoginModule */,
 			);
 			name = Controllers;
@@ -789,6 +810,7 @@
 				5D8F63A61EC9B22A00111138 /* SCLButton.m in Sources */,
 				5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */,
 				5DD316141EC5AC80008FF487 /* AppDelegate.m in Sources */,
+				5DB168A31ECEF63200E0A8E2 /* ComplaintDetailsViewController.m in Sources */,
 				5D864D0A1ECADE97007FFC16 /* ComplainListDataModel.m in Sources */,
 				5D8F63AE1EC9B35B00111138 /* UIImage+ImageEffects.m in Sources */,
 				5DD316421EC5AECA008FF487 /* UIView+RoundedCorner.m in Sources */,

@@ -34,7 +34,7 @@
 #pragma mark - end
 
 #pragma mark - Add back button
-- (void)addBackButtonWithImage {
+- (void)addBackButton {
     //    CGRect framing = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
     CGRect framing = CGRectMake(0, 0, 20, 20);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
@@ -50,7 +50,7 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark - end
-- (void)addMenuButtonWithImage {
+- (void)addMenuButton {
     CGRect framing = CGRectMake(0, 0, 20, 20);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
     [button setBackgroundImage:[UIImage imageNamed:@"menu.png"] forState:UIControlStateNormal];
