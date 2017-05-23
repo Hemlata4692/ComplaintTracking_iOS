@@ -74,7 +74,7 @@
     cell.textLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15.0];
     [tableView setSeparatorColor:[UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0]];
     if (indexPath.row == selectedIndex) {
-        cell.backgroundColor= [UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0];
+        cell.backgroundColor= [UIColor colorWithRed:5/255.0 green:122/255.0 blue:165/255.0 alpha:1.0];
         cell.textLabel.textColor = [UIColor whiteColor];
     }
     else {
@@ -155,6 +155,23 @@
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     selectedIndex = indexPath.row;
+    if (indexPath.row == 4) {
+        [UserDefaultManager removeValue:@"userId"];
+        
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+        myDelegate.window.rootViewController = myDelegate.navigationController;
+         }
 }
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    //    if ([sender tag] == 2)
+    //    {
+    //        [self.view makeToast:@"Please login."];
+    //        return NO;
+    //
+    //    }
+    return YES;
+}
+
 #pragma mark - end
 @end

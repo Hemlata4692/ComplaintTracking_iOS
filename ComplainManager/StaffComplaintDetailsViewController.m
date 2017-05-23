@@ -1,18 +1,18 @@
 //
-//  ComplaintDetailsViewController.m
+//  StaffComplaintDetailsViewController.m
 //  ComplainManager
 //
-//  Created by Monika Sharma on 19/05/17.
+//  Created by Monika Sharma on 22/05/17.
 //  Copyright © 2017 Monika Sharma. All rights reserved.
 //
 
-#import "ComplaintDetailsViewController.h"
+#import "StaffComplaintDetailsViewController.h"
 
-@interface ComplaintDetailsViewController ()
+@interface StaffComplaintDetailsViewController ()
 
 @end
 
-@implementation ComplaintDetailsViewController
+@implementation StaffComplaintDetailsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

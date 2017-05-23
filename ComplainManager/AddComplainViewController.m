@@ -85,10 +85,8 @@
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     
     if (textView == _titleTextView) {
-        if(textView.text.length>=85 && range.length == 0)
-        {
-            NSLog(@"You have reached 140 characters limit.");
-            //            [self.view makeToast:@"You have reached 140 characters limit."];
+        if(textView.text.length>=90 && range.length == 0) {
+            [self.view makeToast:@"You have reached 140 characters limit."];
             [textView resignFirstResponder];
             return NO;
         }
@@ -96,7 +94,7 @@
         
     } else {
         if ([text isEqualToString:[UIPasteboard generalPasteboard].string]) {
-            CGSize size = CGSizeMake(_detailTextView.frame.size.height,120);
+            CGSize size = CGSizeMake(_detailTextView.frame.size.width,120);
             text = [NSString stringWithFormat:@"%@%@",_detailTextView.text,text];
             CGRect textRect=[text
                              boundingRectWithSize:size

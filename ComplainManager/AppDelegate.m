@@ -108,7 +108,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0]];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0]];
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"Roboto-Regular" size:17.0], NSFontAttributeName, nil]];
     //Push notification
     deviceToken = @"";
@@ -124,11 +124,6 @@
         [myDelegate.window setRootViewController:objReveal];
         [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
-
-//        UIViewController * navView = [storyboard instantiateViewControllerWithIdentifier:@"ComplainListing"];
-//        self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-//        [self.window setRootViewController:navView];
-//        [self.window makeKeyAndVisible];
     }
     else {
         UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];

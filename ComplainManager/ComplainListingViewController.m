@@ -26,7 +26,6 @@
     [super viewDidLoad];
     self.navigationItem.title=@"My Complaints";
     complainListArray=[[NSMutableArray alloc]init];
-//    [myDelegate.superViewController addMenuButton];
     [self addMenuButton];
 }
 
@@ -78,7 +77,8 @@
 
 #pragma mark - Table view delegate and datasource methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return complainListArray.count;
+//    return complainListArray.count;
+    return 6;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -102,13 +102,14 @@
     //    }
     
     //display data on cells
-    ComplainListDataModel *data=[complainListArray objectAtIndex:indexPath.row];
-    [complainCell displayComplainListData:data indexPath:(int)indexPath.row rectSize:_complainListingTable.frame.size];
+//    ComplainListDataModel *data=[complainListArray objectAtIndex:indexPath.row];
+//    [complainCell displayComplainListData:data indexPath:(int)indexPath.row rectSize:_complainListingTable.frame.size];
     return complainCell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"TenantsComplaintDetailsViewController"];
+      [self.navigationController pushViewController:complainDetail animated:YES];
 }
 #pragma mark - end
 
