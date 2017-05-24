@@ -8,8 +8,8 @@
 
 #import "UserService.h"
 
-#define kUrlLogin                       @"login"
-#define kUrlForgotPassword              @"forgotpassword"
+#define kUrlLogin                       @"Login"
+#define kUrlForgotPassword              @"ForgotPassword"
 #define kUrlRegister                    @"register"
 
 @implementation UserService
@@ -34,8 +34,8 @@
 
 #pragma mark- Login
 //Login
-- (void)userLogin:(NSString *)username password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    NSDictionary *requestDict = @{@"username":username,@"password":password};
+- (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    NSDictionary *requestDict = @{@"email":email,@"password":password,@"deviceId":@"123456",@"devicetype":@"iOS"};
     [[Webservice sharedManager] post:kUrlLogin parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         if([[Webservice sharedManager] isStatusOK:responseObject]) {

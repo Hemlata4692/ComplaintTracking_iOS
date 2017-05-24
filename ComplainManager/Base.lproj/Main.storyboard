@@ -90,12 +90,12 @@
                                                     <segue destination="hc5-mI-Aoi" kind="show" id="QzE-rg-aDu"/>
                                                 </connections>
                                             </button>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Username" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WST-3l-umR">
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WST-3l-umR">
                                                 <rect key="frame" x="40" y="184" width="240" height="40"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <color key="textColor" red="0.57647058819999997" green="0.58039215690000001" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="13"/>
-                                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no"/>
+                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" keyboardType="emailAddress"/>
                                                 <connections>
                                                     <outlet property="delegate" destination="BYZ-38-t0r" id="NcI-f9-1Dn"/>
                                                 </connections>
@@ -171,6 +171,7 @@
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <navigationItem key="navigationItem" id="uyS-n7-dTe"/>
                     <connections>
+                        <outlet property="emailTextField" destination="WST-3l-umR" id="snT-AG-ePg"/>
                         <outlet property="loginButton" destination="4PS-ti-juE" id="7BD-YS-NOp"/>
                         <outlet property="loginContainerView" destination="PjO-Y8-ORC" id="QfM-73-E3P"/>
                         <outlet property="loginScrollView" destination="gAX-Wm-OY2" id="DPQ-Ti-zdY"/>
@@ -179,7 +180,6 @@
                         <outlet property="registerUserButton" destination="f6H-By-16g" id="fED-3W-EBo"/>
                         <outlet property="staffButton" destination="hdN-OI-9qS" id="WGa-g5-nLE"/>
                         <outlet property="userButton" destination="wTj-0v-N0b" id="bPb-bV-pHq"/>
-                        <outlet property="usernameTextField" destination="WST-3l-umR" id="Hoe-9S-ZUh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
