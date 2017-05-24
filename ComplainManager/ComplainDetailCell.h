@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface ComplainDetailCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *commentsTextView;
+@property (weak, nonatomic) IBOutlet UILabel *commentsTimeLabel;
 
 @end
