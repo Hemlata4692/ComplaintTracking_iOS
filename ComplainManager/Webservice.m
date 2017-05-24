@@ -44,12 +44,13 @@
     manager.securityPolicy.allowInvalidCertificates = YES;
     [manager POST:path parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"error: %@", error);
+    } failure:^(NSURLSessionDataTask * task, NSError * _Nonnull error) {
         [myDelegate stopIndicator];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+        NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
+                                                             options:kNilOptions error:&error];
+        NSLog(@"json %@",json);
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:[json objectForKey:@"message"] delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
         [alert show];
-        
     }];
 }
 
@@ -108,16 +109,16 @@
 
 //Check response success
 - (BOOL)isStatusOK:(id)responseObject {
-    NSNumber *number = responseObject[@"is_success"];
+    NSNumber *number = responseObject[@"status"];
     NSString *msg;
     switch (number.integerValue) {
-        case 0: {
-            msg = responseObject[@"msg"];
+        case 400: {
+            msg = responseObject[@"message"];
             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:msg delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
             [alert show];
             return NO;
         }
-        case 1:
+        case 200:
             return YES;
             break;
             

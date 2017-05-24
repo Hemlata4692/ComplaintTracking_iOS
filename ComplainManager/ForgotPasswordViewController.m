@@ -50,8 +50,8 @@
 - (IBAction)forgotPasswordAction:(id)sender {
     [_emailTextField resignFirstResponder];
     if([self performValidationsForForgotPassword]) {
-//        [myDelegate showIndicator];
-//        [self performSelector:@selector(forgotPassword) withObject:nil afterDelay:.1];
+        [myDelegate showIndicator];
+        [self performSelector:@selector(forgotPassword) withObject:nil afterDelay:.1];
     }
 }
 #pragma mark - end

@@ -17,7 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet UIScrollView *loginScrollView;
 @property (weak, nonatomic) IBOutlet UIView *loginContainerView;
-@property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *emailTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
 @property (weak, nonatomic) IBOutlet UIButton *userButton;
@@ -34,7 +34,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     //Adding textfield to array
-    textFieldArray = @[_usernameTextField,_passwordTextField];
+    textFieldArray = @[_emailTextField,_passwordTextField];
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
     [self.keyboardControls setDelegate:self];
     // UI customisation
@@ -58,9 +58,9 @@
 
 #pragma mark - UI customisation
 - (void)customiseView {
-    [_usernameTextField addTextFieldPadding:_usernameTextField];
+    [_emailTextField addTextFieldPadding:_emailTextField];
     [_passwordTextField addTextFieldPadding:_passwordTextField];
-    [_usernameTextField setBottomBorder:_usernameTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
     [_passwordTextField setBottomBorder:_passwordTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
     [_registerUserButton setCornerRadius:3];
     [_registerUserButton setViewBorder:_registerUserButton color:[UIColor colorWithRed:237/255.0 green:236/255.0 blue:237/255.0 alpha:1.0]];
@@ -94,7 +94,7 @@
 
 #pragma mark - Login validation
 - (BOOL)performValidationsForLogin{
-    if ([_usernameTextField isEmpty] || [_passwordTextField isEmpty]) {
+    if ([_emailTextField isEmpty] || [_passwordTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] init];
         [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email and password." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
@@ -150,8 +150,8 @@
     [self.keyboardControls.activeField resignFirstResponder];
     [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     if([self performValidationsForLogin]) {
-//        [myDelegate showIndicator];
-//        [self performSelector:@selector(loginUser) withObject:nil afterDelay:.1];
+        [myDelegate showIndicator];
+        [self performSelector:@selector(loginUser) withObject:nil afterDelay:.1];
     }
 }
 
@@ -166,14 +166,12 @@
 
 #pragma mark - Webservice
 - (void)loginUser {
-    [[UserService sharedManager] userLogin:_usernameTextField.text password:_passwordTextField.text role:role success:^(id responseObject){
+    [[UserService sharedManager] userLogin:_emailTextField.text password:_passwordTextField.text success:^(id responseObject){
         [myDelegate stopIndicator];
-        [UserDefaultManager setValue:[responseObject objectForKey:@"user_id"] key:@"userId"];
-        UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"ComplainListing"];
-        [myDelegate.window setRootViewController:loginView];
-        [myDelegate.window makeKeyAndVisible];
-    } failure:^(NSError *error) {
+        NSDictionary *data = [responseObject objectForKey:@"data"];
+        [UserDefaultManager setValue:[data objectForKey:@"userId"] key:@"userId"];
+        NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
+          } failure:^(NSError *error) {
         
     }] ;
 }
