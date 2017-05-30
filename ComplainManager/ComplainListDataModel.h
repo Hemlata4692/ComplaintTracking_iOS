@@ -14,5 +14,9 @@
 @property(nonatomic,retain)NSString * complainTitle;
 @property(nonatomic,retain)NSString * complainDescription;
 @property(nonatomic,retain)NSString * complainStatus;
+@property(nonatomic,retain)NSString * complainId;
+@property(nonatomic,retain)NSString * categoryName;
+@property(nonatomic,retain)NSString * complainTime;
+
 
 @end

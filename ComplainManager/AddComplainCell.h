@@ -13,7 +13,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *deleteImageButton;
 @property (weak, nonatomic) IBOutlet UIButton *selectImageButton;
 
-- (void)displayData:(int)index data:(NSMutableArray *)imageArray;
+- (void)displayData:(long)index data:(NSMutableArray *)imageArray;
     
 
 @end

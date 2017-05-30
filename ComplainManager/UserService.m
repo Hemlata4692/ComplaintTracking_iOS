@@ -3,14 +3,15 @@
 //  Finder_iPhoneApp
 //
 //  Created by Hema on 19/04/16.
-//  Copyright © 2016 Ranosys. All rights reserved.
+//  Copyright © 2016 Ranosys. All rights reserved.requestDict
 //
 
 #import "UserService.h"
 
-#define kUrlLogin                       @"login"
-#define kUrlForgotPassword              @"forgotpassword"
+#define kUrlLogin                       @"Login"
+#define kUrlForgotPassword              @"ForgotPassword"
 #define kUrlRegister                    @"register"
+#define kUrlchangePassword              @"ChangePassword"
 
 @implementation UserService
 
@@ -34,10 +35,11 @@
 
 #pragma mark- Login
 //Login
-- (void)userLogin:(NSString *)username password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    NSDictionary *requestDict = @{@"email":username,@"password":password};
+- (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    NSDictionary *requestDict = @{@"email":email,@"password":password,@"deviceId":@"123456",@"devicetype":@"iOS"};
     [[Webservice sharedManager] post:kUrlLogin parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -88,4 +90,23 @@
     }];
 }
 #pragma mark- end
+
+#pragma mark- Change password
+- (void)changePassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"oldPassword":oldPassword,@"newPassword":newPassword};
+    [[Webservice sharedManager] post:kUrlchangePassword parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+
 @end

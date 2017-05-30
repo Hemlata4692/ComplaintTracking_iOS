@@ -95,12 +95,17 @@
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }
-    else  if (_oldPasswordText.text.length<8 || _changePasswordText.text.length<8 || _confirmPasswordText.text.length<8) {
+    else  if (_oldPasswordText.text.length<6 || _changePasswordText.text.length<6 || _confirmPasswordText.text.length<6) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Password with minimum 8 characters are required." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Password with minimum 6 characters are required." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }
     //Password confirmation for new password entered
+    else if ([_oldPasswordText.text isEqualToString:_changePasswordText.text]) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Your new password cannot be same as old password." closeButtonTitle:@"Done" duration:0.0f];
+        return NO;
+    }
     else if (![_changePasswordText.text isEqualToString:_confirmPasswordText.text]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Your passwords do not match. Kindly provide a correct password." closeButtonTitle:@"Done" duration:0.0f];
@@ -119,17 +124,40 @@
         [myDelegate showIndicator];
         [self performSelector:@selector(changePassword) withObject:nil afterDelay:.1];
     }
-    
 }
 #pragma mark - end
 
 #pragma mark - Web services
 -(void)changePassword {
-    //    [[UserService sharedManager] userRegisteration:_nameTextField.text email:_emailTextField.text password:_passwordTextField.text mobileNumber:_phoneNumberTextField.text success:^(id responseObject){
-    //        [myDelegate stopIndicator];
-    //    } failure:^(NSError *error) {
-    //
-    //    }] ;
+    [[UserService sharedManager] changePassword:_oldPasswordText.text newPassword:_changePasswordText.text success:^(id responseObject){
+        [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"Ok" actionBlock:^(void) {
+            UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
+                [UserDefaultManager removeValue:@"name"];
+                [UserDefaultManager removeValue:@"userId"];
+                [UserDefaultManager removeValue:@"AuthenticationToken"];
+                [UserDefaultManager removeValue:@"contactNumber"];
+                [UserDefaultManager removeValue:@"isFirsttime"];
+                [UserDefaultManager removeValue:@"role"];
+                [UserDefaultManager removeValue:@"email"];
+                myDelegate.isMyComplaintScreen= NO;
+                myDelegate.selectedMenuIndex = 0;
+                myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+                myDelegate.window.rootViewController = myDelegate.navigationController;
+            } else {
+                UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+                myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+                [myDelegate.window setRootViewController:objReveal];
+                [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+                [myDelegate.window makeKeyAndVisible];
+            }
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
+    } failure:^(NSError *error) {
+        
+    }] ;
 }
 #pragma mark - end
 

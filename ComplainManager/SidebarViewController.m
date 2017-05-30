@@ -9,11 +9,9 @@
 #import "SidebarViewController.h"
 #import "SWRevealViewController.h"
 #import "LoginViewController.h"
-#import <UIImageView+AFNetworking.h>
 
 @interface SidebarViewController (){
     NSArray *menuItems;
-    long selectedIndex;
 }
 
 @end
@@ -23,7 +21,6 @@
 #pragma mark - View life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    selectedIndex = 0;
     //Set status bar
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     UIView *statusBarView = [[UIView alloc] initWithFrame:CGRectMake(0, -20, self.view.frame.size.width, 20)];
@@ -33,8 +30,19 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-    menuItems = @[@"Dashboard", @"My Profile", @"My Complaints", @"Change Password", @"Logout"];
-    //    menuItems = @[@"Dashboard", @"My Profile", @"Change Password", @"Logout"];
+    if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
+            myDelegate.selectedMenuIndex = 3;
+        } else {
+            myDelegate.selectedMenuIndex = 2;
+        }
+    }
+    
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
+        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
+    } else {
+        menuItems = @[@"Dashboard", @"My Profile", @"Change Password", @"Logout"];
+    }
     self.tableView.scrollEnabled=NO;
     [self.revealViewController.frontViewController.view setUserInteractionEnabled:NO];
     [self.tableView reloadData];
@@ -73,7 +81,7 @@
     cell.textLabel.text = [menuItems objectAtIndex:indexPath.row];
     cell.textLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15.0];
     [tableView setSeparatorColor:[UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0]];
-    if (indexPath.row == selectedIndex) {
+    if (indexPath.row == myDelegate.selectedMenuIndex) {
         cell.backgroundColor= [UIColor colorWithRed:5/255.0 green:122/255.0 blue:165/255.0 alpha:1.0];
         cell.textLabel.textColor = [UIColor whiteColor];
     }
@@ -90,22 +98,21 @@
         return (tableView.bounds.size.height * aspectHeight - 40);
     }
     else{
-        return 170;
+        return 180;
     }
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     NSLog(@"table size %f",tableView.bounds.size.width);
-    float aspectHeight, profileViewHeight,welcomeHeight, nameHeight;
-    welcomeHeight = 16;
-    nameHeight = 23;
+    float aspectHeight, profileViewHeight, nameHeight;
+    nameHeight = 18;
     aspectHeight = 186.0/480.0;
     profileViewHeight = 80;
     if([[UIScreen mainScreen] bounds].size.height > 570) {
         aspectHeight = (tableView.bounds.size.height * aspectHeight - 20);
     }
     else {
-        aspectHeight = 170;
+        aspectHeight = 180;
     }
     //Header view frame
     UIView *headerView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, aspectHeight)];
@@ -117,7 +124,7 @@
     ProfileImgView.backgroundColor=[UIColor whiteColor];
     // profile image url
     __weak UIImageView *weakRef = ProfileImgView;
-    NSString *tempImageString = [[NSUserDefaults standardUserDefaults]objectForKey:@"profileImageUrl"];
+    NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                               timeoutInterval:60];
@@ -131,45 +138,98 @@
     ProfileImgView.layer.masksToBounds = YES;
     //Name label
     UILabel * nameLabel;
-    nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + (welcomeHeight - 6), tableView.bounds.size.width - 20, welcomeHeight)];
+    UILabel *emailLabel;
+    CGSize size = CGSizeMake(self.view.frame.size.width-10,50);
+    CGRect textRect = [self setDynamicHeight:size textString:[UserDefaultManager getValue:@"name"]];
+    
+    if (textRect.size.height < 40){
+        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 15, tableView.bounds.size.width - 10, textRect.size.height+1)];
+        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +10, tableView.bounds.size.width - 10, nameHeight)];
+    }
+    else {
+        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 5, tableView.bounds.size.width - 10, textRect.size.height+1)];
+        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+    }
     nameLabel.backgroundColor = [UIColor clearColor];
     nameLabel.textAlignment=NSTextAlignmentCenter;
     nameLabel.textColor=[UIColor whiteColor];
-    nameLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:20];
-    nameLabel.text=@"John Doe";
+    nameLabel.numberOfLines = 2;
+    nameLabel.text=[UserDefaultManager getValue:@"name"];
     //Email label
-    UILabel *emailLabel;
-    emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, nameLabel.frame.origin.y + (nameHeight), tableView.bounds.size.width - 20, nameHeight)];
     emailLabel.backgroundColor = [UIColor clearColor];
     emailLabel.textAlignment=NSTextAlignmentCenter;
     emailLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emailLabel.numberOfLines = 1;
     emailLabel.textColor=[UIColor whiteColor];
-    emailLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:16];
-    emailLabel.text = @"monika@ranosys.com";
+    emailLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14];
+    emailLabel.text = [UserDefaultManager getValue:@"email"];
     [headerView addSubview:nameLabel];
     [headerView addSubview:emailLabel];
     [headerView addSubview:ProfileImgView];
+    
     return headerView;   // return headerLabel;
 }
 
+//Set dynamic height
+-(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+    CGRect textHeight = [textString
+                         boundingRectWithSize:rectSize
+                         options:NSStringDrawingUsesLineFragmentOrigin
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:18]}
+                         context:nil];
+    return textHeight;
+}
+
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    selectedIndex = indexPath.row;
-    if (indexPath.row == 4) {
-        [UserDefaultManager removeValue:@"userId"];
-        
+    myDelegate.selectedMenuIndex = indexPath.row;
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
+        if (indexPath.row == 0) {
+            myDelegate.isMyComplaintScreen = false;
+        } else if (indexPath.row == 2) {
+            myDelegate.isMyComplaintScreen = true;
+        } else if (indexPath.row == 4) {
+            [self logoutUser];
+        }
+    } else if (indexPath.row == 3) {
+        [self logoutUser];
+    }
+}
+- (void)logoutUser {
+    SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+    [alert addButton:@"Yes" actionBlock:^(void) {
+        [self removeDefaultValues];
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
         myDelegate.window.rootViewController = myDelegate.navigationController;
-         }
+    }];
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout" closeButtonTitle:@"No" duration:0.0f];
+    
+}
+- (void)removeDefaultValues {
+    [UserDefaultManager removeValue:@"name"];
+    [UserDefaultManager removeValue:@"userId"];
+    [UserDefaultManager removeValue:@"AuthenticationToken"];
+    [UserDefaultManager removeValue:@"contactNumber"];
+    [UserDefaultManager removeValue:@"isFirsttime"];
+    [UserDefaultManager removeValue:@"role"];
+    [UserDefaultManager removeValue:@"email"];
+    myDelegate.isMyComplaintScreen= NO;
+    myDelegate.selectedMenuIndex = 0;
 }
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    //    if ([sender tag] == 2)
-    //    {
-    //        [self.view makeToast:@"Please login."];
-    //        return NO;
-    //
-    //    }
+    if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
+            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3){
+                [self.view makeToast:@"Please login."];
+                return NO;
+            }
+        } else {
+            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2){
+                [self.view makeToast:@"Please login."];
+                return NO;
+            }
+        }
+    }
     return YES;
 }
 

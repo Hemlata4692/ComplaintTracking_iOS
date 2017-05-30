@@ -14,6 +14,8 @@
 
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic,retain) UINavigationController *navigationController;
+@property (nonatomic)  BOOL isMyComplaintScreen;
+@property (nonatomic)  long selectedMenuIndex;
 
 //Show/Stop indicator
 - (void)showIndicator;

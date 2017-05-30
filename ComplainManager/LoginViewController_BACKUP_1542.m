@@ -98,9 +98,13 @@
         SCLAlertView *alert = [[SCLAlertView alloc] init];
         [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email and password." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
+    } else if (![_emailTextField isValidEmail]) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please enter a valid email address." closeButtonTitle:@"Done" duration:0.0f];
+        return NO;
     }
     else  if (_passwordTextField.text.length < 6) {
-        SCLAlertView *alert = [[SCLAlertView alloc] init];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Your password must be atleast 6 characters long." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }
@@ -169,9 +173,34 @@
     [[UserService sharedManager] userLogin:_emailTextField.text password:_passwordTextField.text success:^(id responseObject){
         [myDelegate stopIndicator];
         NSDictionary *data = [responseObject objectForKey:@"data"];
+        [UserDefaultManager setValue:_emailTextField.text key:@"email"];
         [UserDefaultManager setValue:[data objectForKey:@"userId"] key:@"userId"];
+        [UserDefaultManager setValue:[data objectForKey:@"name"] key:@"name"];
+        [UserDefaultManager setValue:[data objectForKey:@"contactNumber"] key:@"contactNumber"];
+        [UserDefaultManager setValue:[data objectForKey:@"isFirsttime"] key:@"isFirstTime"];
+        [UserDefaultManager setValue:[data objectForKey:@"AuthenticationToken"] key:@"AuthenticationToken"];
+
+        if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
+            [UserDefaultManager setValue:@"t" key:@"role"];
+        } else {
+            [UserDefaultManager setValue:@"s" key:@"role"];
+        }
+        
+        NSLog(@"AuthenticationToken %@",[UserDefaultManager getValue:@"AuthenticationToken"]);
+        NSLog(@"role %@",[UserDefaultManager getValue:@"role"]);
         NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
-          } failure:^(NSError *error) {
+        NSLog(@"name %@",[UserDefaultManager getValue:@"name"]);
+        NSLog(@"contactNumber %@",[UserDefaultManager getValue:@"contactNumber"]);
+        NSLog(@"isFirstTime %@",[UserDefaultManager getValue:@"isFirstTime"]);
+        
+        UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+        myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [myDelegate.window setRootViewController:objReveal];
+        [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+        [myDelegate.window makeKeyAndVisible];
+        
+    } failure:^(NSError *error) {
         
     }] ;
 }

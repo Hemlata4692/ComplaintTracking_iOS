@@ -16,7 +16,7 @@
 //end
 
 //Login screen method
-- (void)userLogin:(NSString *)username password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+- (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
 //Forgot password method
@@ -25,6 +25,10 @@
 
 //User registeration
 - (void)userRegisteration:(NSString *)name email:(NSString *)email password:(NSString *)password mobileNumber:(NSString *)mobileNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+//end
+
+//Change password
+- (void)changePassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
 @end

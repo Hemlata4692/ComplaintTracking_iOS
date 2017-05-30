@@ -115,6 +115,9 @@
     [self registerForRemoteNotification];
     //Call crashlytics method
 //    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
+    //Check internet connectivity
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+
     //Navigation to view
     NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

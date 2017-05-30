@@ -9,12 +9,19 @@
 #import "AddComplainViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "AddComplainCell.h"
+#import "ComplainService.h"
+#import "AddComplainModel.h"
 
 @interface AddComplainViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate,UITextFieldDelegate,UITextViewDelegate>
 {
     NSArray *textFieldArray;
     NSMutableArray *imagesArray;
+    NSMutableArray *imagesNameArray;
     NSArray *categoryArray;
+    UIImage *complainImage;
+    AddComplainModel *complainModel;
+    NSString *selectedCategoryId;
+    int j;
 }
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *titleTextView;
 @property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
@@ -37,7 +44,7 @@
     [super viewDidLoad];
     self.navigationItem.title=@"Add Complaint";
     imagesArray = [NSMutableArray new];
-    categoryArray = [NSArray arrayWithObjects:@"clean swimming pool",@"pipeline issue",@"cleaning", nil];
+    categoryArray = [NSMutableArray new];
     //Adding textfield to array
     textFieldArray = @[_titleTextView,_detailTextView];
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
@@ -46,6 +53,8 @@
     [self customiseView];
     //Add backButton
     [self addBackButton];
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getCategories) withObject:nil afterDelay:.1];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -267,22 +276,9 @@
 #pragma mark - end
 
 #pragma mark - ImagePicker delegate
-- (NSString *)getImageName:(UIImage*)image {
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    NSLocale *locale = [[NSLocale alloc]
-                        initWithLocaleIdentifier:@"en_US"];
-    [dateFormatter setLocale:locale];
-    [dateFormatter setDateFormat:@"ddMMYYhhmmss"];
-    NSString * datestr = [dateFormatter stringFromDate:[NSDate date]];
-    NSString *fileName = [NSString stringWithFormat:@"%@_%@.jpeg",datestr,[UserDefaultManager getValue:@"userId"]];
-    NSString *filePath = [[NSTemporaryDirectory() stringByAppendingPathComponent:@"upload"] stringByAppendingPathComponent:fileName];
-    NSData * imageData = UIImageJPEGRepresentation(image, 0.1);
-    [imageData writeToFile:filePath atomically:YES];
-    return fileName;
-}
-
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
     [imagesArray addObject:image];
+    complainImage = image;
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_addComplainCollectionView reloadData];
@@ -319,9 +315,12 @@
 
 - (IBAction)registerButtonAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
-    if([self performValidationsForRegister]) {
-        //        [myDelegate showIndicator];
-        //        [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
+    imagesNameArray = [NSMutableArray new];
+    j = 0;
+    
+    if([self performValidationsForAddComplain]) {
+        [myDelegate showIndicator];
+        [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
     }
 }
 
@@ -331,14 +330,16 @@
 
 - (IBAction)selectCategoryPickerDoneAction:(id)sender {
     NSInteger index = [_categoryPickerView selectedRowInComponent:0];
-    _categoryTextField.text=[categoryArray objectAtIndex:index];
+    complainModel=[categoryArray objectAtIndex:index];
+    _categoryTextField.text=complainModel.categoryName;
+    selectedCategoryId=complainModel.categoryId;
     [self hidePickerWithAnimation];
 }
 #pragma mark - end
+
 #pragma mark - Picker View methods
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
     UILabel* pickerLabel = (UILabel*)view;
-    
     if (!pickerLabel)
     {
         pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
@@ -346,7 +347,8 @@
         pickerLabel.textColor = [UIColor colorWithRed:147/255.0 green:148/255.0 blue:153/255.0 alpha:1.0];
         pickerLabel.textAlignment=NSTextAlignmentCenter;
     }
-    pickerLabel.text=[categoryArray objectAtIndex:row];
+    complainModel=[categoryArray objectAtIndex:row];
+    pickerLabel.text=complainModel.categoryName;
     return pickerLabel;
 }
 
@@ -360,14 +362,14 @@
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     [_keyboardControls.activeField resignFirstResponder];
-    NSString *str=[categoryArray objectAtIndex:row];
-    return str;
+    complainModel=[categoryArray objectAtIndex:row];
+    return complainModel.categoryName;
 }
 
 -(void)hidePickerWithAnimation {
     if([[UIScreen mainScreen] bounds].size.height<=568) {
         [UIView animateWithDuration:0.5f animations:^{
-//            self.view.frame = CGRectOffset(self.view.frame, 0, 0);
+            //            self.view.frame = CGRectOffset(self.view.frame, 0, 0);
             [UIView beginAnimations:nil context:NULL];
             [UIView setAnimationDuration:0.3];
             _categoryPickerView.frame = CGRectMake(_categoryPickerView.frame.origin.x, 1000, self.view.bounds.size.width, _categoryPickerView.frame.size.height);
@@ -376,14 +378,18 @@
         }];
     }
 }
-
 #pragma mark - end
 
 #pragma mark - Register validation
-- (BOOL)performValidationsForRegister {
-    if ([_titleTextView.text isEqualToString:@""] || [_detailTextView.text isEqualToString:@""]) {
+- (BOOL)performValidationsForAddComplain {
+    if ([_titleTextView.text isEqualToString:@""] || [_detailTextView.text isEqualToString:@""] || [_categoryTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Ok" duration:0.0f];
+        return NO;
+    }
+    else if (imagesArray.count < 1) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select atleast one image" closeButtonTitle:@"Ok" duration:0.0f];
         return NO;
     }
     else {
@@ -393,8 +399,121 @@
 #pragma mark - end
 
 #pragma mark - Webservices
-- (void)addComplaint {
+//Get complain categories
+- (void)getCategories {
+    [[ComplainService sharedManager] getCategories:^(NSMutableArray *dataArray){
+        categoryArray = dataArray;
+        [_categoryPickerView reloadAllComponents];
+        [myDelegate stopIndicator];
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+    }] ;
+}
+
+//Upload image
+- (void)uploadImage {
     
+    for (int i = 0; i < imagesArray.count; i++) {
+        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
+            [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
+            NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
+            [myDelegate stopIndicator];
+            if (imagesArray.count == imagesNameArray.count) {
+                NSLog(@"addComplaint");
+                [myDelegate showIndicator];
+                [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
+            }
+//            else {
+//                NSLog(@"uploadImage");
+//                [myDelegate showIndicator];
+//                [self uploadImage];
+//            }
+        } failure:^(NSError *error) {
+            [myDelegate stopIndicator];
+        }] ;
+        
+    }
+    
+    //    NSLog(@"imagesArray.count = %lu",(unsigned long)imagesArray.count);
+    //    NSLog(@"value of j = %d",j);
+    //
+    //    if  (imagesArray.count != j) {
+    //        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:j] screenName:@"COMPLAIN" success:^(id responseObject){
+    //            for (int i = 0; i < imagesArray.count; i++) {
+    //                j =  j+1;
+    //                [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
+    //                NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
+    //
+    //                if (imagesArray.count == imagesNameArray.count) {
+    //                    NSLog(@"add complaint");
+    //                    [myDelegate showIndicator];
+    //                    [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
+    //                } else {
+    //
+    //                    NSLog(@"uploadImage");
+    //
+    //                    [myDelegate showIndicator];
+    //                    [self uploadImage];
+    //                    //                    [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
+    //                }
+    //            }
+    //            [myDelegate stopIndicator];
+    //        } failure:^(NSError *error) {
+    //            [myDelegate stopIndicator];
+    //        }] ;
+    //    }
+}
+
+//
+//- (void)uploadImage {
+//    NSLog(@"imagesArray.count = %lu",(unsigned long)imagesArray.count);
+//    NSLog(@"value of j = %d",j);
+//
+//    if  (imagesArray.count != j) {
+//        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:j] screenName:@"COMPLAIN" success:^(id responseObject){
+//            for (int i = 0; i < imagesArray.count; i++) {
+//                j =  j+1;
+//                [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
+//                NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
+//
+//                if (imagesArray.count == imagesNameArray.count) {
+//                    NSLog(@"add complaint");
+//                    [myDelegate showIndicator];
+//                    [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
+//                } else {
+//
+//                    NSLog(@"uploadImage");
+//
+//                    [myDelegate showIndicator];
+//                    [self uploadImage];
+//                    //                    [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
+//                }
+//            }
+//            [myDelegate stopIndicator];
+//        } failure:^(NSError *error) {
+//            [myDelegate stopIndicator];
+//        }] ;
+//    }
+//}
+
+
+//Add complaint
+- (void)addComplaint {
+    [[ComplainService sharedManager] addComplait:_titleTextView.text complainDescription:_detailTextView.text categoryId:selectedCategoryId complainId:@"" imageNameArray:imagesNameArray success:^(id responseObject) {
+        [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"Ok" actionBlock:^(void) {
+            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
+                myDelegate.isMyComplaintScreen = YES;
+            } else {
+                myDelegate.isMyComplaintScreen = NO;
+            }
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+    }] ;
 }
 #pragma mark - end
 
