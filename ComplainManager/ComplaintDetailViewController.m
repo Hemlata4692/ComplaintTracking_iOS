@@ -10,13 +10,19 @@
 #import "ComplainDetailCell.h"
 #import "AddComplainCell.h"
 #import "ComplainService.h"
-@interface ComplaintDetailViewController ()
+#import <AVFoundation/AVFoundation.h>
+#import "CommentsModel.h"
+
+@interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
     CGRect textRect;
     CGSize size;
     CGFloat messageHeight;
     float mainContainerHeight;
-    NSMutableArray *imageArray;
+    NSMutableArray *staffImageArray;
+    NSMutableArray *complainImageArray;
+    NSMutableArray *imagesNameArray;
+    NSMutableArray *commentsArray;
     BOOL isJobStarted;
     NSMutableDictionary *detailDict;
 }
@@ -53,10 +59,12 @@
     [self addBackButton];
     self.navigationItem.title=@"Complaint Details";
     isJobStarted = true;
-    //    imageArray = [NSArray arrayWithObjects:@"clean swimming pool",@"pipeline issue",@"cleaning", nil];
-    //    [self setViewFrames];
-    imageArray = [[NSMutableArray alloc]init];
+    staffImageArray = [[NSMutableArray alloc]init];
+    complainImageArray = [[NSMutableArray alloc]init];
+    imagesNameArray = [[NSMutableArray alloc]init];
     detailDict = [[NSMutableDictionary alloc]init];
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -65,8 +73,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
-    [myDelegate showIndicator];
-    [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
 }
 #pragma mark - end
 
@@ -89,12 +95,9 @@
     _commentsTableView.translatesAutoresizingMaskIntoConstraints = YES;
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
-    //    _commentsContainerView.backgroundColor = [UIColor redColor];
     float commentsViewHeight;
     //Set title text frame
     size = CGSizeMake(self.view.frame.size.width-20,90);
-    //    NSString * titleTextStr = @"Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ";
-    //    NSString * detailTextStr = @"Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt Lorem ipsu";
     textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
     _titleLabel.numberOfLines = 0;
     if (textRect.size.height < 35) {
@@ -118,20 +121,19 @@
     _categoryLabel.text = [data objectForKey:@"CategoryName"];
     _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, _detailsTextView.frame.origin.y+_detailsTextView.frame.size.height + 15, self.view.frame.size.width-20, _categoryLabel.frame.size.height);
     [_categoryLabel setBottomBorder:_categoryLabel color:[UIColor clearColor]];
-    
-    imageArray = [data objectForKey:@"ImageName"];
+    complainImageArray = [data objectForKey:@"ImageName"];
     [_imageCollectionView reloadData];
     //Set image collection view frame
-    if (imageArray.count<1) {
+    if (complainImageArray.count<1) {
         _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height, self.view.frame.size.width-20, 0);
     } else {
         _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 20, self.view.frame.size.width-20, _imageCollectionView.frame.size.height);
     }
+    _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
     //Comments container view frame
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
         //Start job button frame
         _startJobButton.frame = CGRectMake(_startJobButton.frame.origin.x, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
-        
         if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
             isJobStarted = false;
         } else {
@@ -146,7 +148,6 @@
             _startJobButton.hidden = NO;
             _scrollView.scrollEnabled= NO;
         }
-        
         _UserStatusView.hidden=YES;
         _commentsCountLabel.frame = CGRectMake(10,10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
         _addCommentTextView.text = @"";
@@ -164,10 +165,25 @@
         else {
             _sendCommentButton.enabled = YES;
         }
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
-        _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
-        [_completeJobAction setCornerRadius:3];
-        commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_startJobButton.frame.size.height+30;
+        if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
+            _UserStatusView.hidden=NO;
+            _addCommentContainerView.hidden=YES;
+            _startJobButton.hidden=YES;
+            _completeJobAction.hidden=YES;
+            _UserStatusView.frame = CGRectMake(10,10, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
+            [_UserStatusView setBottomBorder:_UserStatusView color:[UIColor clearColor]];
+            _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
+            _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
+            _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height+80);
+            commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height;
+        } else {
+            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
+            _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+            [_completeJobAction setCornerRadius:3];
+            commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_startJobButton.frame.size.height+20;
+        }
+        
     } else {
         _addCommentContainerView.hidden=YES;
         _startJobButton.hidden=YES;
@@ -179,7 +195,6 @@
         _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
         _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height+80);
         commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height;
-        
     }
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight);
     mainContainerHeight = _titleLabel.frame.origin.y+20+_titleLabel.frame.size.height+20+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+20+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height;
@@ -189,11 +204,7 @@
 
 //Set dynamic height
 -(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
-    CGRect textHeight = [textString
-                         boundingRectWithSize:rectSize
-                         options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:13]}
-                         context:nil];
+    CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:13]} context:nil];
     return textHeight;
 }
 #pragma mark - end
@@ -202,13 +213,13 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     if (textView == _addCommentTextView) {
         if([[UIScreen mainScreen] bounds].size.height==568) {
-            if (imageArray.count>1) {
+            if (complainImageArray.count>1) {
                 [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 280) animated:YES];
             } else {
                 [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 400) animated:YES];
             }
         }
-        if (imageArray.count>1) {
+        if (complainImageArray.count>1) {
             if([[UIScreen mainScreen] bounds].size.height==667) {
                 [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 480) animated:YES];
             } else if([[UIScreen mainScreen] bounds].size.height==736) {
@@ -256,6 +267,7 @@
         }
         if([text isEqualToString:@"\n"]) {
             [textView resignFirstResponder];
+            [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
             return NO;
         }
     }
@@ -279,8 +291,6 @@
             _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
             _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
             _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-            
-            
         }
         NSString *string = textView.text;
         NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -300,23 +310,40 @@
 #pragma mark - end
 #pragma mark - Collection view methds
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return imageArray.count;
+    if ([[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+        if  (staffImageArray.count < 3){
+            return complainImageArray.count + 1;
+        } else {
+            return complainImageArray.count;
+        }
+    } else {
+        return complainImageArray.count;
+    }
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier;
     AddComplainCell *cell;
-    identifier = @"complainImage";
-    cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-    [cell displayData:indexPath.row data:imageArray];
-    cell.deleteImageButton.hidden = YES;
+    if (indexPath.row != complainImageArray.count) {
+        identifier = @"complainImage";
+        cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+        cell.deleteImageButton.tag = indexPath.item;
+        [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
+        [cell displayData:(int)indexPath.row data:complainImageArray isAddComplainScreen:false];
+    }
+    else {
+        identifier = @"addMoreImages";
+        cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+        cell.selectImageButton.tag = indexPath.item;
+        [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    }
     return cell;
 }
 #pragma mark - end
 
 #pragma mark - Table view methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 6;
+    return commentsArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -324,12 +351,28 @@
     ComplainDetailCell *complainCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
     if (complainCell == nil) {
         complainCell = [[ComplainDetailCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+        
     }
+    CommentsModel *commentsModel = [commentsArray objectAtIndex:indexPath.row];
+    [complainCell displayCommentsListData:commentsModel indexPath:indexPath.row];
+    
     return complainCell;
 }
 #pragma mark - end
 
 #pragma mark - IBActions
+-(IBAction)deleteImageAction:(id)sender {
+    if ([staffImageArray containsObject:[complainImageArray objectAtIndex:[sender tag]]]) {
+        [staffImageArray removeObject:[complainImageArray objectAtIndex:[sender tag]]];
+    }
+    [complainImageArray removeObjectAtIndex:[sender tag]];
+    [_imageCollectionView reloadData];
+}
+
+-(IBAction)selectImageAction:(id)sender {
+    [self showActionSheet];
+}
+
 - (IBAction)startJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
@@ -343,18 +386,104 @@
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
         [myDelegate showIndicator];
-        [self performSelector:@selector(changeComplainStatus:) withObject:@"complete" afterDelay:.1];
+        if (staffImageArray.count >= 1) {
+            [self performSelector:@selector(uploadImage:) withObject:staffImageArray afterDelay:.1];
+            
+        } else {
+            [self performSelector:@selector(changeComplainStatus:) withObject:@"Complete" afterDelay:.1];
+        }
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you have completed the job?" closeButtonTitle:@"No" duration:0.0f];
+}
+
+- (IBAction)sendCommentAction:(id)sender {
+    [myDelegate showIndicator];
+    [self performSelector:@selector(addComments) withObject:nil afterDelay:.1];
+}
+#pragma mark - end
+
+#pragma mark - Show actionsheet method
+- (void)showActionSheet {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Select Image" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction* cameraAction = [UIAlertAction actionWithTitle:@"Take Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+        if(authStatus == AVAuthorizationStatusAuthorized) {
+            [self openDefaultCamera];
+        }
+        else if(authStatus == AVAuthorizationStatusDenied) {
+            [self showAlertCameraAccessDenied];
+        }
+        else if(authStatus == AVAuthorizationStatusRestricted){
+            [self showAlertCameraAccessDenied];
+        }
+        else if(authStatus == AVAuthorizationStatusNotDetermined){
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+                if(granted){
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self openDefaultCamera];
+                    });
+                }
+            }];
+        }
+    }];
+    UIAlertAction* galleryAction = [UIAlertAction actionWithTitle:@"Choose from Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {                                                              UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = self;
+        picker.allowsEditing = NO;
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        picker.navigationBar.tintColor = [UIColor whiteColor];
+        [self presentViewController:picker animated:YES completion:NULL];
+    }];
+    UIAlertAction * defaultAct = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                        handler:^(UIAlertAction * action) {[alert dismissViewControllerAnimated:YES completion:nil];
+                                                        }];
+    [alert addAction:cameraAction];
+    [alert addAction:galleryAction];
+    [alert addAction:defaultAct];
+    [self presentViewController:alert animated:YES completion:nil];
+}
+
+- (void)openDefaultCamera {
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = NO;
+    picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)showAlertCameraAccessDenied {
+    SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+    [alert addButton:@"Settings" actionBlock:^(void) {
+        NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        [[UIApplication sharedApplication] openURL:url];
+    }];
+    [alert showWarning:nil title:@"Camera Access" subTitle:@"Without permission to use your camera, you won't be able to take photo.\nGo to your device settings and then Privacy to grant permission." closeButtonTitle:@"Cancel" duration:0.0f];
+    
+}
+#pragma mark - end
+
+#pragma mark - ImagePicker delegate
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
+    [staffImageArray addObject:image];
+    [complainImageArray addObject:image];
+    [picker dismissViewControllerAnimated:YES completion:NULL];
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    [_imageCollectionView reloadData];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [picker dismissViewControllerAnimated:YES completion:NULL];
 }
 #pragma mark - end
 
 #pragma mark - Web services
 //Get complaint details
 - (void)getComplaintDetails {
-    [[ComplainService sharedManager] getComplaitDetail:complainId success:^(id responseObject){
-        detailDict = [responseObject objectForKey:@"Details"];
+    [[ComplainService sharedManager] getComplaitDetail:complainId success:^(NSMutableDictionary * responseObject){
+        detailDict = responseObject;
+        commentsArray = [[NSMutableArray alloc]init];
+        commentsArray = [responseObject objectForKey:@"comments"];
         [self setViewFrames:detailDict];
+        [_commentsTableView reloadData];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
@@ -363,14 +492,21 @@
 
 //Change complain status
 - (void)changeComplainStatus:(NSString *)complainStatus {
-    [[ComplainService sharedManager] changeJobStatus:complainId jobStatus:complainStatus success:^(id responseObject){
+    [[ComplainService sharedManager] changeJobStatus:complainId jobStatus:complainStatus imageNameArray:imagesNameArray success:^(id responseObject){
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"Ok" actionBlock:^(void) {
             if ([complainStatus isEqualToString:@"In process"]) {
                 [detailDict removeObjectForKey:@"ComplainStatus"];
-                [detailDict setObject:@"InProcess" forKey:@"ComplainStatus"];
+                [detailDict setObject:@"In process" forKey:@"ComplainStatus"];
+                [self setViewFrames:detailDict];
+            } else {
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+                myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+                [myDelegate.window setRootViewController:objReveal];
+                [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+                [myDelegate.window makeKeyAndVisible];
             }
-            [self setViewFrames:detailDict];
         }];
         [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
         [myDelegate stopIndicator];
@@ -379,6 +515,31 @@
     }] ;
 }
 
+//Upload image
+- (void)uploadImage:(NSMutableArray *)imagesArray {
+    for (int i = 0; i < imagesArray.count; i++) {
+        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
+            [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
+            NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
+            if (imagesArray.count == imagesNameArray.count) {
+                NSLog(@"changeComplainStatus");
+                [self performSelector:@selector(changeComplainStatus:) withObject:@"Complete" afterDelay:.1];
+            }
+        } failure:^(NSError *error) {
+            [myDelegate stopIndicator];
+        }] ;
+    }
+}
+
+- (void)addComments {
+    [_addCommentTextView resignFirstResponder];
+    [[ComplainService sharedManager] addComment:complainId comments:_addCommentTextView.text success:^(id responseObject){
+        [myDelegate stopIndicator];
+        NSLog(@"comments = %@", responseObject);
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+    }] ;
+}
 #pragma mark - end
 
 @end

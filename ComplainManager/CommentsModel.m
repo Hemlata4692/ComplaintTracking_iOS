@@ -9,5 +9,6 @@
 #import "CommentsModel.h"
 
 @implementation CommentsModel
-
+@synthesize commnts;
+@synthesize time;
 @end

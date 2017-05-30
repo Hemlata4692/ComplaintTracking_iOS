@@ -9,6 +9,7 @@
 #import "ComplainService.h"
 #import "ComplainListDataModel.h"
 #import "AddComplainModel.h"
+#import "CommentsModel.h"
 
 #define kUrlComplainList                  @"ComplainList"
 #define kUrlUploadImage                   @"UploadImage"
@@ -16,6 +17,7 @@
 #define kUrlAddComplain                   @"AddComplain"
 #define kUrlGetComplainDetail             @"GetComplainDetails"
 #define kUrlJobStatus                     @"JobStatus"
+#define kUrlAddComments                   @"AddComments"
 
 @implementation ComplainService
 
@@ -159,7 +161,22 @@
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
-            success(responseObject);
+            NSMutableDictionary *detailDict = [NSMutableDictionary new];
+            detailDict = [responseObject objectForKey:@"Details"];
+            id array =[[responseObject objectForKey:@"Details"] objectForKey:@"Comments"];
+            if (([array isKindOfClass:[NSArray class]])) {
+                NSArray * categoryArray = [[responseObject objectForKey:@"Details"] objectForKey:@"Comments"];
+                NSMutableArray *dataArray = [NSMutableArray new];
+                for (int i =0; i<categoryArray.count; i++) {
+                    CommentsModel *commentModel = [[CommentsModel alloc]init];
+                    NSDictionary * commentDict =[categoryArray objectAtIndex:i];
+                    commentModel.commnts =[commentDict objectForKey:@"comments"];
+                    commentModel.time =[commentDict objectForKey:@"SubmittedOn"];
+                    [dataArray addObject:commentModel];
+                }
+                [detailDict setObject:dataArray forKey:@"comments"];
+                success(detailDict);
+            }
         } else {
             [myDelegate stopIndicator];
             failure(nil);
@@ -172,10 +189,36 @@
 #pragma mark - end
 
 #pragma mark - Job status
-- (void)changeJobStatus:(NSString *)complainId jobStatus:(NSString *)jobStatus success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"complainStatus":jobStatus};
+- (void)changeJobStatus:(NSString *)complainId jobStatus:(NSString *)jobStatus imageNameArray:(NSMutableArray *)imageNameArray success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict;
+    if ([jobStatus isEqualToString:@"Complete"]) {
+        requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"complainStatus":jobStatus, @"ImageName":imageNameArray};
+        
+    } else {
+        requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"complainStatus":jobStatus};
+    }
     NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlJobStatus parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark - end
+
+#pragma mark - Add comment
+- (void)addComment:(NSString *)complainId comments:(NSString *)comments success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"commments":comments};
+    NSLog(@"complain requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlAddComments parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {

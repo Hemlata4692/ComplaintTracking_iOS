@@ -185,7 +185,7 @@
         cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
         cell.deleteImageButton.tag = indexPath.item;
         [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
-        [cell displayData:(int)indexPath.row data:imagesArray];
+        [cell displayData:(int)indexPath.row data:imagesArray isAddComplainScreen:true];
     }
     else {
         identifier = @"addMoreImages";
@@ -199,55 +199,37 @@
 
 #pragma mark - Show actionsheet method
 - (void)showActionSheet {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Select Image"
-                                                                   message:@""
-                                                            preferredStyle:UIAlertControllerStyleActionSheet];
-    UIAlertAction* cameraAction = [UIAlertAction actionWithTitle:@"Take Photo" style:UIAlertActionStyleDefault
-                                                         handler:^(UIAlertAction * action) {
-                                                             
-                                                             
-                                                             AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
-                                                             if(authStatus == AVAuthorizationStatusAuthorized) {
-                                                                 
-                                                                 [self openDefaultCamera];
-                                                                 
-                                                             }
-                                                             else if(authStatus == AVAuthorizationStatusDenied){
-                                                                 
-                                                                 [self showAlertCameraAccessDenied];
-                                                             }
-                                                             else if(authStatus == AVAuthorizationStatusRestricted){
-                                                                 
-                                                                 [self showAlertCameraAccessDenied];
-                                                             }
-                                                             else if(authStatus == AVAuthorizationStatusNotDetermined){
-                                                                 
-                                                                 [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
-                                                                     if(granted){
-                                                                         
-                                                                         dispatch_async(dispatch_get_main_queue(), ^{
-                                                                             [self openDefaultCamera];
-                                                                         });
-                                                                     }
-                                                                     
-                                                                 }];
-                                                             }
-                                                         }];
-    
-    UIAlertAction* galleryAction = [UIAlertAction actionWithTitle:@"Choose from Gallery" style:UIAlertActionStyleDefault
-                                                          handler:^(UIAlertAction * action) {
-                                                              UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-                                                              picker.delegate = self;
-                                                              picker.allowsEditing = NO;
-                                                              picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-                                                              picker.navigationBar.tintColor = [UIColor whiteColor];
-                                                              
-                                                              [self presentViewController:picker animated:YES completion:NULL];
-                                                          }];
-    
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"Select Image" message:@"" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertAction* cameraAction = [UIAlertAction actionWithTitle:@"Take Photo" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+        if(authStatus == AVAuthorizationStatusAuthorized) {
+            [self openDefaultCamera];
+        }
+        else if(authStatus == AVAuthorizationStatusDenied) {
+            [self showAlertCameraAccessDenied];
+        }
+        else if(authStatus == AVAuthorizationStatusRestricted){
+            [self showAlertCameraAccessDenied];
+        }
+        else if(authStatus == AVAuthorizationStatusNotDetermined){
+            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+                if(granted){
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self openDefaultCamera];
+                    });
+                }
+            }];
+        }
+    }];
+    UIAlertAction* galleryAction = [UIAlertAction actionWithTitle:@"Choose from Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {                                                              UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+        picker.delegate = self;
+        picker.allowsEditing = NO;
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        picker.navigationBar.tintColor = [UIColor whiteColor];
+        [self presentViewController:picker animated:YES completion:NULL];
+    }];
     UIAlertAction * defaultAct = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                        handler:^(UIAlertAction * action) {
-                                                            [alert dismissViewControllerAnimated:YES completion:nil];
+                                                        handler:^(UIAlertAction * action) {[alert dismissViewControllerAnimated:YES completion:nil];
                                                         }];
     [alert addAction:cameraAction];
     [alert addAction:galleryAction];
@@ -299,6 +281,7 @@
     [self showActionSheet];
     [_addComplainCollectionView reloadData];
 }
+
 - (IBAction)selectComplaintCategoryAction:(id)sender {
     [_keyboardControls.activeField resignFirstResponder];
     if([[UIScreen mainScreen] bounds].size.height<=568) {
@@ -412,90 +395,21 @@
 
 //Upload image
 - (void)uploadImage {
-    
     for (int i = 0; i < imagesArray.count; i++) {
         [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
             [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
             NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
-            [myDelegate stopIndicator];
+//            [myDelegate stopIndicator];
             if (imagesArray.count == imagesNameArray.count) {
                 NSLog(@"addComplaint");
-                [myDelegate showIndicator];
+//                [myDelegate showIndicator];
                 [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
             }
-//            else {
-//                NSLog(@"uploadImage");
-//                [myDelegate showIndicator];
-//                [self uploadImage];
-//            }
         } failure:^(NSError *error) {
             [myDelegate stopIndicator];
         }] ;
-        
     }
-    
-    //    NSLog(@"imagesArray.count = %lu",(unsigned long)imagesArray.count);
-    //    NSLog(@"value of j = %d",j);
-    //
-    //    if  (imagesArray.count != j) {
-    //        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:j] screenName:@"COMPLAIN" success:^(id responseObject){
-    //            for (int i = 0; i < imagesArray.count; i++) {
-    //                j =  j+1;
-    //                [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
-    //                NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
-    //
-    //                if (imagesArray.count == imagesNameArray.count) {
-    //                    NSLog(@"add complaint");
-    //                    [myDelegate showIndicator];
-    //                    [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
-    //                } else {
-    //
-    //                    NSLog(@"uploadImage");
-    //
-    //                    [myDelegate showIndicator];
-    //                    [self uploadImage];
-    //                    //                    [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
-    //                }
-    //            }
-    //            [myDelegate stopIndicator];
-    //        } failure:^(NSError *error) {
-    //            [myDelegate stopIndicator];
-    //        }] ;
-    //    }
 }
-
-//
-//- (void)uploadImage {
-//    NSLog(@"imagesArray.count = %lu",(unsigned long)imagesArray.count);
-//    NSLog(@"value of j = %d",j);
-//
-//    if  (imagesArray.count != j) {
-//        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:j] screenName:@"COMPLAIN" success:^(id responseObject){
-//            for (int i = 0; i < imagesArray.count; i++) {
-//                j =  j+1;
-//                [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
-//                NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
-//
-//                if (imagesArray.count == imagesNameArray.count) {
-//                    NSLog(@"add complaint");
-//                    [myDelegate showIndicator];
-//                    [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
-//                } else {
-//
-//                    NSLog(@"uploadImage");
-//
-//                    [myDelegate showIndicator];
-//                    [self uploadImage];
-//                    //                    [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
-//                }
-//            }
-//            [myDelegate stopIndicator];
-//        } failure:^(NSError *error) {
-//            [myDelegate stopIndicator];
-//        }] ;
-//    }
-//}
-
 
 //Add complaint
 - (void)addComplaint {
