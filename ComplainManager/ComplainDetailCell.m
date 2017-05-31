@@ -11,6 +11,7 @@
 @implementation ComplainDetailCell
 @synthesize commentsTextView,commentsTimeLabel;
 
+#pragma mark - Load nib
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
@@ -21,6 +22,9 @@
 
     // Configure the view for the selected state
 }
+#pragma mark - end
+
+#pragma mark - Display data in cell
 - (void)displayCommentsListData :(CommentsModel *)commentList indexPath:(long)indexPath {
     commentsTextView.text = commentList.commnts;
      NSString *dateString = commentList.time;
@@ -32,5 +36,6 @@
     NSString *newDateString = [dateFormatter stringFromDate:date];
     commentsTimeLabel.text = newDateString;
 }
+#pragma mark - end
 
 @end

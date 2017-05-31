@@ -131,25 +131,19 @@
     }
     _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
     //Comments container view frame
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
         //Start job button frame
         _startJobButton.frame = CGRectMake(_startJobButton.frame.origin.x, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
-        if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
-            isJobStarted = false;
-        } else {
-            isJobStarted = true;
-        }
-        if (isJobStarted) {
-            _commentsContainerView.hidden = NO;
-            _startJobButton.hidden = YES;
-            _scrollView.scrollEnabled= YES;
-        } else {
-            _commentsContainerView.hidden = YES;
-            _startJobButton.hidden = NO;
-            _scrollView.scrollEnabled= NO;
-        }
+        _commentsContainerView.hidden = YES;
+        _startJobButton.hidden = NO;
+        _scrollView.scrollEnabled= NO;
+    }
+    else     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+        _startJobButton.hidden = YES;
         _UserStatusView.hidden=YES;
-        _commentsCountLabel.frame = CGRectMake(10,10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
+        _addCommentContainerView.hidden=NO;
+        _scrollView.scrollEnabled= YES;
+        _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20, 30);
         _addCommentTextView.text = @"";
         [_addCommentTextView setPlaceholder:@" Add Comment"];
         [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
@@ -165,41 +159,42 @@
         else {
             _sendCommentButton.enabled = YES;
         }
-        if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
-            _UserStatusView.hidden=NO;
-            _addCommentContainerView.hidden=YES;
-            _startJobButton.hidden=YES;
-            _completeJobAction.hidden=YES;
-            _UserStatusView.frame = CGRectMake(10,10, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
-            [_UserStatusView setBottomBorder:_UserStatusView color:[UIColor clearColor]];
-            _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
-            _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
-            _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
-            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height+80);
-            commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height;
+        if (commentsArray.count < 1) {
+            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, 0);
+        } else  if (commentsArray.count < 2) {
+            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, 60);
         } else {
             _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
-            _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
-            [_completeJobAction setCornerRadius:3];
-            commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_startJobButton.frame.size.height+20;
         }
+        _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+        [_completeJobAction setCornerRadius:3];
+        commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_startJobButton.frame.size.height+20;
         
-    } else {
+    }
+    else  if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
+        _scrollView.scrollEnabled= YES;
+        _UserStatusView.hidden=NO;
         _addCommentContainerView.hidden=YES;
         _startJobButton.hidden=YES;
         _completeJobAction.hidden=YES;
-        _UserStatusView.frame = CGRectMake(10,10, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
+        _UserStatusView.frame = CGRectMake(10,0, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
         [_UserStatusView setBottomBorder:_UserStatusView color:[UIColor clearColor]];
         _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
         _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
         _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
-        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height+80);
-        commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height;
+        if (commentsArray.count < 1) {
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, 0);
+        } else  if (commentsArray.count < 2) {
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, 60);
+        } else {
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
+        }
+        commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
     }
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight);
-    mainContainerHeight = _titleLabel.frame.origin.y+20+_titleLabel.frame.size.height+20+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+20+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height;
+    mainContainerHeight = 20 +_titleLabel.frame.origin.y+20+_titleLabel.frame.size.height+20+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+20+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
-    _scrollView.contentSize = CGSizeMake(0,_mainContainerView.frame.size.height);
+    _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
 
 //Set dynamic height
