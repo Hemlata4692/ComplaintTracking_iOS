@@ -12,7 +12,6 @@
 @interface LoginViewController ()<UITextFieldDelegate,BSKeyboardControlsDelegate>
 {
     NSArray *textFieldArray;
-    NSString *role;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *loginScrollView;
@@ -20,11 +19,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
-@property (weak, nonatomic) IBOutlet UIButton *userButton;
-@property (weak, nonatomic) IBOutlet UIButton *staffButton;
-@property (weak, nonatomic) IBOutlet UIButton *registerUserButton;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
-@property (weak, nonatomic) IBOutlet UIView *orView;
 
 @end
 
@@ -39,9 +34,6 @@
     [self.keyboardControls setDelegate:self];
     // UI customisation
     [self customiseView];
-    //Set user selected
-    [_userButton setSelected:YES];
-    role = @"user";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -62,8 +54,6 @@
     [_passwordTextField addTextFieldPadding:_passwordTextField];
     [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
     [_passwordTextField setBottomBorder:_passwordTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_registerUserButton setCornerRadius:3];
-    [_registerUserButton setViewBorder:_registerUserButton color:[UIColor colorWithRed:237/255.0 green:236/255.0 blue:237/255.0 alpha:1.0]];
     [_loginButton setCornerRadius:2];
 }
 #pragma mark - end
@@ -111,45 +101,10 @@
     else {
         return YES;
     }
-    
 }
 #pragma mark - end
 
 #pragma mark - IBActions
-
-- (IBAction)selectUserRoleAction:(id)sender {
-    switch ([sender tag ]) {
-        case 0:
-            //If user is selected
-            if (![_userButton isSelected]) {
-                [_userButton setSelected:YES];
-                [_staffButton setSelected:NO];
-                _registerUserButton.hidden = NO;
-                _orView.hidden = NO;
-                role = @"user";
-                NSLog(@"role = %@",role);
-            }
-            else {
-            }
-            break;
-        case 1:
-            //If staff is selected
-            if (![_staffButton isSelected]) {
-                [_staffButton setSelected:YES];
-                [_userButton setSelected:NO];
-                _registerUserButton.hidden = YES;
-                _orView.hidden = YES;
-                role = @"staff";
-                NSLog(@"role = %@",role);
-            }
-            else{
-            }
-            break;
-        default:
-            break;
-    }
-}
-
 - (IBAction)loginAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
     [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
@@ -161,10 +116,6 @@
 
 - (IBAction)forgotPasswordAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
-}
-
-- (IBAction)registerUserAction:(id)sender {
-    
 }
 #pragma mark - end
 

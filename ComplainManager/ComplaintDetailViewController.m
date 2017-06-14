@@ -25,6 +25,7 @@
     NSMutableArray *commentsArray;
     BOOL isJobStarted;
     NSMutableDictionary *detailDict;
+    float commentsViewHeight;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -95,7 +96,6 @@
     _commentsTableView.translatesAutoresizingMaskIntoConstraints = YES;
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
-    float commentsViewHeight;
     //Set title text frame
     size = CGSizeMake(self.view.frame.size.width-20,90);
     textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
@@ -138,7 +138,7 @@
         _startJobButton.hidden = NO;
         _scrollView.scrollEnabled= NO;
     }
-    else     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
         _startJobButton.hidden = YES;
         _UserStatusView.hidden=YES;
         _addCommentContainerView.hidden=NO;
