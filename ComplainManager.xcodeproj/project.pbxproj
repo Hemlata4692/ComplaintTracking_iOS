@@ -458,13 +458,6 @@
 			name = AddComplainModule;
 			sourceTree = "<group>";
 		};
-		5DCE185C1ECC7E4A00F542BE /* MultipleImagePicker */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = MultipleImagePicker;
-			sourceTree = "<group>";
-		};
 		5DCE185E1ECC7F2700F542BE /* AddComplainView */ = {
 			isa = PBXGroup;
 			children = (
@@ -555,7 +548,6 @@
 			children = (
 				5D3DA8271ED84F5200AD0435 /* Base64File */,
 				5D4E1BFF1ED2EE30008B68F4 /* ToastFile */,
-				5DCE185C1ECC7E4A00F542BE /* MultipleImagePicker */,
 				5D7549821ECC5FDB00A775E4 /* CustomString */,
 				5D8F63951EC9B21800111138 /* AlertView */,
 				5DD316521EC5AF1D008FF487 /* BSKeyboardControls */,

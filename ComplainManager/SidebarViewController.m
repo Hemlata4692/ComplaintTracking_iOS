@@ -33,14 +33,35 @@
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
             myDelegate.selectedMenuIndex = 3;
+        }
+        else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+            myDelegate.selectedMenuIndex = 4;
         } else {
             myDelegate.selectedMenuIndex = 2;
         }
     }
+    /*
+     MCST staff (s) - Dashboard, My profile, My feedback,Change password, Logout
+     MCST staff (s-bm/ic) - Dashboard, My profile, My feedback, Property feedback,Change password, Logout
+     tenants (t) - Dashboard, My profile,Change password, Logout
+     council member (cm) - Dashboard, My profile, Property feedback, Tenants, Change password, Logout
+     long term contractor (ltc) - Dashboard, My profile, Change password, Logout
+     */
     
+    //If user role is MCST staff member
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
         menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
-    } else {
+    }
+    //If user role is MCST building manager and MCST In charger
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback",@"Property Feedback", @"Change Password", @"Logout"];
+    }
+    //If user role is council member
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        menuItems = @[@"Dashboard", @"My Profile",@"Property Feedback",@"Tenants", @"Change Password", @"Logout"];
+    }
+    //If user role is tenants/long term contractor
+    else {
         menuItems = @[@"Dashboard", @"My Profile", @"Change Password", @"Logout"];
     }
     self.tableView.scrollEnabled=NO;
@@ -93,13 +114,7 @@
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    if([[UIScreen mainScreen] bounds].size.height > 570) {
-        float aspectHeight = 186.0/480.0;
-        return (tableView.bounds.size.height * aspectHeight - 40);
-    }
-    else{
-        return 180;
-    }
+    return 180;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -108,12 +123,7 @@
     nameHeight = 18;
     aspectHeight = 186.0/480.0;
     profileViewHeight = 80;
-    if([[UIScreen mainScreen] bounds].size.height > 570) {
-        aspectHeight = (tableView.bounds.size.height * aspectHeight - 20);
-    }
-    else {
-        aspectHeight = 180;
-    }
+    aspectHeight = 180;
     //Header view frame
     UIView *headerView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, aspectHeight)];
     headerView.backgroundColor=[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0];
@@ -190,10 +200,18 @@
         } else if (indexPath.row == 4) {
             [self logoutUser];
         }
-    } else if (indexPath.row == 3) {
-        [self logoutUser];
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if (indexPath.row == 5) {
+            [self logoutUser];
+        }
+    } else {
+        if (indexPath.row == 3) {
+            [self logoutUser];
+        }
     }
 }
+
 - (void)logoutUser {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
@@ -205,6 +223,7 @@
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout" closeButtonTitle:@"No" duration:0.0f];
     
 }
+
 - (void)removeDefaultValues {
     [UserDefaultManager removeValue:@"name"];
     [UserDefaultManager removeValue:@"userId"];
@@ -216,10 +235,17 @@
     myDelegate.isMyComplaintScreen= NO;
     myDelegate.selectedMenuIndex = 0;
 }
+
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
             if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3){
+                [self.view makeToast:@"Please login."];
+                return NO;
+            }
+        }
+        else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3 ||[sender tag] == 4){
                 [self.view makeToast:@"Please login."];
                 return NO;
             }

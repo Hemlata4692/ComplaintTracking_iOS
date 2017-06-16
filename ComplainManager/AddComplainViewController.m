@@ -14,26 +14,32 @@
 
 @interface AddComplainViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate,UITextFieldDelegate,UITextViewDelegate>
 {
-    NSArray *textFieldArray;
+    NSArray *textArray;
     NSMutableArray *imagesArray;
     NSMutableArray *imagesNameArray;
     NSArray *categoryArray;
-    UIImage *complainImage;
+    NSArray *locationArray;
     AddComplainModel *complainModel;
     NSString *selectedCategoryId;
-    int j;
+    NSString *selectedLocationId;
+    BOOL isCategoryPicker;
 }
+
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *titleTextView;
 @property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *detailTextView;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UITextField *categoryTextField;
+@property (weak, nonatomic) IBOutlet UITextField *locationTextField;
 @property (weak, nonatomic) IBOutlet UICollectionView *addComplainCollectionView;
 @property (weak, nonatomic) IBOutlet UIButton *registerButton;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
-@property (weak, nonatomic) IBOutlet UIPickerView *categoryPickerView;
-@property (weak, nonatomic) IBOutlet UIToolbar *categoryToolBar;
+@property (weak, nonatomic) IBOutlet UIPickerView *pickerView;
+@property (weak, nonatomic) IBOutlet UIToolbar *toolBar;
 @property (weak, nonatomic) IBOutlet UIView *categorypickerContainerView;
+@property (weak, nonatomic) IBOutlet UILabel *categorySeparatorLabel;
+@property (weak, nonatomic) IBOutlet UIView *locationPickerContainerView;
+@property (weak, nonatomic) IBOutlet UILabel *locationSeaparatorLabel;
 
 @end
 
@@ -43,37 +49,46 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title=@"Add Complaint";
+    //Array initialisation
     imagesArray = [NSMutableArray new];
     categoryArray = [NSMutableArray new];
-    //Adding textfield to array
-    textFieldArray = @[_titleTextView,_detailTextView];
-    [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
+    locationArray = [NSMutableArray new];
+    //Adding textview to array
+    textArray = @[_titleTextView,_detailTextView];
+    //Add BSKeyboard
+    [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textArray]];
     [self.keyboardControls setDelegate:self];
     //UI customisation
     [self customiseView];
     //Add backButton
     [self addBackButton];
+    //Get complaint categories
     [myDelegate showIndicator];
     [self performSelector:@selector(getCategories) withObject:nil afterDelay:.1];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 #pragma mark - end
 
 #pragma mark - UI customisation
 - (void)setViewFrames {
-    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
-    _categoryPickerView.translatesAutoresizingMaskIntoConstraints = YES;
+    _categorypickerContainerView.translatesAutoresizingMaskIntoConstraints = YES;
+    _categorySeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _locationPickerContainerView.translatesAutoresizingMaskIntoConstraints = YES;
+    _locationSeaparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _pickerView.translatesAutoresizingMaskIntoConstraints = YES;
+    _toolBar.translatesAutoresizingMaskIntoConstraints = YES;
     _addComplainCollectionView.translatesAutoresizingMaskIntoConstraints = YES;
     _registerButton.translatesAutoresizingMaskIntoConstraints = YES;
-    _titleSeparatorLabel.frame = CGRectMake(10, _titleTextView.frame.origin.y+_titleTextView.frame.size.height-1, self.view.frame.size.width - 20, 1);
     _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height-1, self.view.frame.size.width - 20, 1);
     _categorypickerContainerView.frame = CGRectMake(10, _detailSeparatorLabel.frame.origin.y +_detailSeparatorLabel.frame.size.height+15, self.view.frame.size.width - 20, _categorypickerContainerView.frame.size.height);
-    _addComplainCollectionView.frame = CGRectMake(10, _categorypickerContainerView.frame.origin.y +_categorypickerContainerView.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
+    _categorySeparatorLabel.frame = CGRectMake(10, _categorypickerContainerView.frame.origin.y+_categorypickerContainerView.frame.size.height-1, self.view.frame.size.width - 20, 1);
+    _locationPickerContainerView.frame = CGRectMake(10, _categorySeparatorLabel.frame.origin.y +_categorySeparatorLabel.frame.size.height+15, self.view.frame.size.width - 20, _locationPickerContainerView.frame.size.height);
+    _locationSeaparatorLabel.frame = CGRectMake(10, _locationPickerContainerView.frame.origin.y+_locationPickerContainerView.frame.size.height-1, self.view.frame.size.width - 20, 1);
+    _addComplainCollectionView.frame = CGRectMake(10, _locationPickerContainerView.frame.origin.y +_locationPickerContainerView.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
     _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+20, self.view.frame.size.width - 60, _registerButton.frame.size.height);
 }
 
@@ -112,10 +127,10 @@
                              context:nil];
             _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
             if ((textRect.size.height < 120) && (textRect.size.height > 37)) {
-                _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailTextView.frame.origin.y, _detailTextView.frame.size.width, textRect.size.height);
+                _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _titleTextView.frame.origin.y + _titleTextView.frame.size.height + 15, _detailTextView.frame.size.width, textRect.size.height);
             }
             else if(textRect.size.height <= 40) {
-                _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailTextView.frame.origin.y, _detailTextView.frame.size.width, 40);
+                _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _titleTextView.frame.origin.y + _titleTextView.frame.size.height + 15, _detailTextView.frame.size.width, 40);
             }
         }
         return YES;
@@ -123,25 +138,26 @@
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
+    _titleTextView.translatesAutoresizingMaskIntoConstraints = YES;
+    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     if (textView == _titleTextView) {
         if (([_titleTextView sizeThatFits:_titleTextView.frame.size].height < 42) && ([_titleTextView sizeThatFits:_titleTextView.frame.size].height > 37)) {
-            _titleTextView.translatesAutoresizingMaskIntoConstraints = YES;
             _titleTextView.frame = CGRectMake(_titleTextView.frame.origin.x, _titleTextView.frame.origin.y, _titleTextView.frame.size.width, [_titleTextView sizeThatFits:_titleTextView.frame.size].height);
+            _titleSeparatorLabel.frame = CGRectMake(10, _titleTextView.frame.origin.y+_titleTextView.frame.size.height-1, self.view.frame.size.width - 20, 1);
             [self setViewFrames];
-            
         }
         else if([_titleTextView sizeThatFits:_titleTextView.frame.size].height <= 37) {
             _titleTextView.frame = CGRectMake(_titleTextView.frame.origin.x, _titleTextView.frame.origin.y, _titleTextView.frame.size.width, 40);
+            _titleSeparatorLabel.frame = CGRectMake(10, _titleTextView.frame.origin.y+_titleTextView.frame.size.height-1, self.view.frame.size.width - 20, 1);
         }
     } else {
         if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 120) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 37)) {
             _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailTextView.frame.origin.y, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _titleTextView.frame.origin.y + _titleTextView.frame.size.height + 15, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
             [self setViewFrames];
-            
         }
         else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 37) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailTextView.frame.origin.y, _detailTextView.frame.size.width, 40);
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _titleTextView.frame.origin.y + _titleTextView.frame.size.height + 15, _detailTextView.frame.size.width, 40);
         }
     }
 }
@@ -168,7 +184,7 @@
 }
 #pragma mark - end
 
-#pragma mark - Collection view methds
+#pragma mark - Collection view methods
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     //Max image selection 5
     if (imagesArray.count < 5) {
@@ -228,9 +244,7 @@
         picker.navigationBar.tintColor = [UIColor whiteColor];
         [self presentViewController:picker animated:YES completion:NULL];
     }];
-    UIAlertAction * defaultAct = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                        handler:^(UIAlertAction * action) {[alert dismissViewControllerAnimated:YES completion:nil];
-                                                        }];
+    UIAlertAction * defaultAct = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {[alert dismissViewControllerAnimated:YES completion:nil];}];
     [alert addAction:cameraAction];
     [alert addAction:galleryAction];
     [alert addAction:defaultAct];
@@ -238,7 +252,6 @@
 }
 
 - (void)openDefaultCamera {
-    
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.allowsEditing = NO;
@@ -260,7 +273,6 @@
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
     [imagesArray addObject:image];
-    complainImage = image;
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_addComplainCollectionView reloadData];
@@ -282,40 +294,40 @@
     [_addComplainCollectionView reloadData];
 }
 
-- (IBAction)selectComplaintCategoryAction:(id)sender {
-    [_keyboardControls.activeField resignFirstResponder];
-    if([[UIScreen mainScreen] bounds].size.height<=568) {
-        [UIView animateWithDuration:0.5f animations:^{
-            [UIView beginAnimations:nil context:NULL];
-            [UIView setAnimationDuration:0.3];
-            [_categoryPickerView reloadAllComponents];
-            _categoryPickerView.frame = CGRectMake(_categoryPickerView.frame.origin.x, self.view.bounds.size.height-_categoryPickerView.frame.size.height , self.view.bounds.size.width, _categoryPickerView.frame.size.height);
-            _categoryToolBar.frame = CGRectMake(_categoryToolBar.frame.origin.x, _categoryPickerView.frame.origin.y-44, self.view.bounds.size.width, _categoryToolBar.frame.size.height);
-            [UIView commitAnimations];
-        }];
-    }
-}
-
 - (IBAction)registerButtonAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
     imagesNameArray = [NSMutableArray new];
-    j = 0;
-    
     if([self performValidationsForAddComplain]) {
         [myDelegate showIndicator];
         [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
     }
 }
 
+- (IBAction)showPickerAction:(id)sender {
+    [_keyboardControls.activeField resignFirstResponder];
+    if ([sender tag] == 1) {
+        isCategoryPicker = false;
+    } else {
+        isCategoryPicker = true;
+    }
+    [self showPickerWithAnimation];
+}
+
 - (IBAction)pickerCancelAction:(id)sender {
     [self hidePickerWithAnimation];
 }
 
-- (IBAction)selectCategoryPickerDoneAction:(id)sender {
-    NSInteger index = [_categoryPickerView selectedRowInComponent:0];
-    complainModel=[categoryArray objectAtIndex:index];
-    _categoryTextField.text=complainModel.categoryName;
-    selectedCategoryId=complainModel.categoryId;
+- (IBAction)pickerDoneAction:(id)sender {
+    NSInteger index = [_pickerView selectedRowInComponent:0];
+    if (isCategoryPicker) {
+        complainModel=[categoryArray objectAtIndex:index];
+        _categoryTextField.text=complainModel.categoryName;
+        selectedCategoryId=complainModel.categoryId;
+    } else {
+        complainModel=[locationArray objectAtIndex:index];
+        _locationTextField.text=complainModel.locationName;
+        selectedLocationId=complainModel.locationId;
+    }
     [self hidePickerWithAnimation];
 }
 #pragma mark - end
@@ -323,15 +335,19 @@
 #pragma mark - Picker View methods
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
     UILabel* pickerLabel = (UILabel*)view;
-    if (!pickerLabel)
-    {
+    if (!pickerLabel) {
         pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
         pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14];
         pickerLabel.textColor = [UIColor colorWithRed:147/255.0 green:148/255.0 blue:153/255.0 alpha:1.0];
         pickerLabel.textAlignment=NSTextAlignmentCenter;
     }
-    complainModel=[categoryArray objectAtIndex:row];
-    pickerLabel.text=complainModel.categoryName;
+    if (isCategoryPicker) {
+        complainModel=[categoryArray objectAtIndex:row];
+        pickerLabel.text=complainModel.categoryName;
+    } else {
+        complainModel=[locationArray objectAtIndex:row];
+        pickerLabel.text=complainModel.locationName;
+    }
     return pickerLabel;
 }
 
@@ -340,26 +356,43 @@
 }
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
-    return categoryArray.count;
+    if (isCategoryPicker) {
+        return categoryArray.count;
+    } else {
+        return locationArray.count;
+    }
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     [_keyboardControls.activeField resignFirstResponder];
-    complainModel=[categoryArray objectAtIndex:row];
-    return complainModel.categoryName;
+    if (isCategoryPicker) {
+        complainModel=[categoryArray objectAtIndex:row];
+        return complainModel.categoryName;
+    } else {
+        complainModel=[locationArray objectAtIndex:row];
+        return complainModel.locationName;
+    }
+}
+
+-(void)showPickerWithAnimation {
+    [UIView animateWithDuration:0.5f animations:^{
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:0.3];
+        [_pickerView reloadAllComponents];
+        _pickerView.frame = CGRectMake(_pickerView.frame.origin.x, self.view.bounds.size.height-_pickerView.frame.size.height , self.view.bounds.size.width, _pickerView.frame.size.height);
+        _toolBar.frame = CGRectMake(_toolBar.frame.origin.x, _pickerView.frame.origin.y-44, self.view.bounds.size.width, _toolBar.frame.size.height);
+        [UIView commitAnimations];
+    }];
 }
 
 -(void)hidePickerWithAnimation {
-    if([[UIScreen mainScreen] bounds].size.height<=568) {
-        [UIView animateWithDuration:0.5f animations:^{
-            //            self.view.frame = CGRectOffset(self.view.frame, 0, 0);
-            [UIView beginAnimations:nil context:NULL];
-            [UIView setAnimationDuration:0.3];
-            _categoryPickerView.frame = CGRectMake(_categoryPickerView.frame.origin.x, 1000, self.view.bounds.size.width, _categoryPickerView.frame.size.height);
-            _categoryToolBar.frame = CGRectMake(_categoryToolBar.frame.origin.x, 1000, self.view.bounds.size.width, _categoryToolBar.frame.size.height);
-            [UIView commitAnimations];
-        }];
-    }
+    [UIView animateWithDuration:0.5f animations:^{
+        [UIView beginAnimations:nil context:NULL];
+        [UIView setAnimationDuration:0.3];
+        _pickerView.frame = CGRectMake(_pickerView.frame.origin.x, 1000, self.view.bounds.size.width, _pickerView.frame.size.height);
+        _toolBar.frame = CGRectMake(_toolBar.frame.origin.x, 1000, self.view.bounds.size.width, _toolBar.frame.size.height);
+        [UIView commitAnimations];
+    }];
 }
 #pragma mark - end
 
@@ -386,7 +419,7 @@
 - (void)getCategories {
     [[ComplainService sharedManager] getCategories:^(NSMutableArray *dataArray){
         categoryArray = dataArray;
-        [_categoryPickerView reloadAllComponents];
+        [_pickerView reloadAllComponents];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
@@ -399,10 +432,7 @@
         [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
             [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
             NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
-//            [myDelegate stopIndicator];
             if (imagesArray.count == imagesNameArray.count) {
-                NSLog(@"addComplaint");
-//                [myDelegate showIndicator];
                 [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
             }
         } failure:^(NSError *error) {

@@ -43,7 +43,7 @@
 #pragma mark - UI customisation
 - (void)customiseView {
     [_emailTextField addTextFieldPaddingWithoutImages:_emailTextField];
-    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_emailTextField setBottomBorder:_emailTextField];
     [_sendPasswordButton setCornerRadius:3];
 }
 #pragma mark - end

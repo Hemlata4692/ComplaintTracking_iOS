@@ -48,9 +48,9 @@
 #pragma mark - UI customisation
 - (void)customiseView {
     [_changePasswordButton setCornerRadius:3];
-    [_oldPasswordText setBottomBorder:_oldPasswordText color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_changePasswordText setBottomBorder:_changePasswordText color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_confirmPasswordText setBottomBorder:_confirmPasswordText color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_oldPasswordText setBottomBorder:_oldPasswordText];
+    [_changePasswordText setBottomBorder:_changePasswordText];
+    [_confirmPasswordText setBottomBorder:_confirmPasswordText];
 }
 #pragma mark - end
 

@@ -50,10 +50,8 @@
 
 #pragma mark - UI customisation
 - (void)customiseView {
-    [_emailTextField addTextFieldPadding:_emailTextField];
-    [_passwordTextField addTextFieldPadding:_passwordTextField];
-    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_passwordTextField setBottomBorder:_passwordTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_emailTextField setBottomBorder:_emailTextField];
+    [_passwordTextField setBottomBorder:_passwordTextField];
     [_loginButton setCornerRadius:2];
 }
 #pragma mark - end

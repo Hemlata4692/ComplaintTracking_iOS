@@ -12,5 +12,7 @@
 
 @synthesize categoryId;
 @synthesize categoryName;
+@synthesize locationId;
+@synthesize locationName;
 
 @end

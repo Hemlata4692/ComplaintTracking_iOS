@@ -58,10 +58,10 @@
     [_passwordTextField addTextFieldPadding:_passwordTextField];
     [_phoneNumberTextField addTextFieldPadding:_phoneNumberTextField];
     [_signUpButton setCornerRadius:3];
-    [_nameTextField setBottomBorder:_nameTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_passwordTextField setBottomBorder:_passwordTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_phoneNumberTextField setBottomBorder:_phoneNumberTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_nameTextField setBottomBorder:_nameTextField];
+    [_emailTextField setBottomBorder:_emailTextField];
+    [_passwordTextField setBottomBorder:_passwordTextField];
+    [_phoneNumberTextField setBottomBorder:_phoneNumberTextField];
 }
 #pragma mark - end
 

@@ -31,9 +31,13 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *mainContainerView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *detailsTextView;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *categoryLabel;
+@property (weak, nonatomic) IBOutlet UILabel *categorySeparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *locationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *locationSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UICollectionView *imageCollectionView;
 @property (weak, nonatomic) IBOutlet UIButton *startJobButton;
 @property (weak, nonatomic) IBOutlet UIView *commentsContainerView;
@@ -81,13 +85,16 @@
 - (void)setViewFrames: (NSDictionary *)data {
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
     _titleLabel.translatesAutoresizingMaskIntoConstraints=YES;
+    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
     _detailsTextView.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _categoryLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _categorySeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
+    _locationLabel.translatesAutoresizingMaskIntoConstraints=YES;
+    _locationSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
     _imageCollectionView.translatesAutoresizingMaskIntoConstraints = YES;
     _startJobButton.translatesAutoresizingMaskIntoConstraints = YES;
     _commentsContainerView.translatesAutoresizingMaskIntoConstraints = YES;
-    //Remove comments container view autolayouts
     _commentsContainerView.translatesAutoresizingMaskIntoConstraints = YES;
     _commentsCountLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _addCommentContainerView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -106,7 +113,7 @@
         _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, textRect.size.height + 5);
     }
     _titleLabel.text=[data objectForKey:@"Title"];
-    [_titleLabel setBottomBorder:_titleLabel color:[UIColor clearColor]];
+    _titleSeparatorLabel.frame = CGRectMake(_titleSeparatorLabel.frame.origin.x, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
     //Detail text view frame
     textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"]];
     if ((textRect.size.height < 90) && (textRect.size.height > 37)) {
@@ -120,14 +127,17 @@
     //Set category label frame
     _categoryLabel.text = [data objectForKey:@"CategoryName"];
     _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, _detailsTextView.frame.origin.y+_detailsTextView.frame.size.height + 15, self.view.frame.size.width-20, _categoryLabel.frame.size.height);
-    [_categoryLabel setBottomBorder:_categoryLabel color:[UIColor clearColor]];
+    _categorySeparatorLabel.frame = CGRectMake(_categorySeparatorLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+    //Set location label frame
+    _locationLabel.frame = CGRectMake(_locationLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 15, self.view.frame.size.width-20, _locationLabel.frame.size.height);
+    _locationSeparatorLabel.frame = CGRectMake(_locationSeparatorLabel.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
     complainImageArray = [data objectForKey:@"ImageName"];
     [_imageCollectionView reloadData];
     //Set image collection view frame
     if (complainImageArray.count<1) {
-        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height, self.view.frame.size.width-20, 0);
+        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height, self.view.frame.size.width-20, 0);
     } else {
-        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 20, self.view.frame.size.width-20, _imageCollectionView.frame.size.height);
+        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 20, self.view.frame.size.width-20, _imageCollectionView.frame.size.height);
     }
     _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
     //Comments container view frame
@@ -141,6 +151,7 @@
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
         _startJobButton.hidden = YES;
         _UserStatusView.hidden=YES;
+        _commentsContainerView.hidden=NO;
         _addCommentContainerView.hidden=NO;
         _scrollView.scrollEnabled= YES;
         _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20, 30);
@@ -178,7 +189,7 @@
         _startJobButton.hidden=YES;
         _completeJobAction.hidden=YES;
         _UserStatusView.frame = CGRectMake(10,0, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
-        [_UserStatusView setBottomBorder:_UserStatusView color:[UIColor clearColor]];
+        [_UserStatusView setBottomBorder:_UserStatusView];
         _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
         _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
         _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
@@ -191,8 +202,13 @@
         }
         commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
     }
-    _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight);
-    mainContainerHeight = 20 +_titleLabel.frame.origin.y+20+_titleLabel.frame.size.height+20+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+20+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
+    _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight + 20);
+    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
+        mainContainerHeight = self.view.frame.size.height;
+        
+    } else {
+        mainContainerHeight = 20 +_titleLabel.frame.origin.y+21+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
+    }
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
@@ -279,7 +295,7 @@
             _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
             _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
         }
-        else if([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
+        else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
             messageHeight = 40;
             _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
             _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
@@ -303,6 +319,7 @@
     }
 }
 #pragma mark - end
+
 #pragma mark - Collection view methds
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if ([[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
@@ -346,11 +363,9 @@
     ComplainDetailCell *complainCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
     if (complainCell == nil) {
         complainCell = [[ComplainDetailCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
-        
     }
     CommentsModel *commentsModel = [commentsArray objectAtIndex:indexPath.row];
     [complainCell displayCommentsListData:commentsModel indexPath:indexPath.row];
-    
     return complainCell;
 }
 #pragma mark - end
@@ -428,9 +443,7 @@
         picker.navigationBar.tintColor = [UIColor whiteColor];
         [self presentViewController:picker animated:YES completion:NULL];
     }];
-    UIAlertAction * defaultAct = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                        handler:^(UIAlertAction * action) {[alert dismissViewControllerAnimated:YES completion:nil];
-                                                        }];
+    UIAlertAction * defaultAct = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:^(UIAlertAction * action) {[alert dismissViewControllerAnimated:YES completion:nil];}];
     [alert addAction:cameraAction];
     [alert addAction:galleryAction];
     [alert addAction:defaultAct];
@@ -526,6 +539,7 @@
     }
 }
 
+//Add comments
 - (void)addComments {
     [_addCommentTextView resignFirstResponder];
     [[ComplainService sharedManager] addComment:complainId comments:_addCommentTextView.text success:^(id responseObject){

@@ -12,5 +12,7 @@
 
 @property(nonatomic,retain)NSString * categoryId;
 @property(nonatomic,retain)NSString * categoryName;
+@property(nonatomic,retain)NSString * locationId;
+@property(nonatomic,retain)NSString * locationName;
 
 @end
