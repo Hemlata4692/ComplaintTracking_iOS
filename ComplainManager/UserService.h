@@ -35,4 +35,8 @@
 - (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
 //end
 
+//Profile details
+- (void)getProfileDetail:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
 @end

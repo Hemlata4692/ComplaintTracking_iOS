@@ -8,12 +8,14 @@
 
 #import "UserService.h"
 #import "TenantsListModel.h"
+#import "ProfileDataModel.h"
 
 #define kUrlLogin                       @"Login"
 #define kUrlForgotPassword              @"ForgotPassword"
 #define kUrlRegister                    @"register"
 #define kUrlChangePassword              @"ChangePassword"
 #define kUrlTenantsList                 @"GetTenantsDetails"
+#define kUrlGetProfile                  @"GetProfile"
 
 @implementation UserService
 
@@ -134,6 +136,35 @@
                 }
                 success(dataArray);
             }
+        }
+        else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+
+#pragma mark- Profile details
+- (void)getProfileDetail:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSLog(@"Profile requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlGetProfile parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"Profile response %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
+            NSMutableArray *dataArray = [NSMutableArray new];
+            for (int i =0; i<infoArray.count; i++) {
+                ProfileDataModel *dataModel = [[ProfileDataModel alloc]init];
+//                NSDictionary * dict =[infoArray objectAtIndex:i];
+                dataModel.info =[infoArray objectAtIndex:i];
+                [dataArray addObject:dataModel];
+            }
+            success(dataArray);
         }
         else {
             [myDelegate stopIndicator];

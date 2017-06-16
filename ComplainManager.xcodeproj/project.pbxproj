@@ -36,6 +36,8 @@
 		5D984B3C1EF39DA70074E29C /* TenantsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B3B1EF39DA70074E29C /* TenantsListViewController.m */; };
 		5D984B411EF3A4090074E29C /* TenantsListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B401EF3A4090074E29C /* TenantsListCell.m */; };
 		5D984B451EF3AB060074E29C /* TenantsListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B441EF3AB060074E29C /* TenantsListModel.m */; };
+		5D984B4A1EF3D0CC0074E29C /* ProfileTableCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B491EF3D0CC0074E29C /* ProfileTableCell.m */; };
+		5D984B4E1EF3D8540074E29C /* ProfileDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B4D1EF3D8540074E29C /* ProfileDataModel.m */; };
 		5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */; };
 		5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */; };
 		5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */; };
@@ -119,6 +121,10 @@
 		5D984B401EF3A4090074E29C /* TenantsListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TenantsListCell.m; sourceTree = "<group>"; };
 		5D984B431EF3AB060074E29C /* TenantsListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TenantsListModel.h; sourceTree = "<group>"; };
 		5D984B441EF3AB060074E29C /* TenantsListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TenantsListModel.m; sourceTree = "<group>"; };
+		5D984B481EF3D0CC0074E29C /* ProfileTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileTableCell.h; sourceTree = "<group>"; };
+		5D984B491EF3D0CC0074E29C /* ProfileTableCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileTableCell.m; sourceTree = "<group>"; };
+		5D984B4C1EF3D8540074E29C /* ProfileDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileDataModel.h; sourceTree = "<group>"; };
+		5D984B4D1EF3D8540074E29C /* ProfileDataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileDataModel.m; sourceTree = "<group>"; };
 		5DB168941ECE9DCC00E0A8E2 /* SidebarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarViewController.h; sourceTree = "<group>"; };
 		5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarViewController.m; sourceTree = "<group>"; };
 		5DB168991ECE9DF300E0A8E2 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
@@ -367,6 +373,33 @@
 			name = TenantsListModel;
 			sourceTree = "<group>";
 		};
+		5D984B461EF3D0650074E29C /* UserProfileCell */ = {
+			isa = PBXGroup;
+			children = (
+				5D984B481EF3D0CC0074E29C /* ProfileTableCell.h */,
+				5D984B491EF3D0CC0074E29C /* ProfileTableCell.m */,
+			);
+			name = UserProfileCell;
+			sourceTree = "<group>";
+		};
+		5D984B471EF3D0690074E29C /* UserProfileView */ = {
+			isa = PBXGroup;
+			children = (
+				5DCE18551ECC79E900F542BE /* UserProfileViewController.h */,
+				5DCE18561ECC79E900F542BE /* UserProfileViewController.m */,
+			);
+			name = UserProfileView;
+			sourceTree = "<group>";
+		};
+		5D984B4B1EF3D82E0074E29C /* ProfileModel */ = {
+			isa = PBXGroup;
+			children = (
+				5D984B4C1EF3D8540074E29C /* ProfileDataModel.h */,
+				5D984B4D1EF3D8540074E29C /* ProfileDataModel.m */,
+			);
+			name = ProfileModel;
+			sourceTree = "<group>";
+		};
 		5DB168971ECE9DCF00E0A8E2 /* SideBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -463,8 +496,8 @@
 		5DC047851EDC143D00B31D51 /* MyProfileView */ = {
 			isa = PBXGroup;
 			children = (
-				5DCE18551ECC79E900F542BE /* UserProfileViewController.h */,
-				5DCE18561ECC79E900F542BE /* UserProfileViewController.m */,
+				5D984B471EF3D0690074E29C /* UserProfileView */,
+				5D984B461EF3D0650074E29C /* UserProfileCell */,
 			);
 			name = MyProfileView;
 			sourceTree = "<group>";
@@ -683,6 +716,7 @@
 		5DD3163E1EC5AE89008FF487 /* DataModel */ = {
 			isa = PBXGroup;
 			children = (
+				5D984B4B1EF3D82E0074E29C /* ProfileModel */,
 				5D864D071ECADE6D007FFC16 /* ComplainModel */,
 			);
 			name = DataModel;
@@ -945,6 +979,7 @@
 				5D864D0E1ECAFEA5007FFC16 /* ComplainService.m in Sources */,
 				5D864D191ECB170C007FFC16 /* GlobalViewController.m in Sources */,
 				5DCE185B1ECC7A8F00F542BE /* AddComplainViewController.m in Sources */,
+				5D984B4A1EF3D0CC0074E29C /* ProfileTableCell.m in Sources */,
 				5D8F63A91EC9B22A00111138 /* SCLTimerDisplay.m in Sources */,
 				5D7549811ECC5FBA00A775E4 /* NSString+CustomString.m in Sources */,
 				5DD316551EC5AF25008FF487 /* BSKeyboardControls.m in Sources */,
@@ -956,6 +991,7 @@
 				5D8F63AE1EC9B35B00111138 /* UIImage+ImageEffects.m in Sources */,
 				5DD316421EC5AECA008FF487 /* UIView+RoundedCorner.m in Sources */,
 				5DD316511EC5AF10008FF487 /* MMMaterialDesignSpinner.m in Sources */,
+				5D984B4E1EF3D8540074E29C /* ProfileDataModel.m in Sources */,
 				5DD316341EC5ADF8008FF487 /* UserDefaultManager.m in Sources */,
 				5DD316491EC5AEE4008FF487 /* UIPlaceHolderTextView.m in Sources */,
 				5DD3166A1EC5C2E9008FF487 /* UserService.m in Sources */,
