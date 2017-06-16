@@ -33,6 +33,9 @@
 		5D8F63BB1EC9BADD00111138 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */; };
 		5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F63BE1EC9C73000111138 /* RegisterViewController.m */; };
 		5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D965A801ECD57D900748EAC /* AddComplainCell.m */; };
+		5D984B3C1EF39DA70074E29C /* TenantsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B3B1EF39DA70074E29C /* TenantsListViewController.m */; };
+		5D984B411EF3A4090074E29C /* TenantsListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B401EF3A4090074E29C /* TenantsListCell.m */; };
+		5D984B451EF3AB060074E29C /* TenantsListModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B441EF3AB060074E29C /* TenantsListModel.m */; };
 		5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */; };
 		5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689A1ECE9DF300E0A8E2 /* SWRevealViewController.m */; };
 		5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */; };
@@ -110,6 +113,12 @@
 		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RegisterViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5D965A7F1ECD57D900748EAC /* AddComplainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainCell.h; sourceTree = "<group>"; };
 		5D965A801ECD57D900748EAC /* AddComplainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainCell.m; sourceTree = "<group>"; };
+		5D984B3A1EF39DA70074E29C /* TenantsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TenantsListViewController.h; sourceTree = "<group>"; };
+		5D984B3B1EF39DA70074E29C /* TenantsListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TenantsListViewController.m; sourceTree = "<group>"; };
+		5D984B3F1EF3A4090074E29C /* TenantsListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TenantsListCell.h; sourceTree = "<group>"; };
+		5D984B401EF3A4090074E29C /* TenantsListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TenantsListCell.m; sourceTree = "<group>"; };
+		5D984B431EF3AB060074E29C /* TenantsListModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TenantsListModel.h; sourceTree = "<group>"; };
+		5D984B441EF3AB060074E29C /* TenantsListModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TenantsListModel.m; sourceTree = "<group>"; };
 		5DB168941ECE9DCC00E0A8E2 /* SidebarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarViewController.h; sourceTree = "<group>"; };
 		5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarViewController.m; sourceTree = "<group>"; };
 		5DB168991ECE9DF300E0A8E2 /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
@@ -250,6 +259,7 @@
 		5D864D071ECADE6D007FFC16 /* ComplainModel */ = {
 			isa = PBXGroup;
 			children = (
+				5D984B421EF3AAE70074E29C /* TenantsListModel */,
 				5DC0478A1EDC3F8400B31D51 /* ComplainDetailModel */,
 				5D864D061ECADE43007FFC16 /* ComplainListDataModel */,
 				5D3DA81F1ED7F11600AD0435 /* AddComplainModel */,
@@ -321,6 +331,42 @@
 			name = RegisterView;
 			sourceTree = "<group>";
 		};
+		5D984B391EF39D4E0074E29C /* TenantsListView */ = {
+			isa = PBXGroup;
+			children = (
+				5D984B3E1EF3A3DD0074E29C /* TenantsList */,
+				5D984B3D1EF3A3D90074E29C /* TenantsListCell */,
+			);
+			name = TenantsListView;
+			sourceTree = "<group>";
+		};
+		5D984B3D1EF3A3D90074E29C /* TenantsListCell */ = {
+			isa = PBXGroup;
+			children = (
+				5D984B3F1EF3A4090074E29C /* TenantsListCell.h */,
+				5D984B401EF3A4090074E29C /* TenantsListCell.m */,
+			);
+			name = TenantsListCell;
+			sourceTree = "<group>";
+		};
+		5D984B3E1EF3A3DD0074E29C /* TenantsList */ = {
+			isa = PBXGroup;
+			children = (
+				5D984B3A1EF39DA70074E29C /* TenantsListViewController.h */,
+				5D984B3B1EF39DA70074E29C /* TenantsListViewController.m */,
+			);
+			name = TenantsList;
+			sourceTree = "<group>";
+		};
+		5D984B421EF3AAE70074E29C /* TenantsListModel */ = {
+			isa = PBXGroup;
+			children = (
+				5D984B431EF3AB060074E29C /* TenantsListModel.h */,
+				5D984B441EF3AB060074E29C /* TenantsListModel.m */,
+			);
+			name = TenantsListModel;
+			sourceTree = "<group>";
+		};
 		5DB168971ECE9DCF00E0A8E2 /* SideBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -370,6 +416,7 @@
 			isa = PBXGroup;
 			children = (
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
+				5D984B391EF39D4E0074E29C /* TenantsListView */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
 				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
 				5DB1689C1ECEB44400E0A8E2 /* ChangePassword */,
@@ -870,11 +917,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DD3164D1EC5AEF7008FF487 /* UITextField+Validations.m in Sources */,
+				5D984B411EF3A4090074E29C /* TenantsListCell.m in Sources */,
 				5DD3163A1EC5AE1E008FF487 /* NullValueChecker.m in Sources */,
 				5DC047891EDC146400B31D51 /* EditProfileViewController.m in Sources */,
 				5DBE04A01ECC54DE005EC7A2 /* ComplainListingCell.m in Sources */,
 				5DD316651EC5B15C008FF487 /* Webservice.m in Sources */,
 				5D8F63AB1EC9B22A00111138 /* SCLSwitchView.m in Sources */,
+				5D984B3C1EF39DA70074E29C /* TenantsListViewController.m in Sources */,
 				5DD3165A1EC5AF6A008FF487 /* LoginViewController.m in Sources */,
 				5DD316481EC5AEE4008FF487 /* UITextField+Padding.m in Sources */,
 				5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */,
@@ -890,6 +939,7 @@
 				5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */,
 				5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */,
 				5DD3165F1EC5AF91008FF487 /* ForgotPasswordViewController.m in Sources */,
+				5D984B451EF3AB060074E29C /* TenantsListModel.m in Sources */,
 				5D3DA8251ED824E600AD0435 /* ComplaintDetailViewController.m in Sources */,
 				5DD316371EC5AE04008FF487 /* UncaughtExceptionHandler.m in Sources */,
 				5D864D0E1ECAFEA5007FFC16 /* ComplainService.m in Sources */,

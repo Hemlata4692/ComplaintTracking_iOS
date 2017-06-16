@@ -48,6 +48,8 @@
         weakRef.image = image;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
     }];
+    userImageView.layer.cornerRadius = userImageView.frame.size.width / 2;
+    userImageView.layer.masksToBounds = YES;
     NSString *dateString = complainList.complainTime;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
@@ -58,15 +60,6 @@
     _complainTimeLabel.text=newDateString;
     complainTitleLabel.text=complainList.complainTitle;
     complainDescriptionLabel.text = complainList.complainDescription;
-//    complainStatusLabel.text = complainList.complainStatus;
-//    if ([complainList.complainStatus isEqualToString:@"Resolved"]) {
-//        complainStatusLabel.textColor=[UIColor colorWithRed:180.0/255.0 green:180.0/255.0 blue:180.0/255.0 alpha:1.0];
-//    } else  if ([complainList.complainStatus isEqualToString:@"InProcess"]) {
-//        complainStatusLabel.textColor=[UIColor colorWithRed:20.0/255.0 green:20.0/255.0 blue:20.0/255.0 alpha:1.0];
-//    }
-//    else {
-//        complainStatusLabel.textColor=[UIColor greenColor];
-//    }
 }
 
 //Set dynamic height

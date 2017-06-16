@@ -7,11 +7,13 @@
 //
 
 #import "UserService.h"
+#import "TenantsListModel.h"
 
 #define kUrlLogin                       @"Login"
 #define kUrlForgotPassword              @"ForgotPassword"
 #define kUrlRegister                    @"register"
-#define kUrlchangePassword              @"ChangePassword"
+#define kUrlChangePassword              @"ChangePassword"
+#define kUrlTenantsList                 @"GetTenantsDetails"
 
 @implementation UserService
 
@@ -94,11 +96,46 @@
 #pragma mark- Change password
 - (void)changePassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success:(void (^)(id))success failure:(void (^)(NSError *))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"oldPassword":oldPassword,@"newPassword":newPassword};
-    [[Webservice sharedManager] post:kUrlchangePassword parameters:requestDict success:^(id responseObject) {
+    [[Webservice sharedManager] post:kUrlChangePassword parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+
+#pragma mark- Tenants Listing
+- (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSLog(@"Tenants list requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlTenantsList parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"Tenants list response %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            id array =[responseObject objectForKey:@"list"];
+            if (([array isKindOfClass:[NSArray class]])) {
+                NSArray * tenantsListArray = [responseObject objectForKey:@"list"];
+                NSMutableArray *dataArray = [NSMutableArray new];
+                for (int i =0; i<tenantsListArray.count; i++) {
+                    TenantsListModel *dataModel = [[TenantsListModel alloc]init];
+                    NSDictionary * complainDict =[tenantsListArray objectAtIndex:i];
+                    dataModel.tenantsImageString =[complainDict objectForKey:@"image"];
+                    dataModel.tenantsName =[complainDict objectForKey:@"Name"];
+                    dataModel.tenantsEmail =[complainDict objectForKey:@"Email"];
+                    dataModel.tenantsContact =[complainDict objectForKey:@"Contact"];
+                    [dataArray addObject:dataModel];
+                }
+                success(dataArray);
+            }
+        }
+        else {
             [myDelegate stopIndicator];
             failure(nil);
         }

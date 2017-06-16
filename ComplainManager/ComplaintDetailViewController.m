@@ -205,7 +205,6 @@
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight + 20);
     if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
         mainContainerHeight = self.view.frame.size.height;
-        
     } else {
         mainContainerHeight = 20 +_titleLabel.frame.origin.y+21+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
     }

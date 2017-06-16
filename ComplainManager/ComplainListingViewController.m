@@ -139,21 +139,7 @@
     if (complainCell == nil) {
         complainCell = [[ComplainListingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
-    //    complainCell.complainTitleLabel.attributedText = [complainCell.complainTitleLabel.text setAttributrdString:@"John Doe" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:12.0] selectedColor:[UIColor blackColor]];
-    
-    //    //hide separator if result is only 1 mission
-    //    if (self.complainListArray.count==1) {
-    //        complainCell.topSeparator.hidden=YES;
-    //        complainCell.bottomSeparator.hidden=YES;
-    //    }
-    //    if (indexPath.row==0) {
-    //        complainCell.topSeparator.hidden=YES;2
-    //    }
-    //    else {
-    //        complainCell.topSeparator.hidden=NO;
-    //    }
-    
-    //    display data on cells
+    //Display data on cells
     ComplainListDataModel *data;
     if (isSearch) {
         data=[searchArray objectAtIndex:indexPath.row];

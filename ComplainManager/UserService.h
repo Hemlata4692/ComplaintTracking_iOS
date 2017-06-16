@@ -31,4 +31,8 @@
 - (void)changePassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
+//Tenants Listing
+- (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
 @end
