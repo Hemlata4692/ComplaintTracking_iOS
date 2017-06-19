@@ -27,4 +27,16 @@
 - (void)userRegisteration:(NSString *)name email:(NSString *)email password:(NSString *)password mobileNumber:(NSString *)mobileNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
+//Change password
+- (void)changePassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+//end
+
+//Tenants Listing
+- (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
+//Profile details
+- (void)getProfileDetail:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
 @end

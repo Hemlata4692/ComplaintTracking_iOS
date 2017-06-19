@@ -108,13 +108,31 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
-    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:0/255.0 green:141/255.0 blue:200.0/255.0 alpha:1.0]];
+    [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0]];
     [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"Roboto-Regular" size:17.0], NSFontAttributeName, nil]];
     //Push notification
     deviceToken = @"";
     [self registerForRemoteNotification];
     //Call crashlytics method
 //    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
+    //Check internet connectivity
+    [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+
+    //Navigation to view
+    NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
+    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userId"]!=nil) {
+        UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+        myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [myDelegate.window setRootViewController:objReveal];
+        [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+        [myDelegate.window makeKeyAndVisible];
+    }
+    else {
+        UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
+        [self.navigationController setViewControllers: [NSArray arrayWithObject:loginView]
+                                             animated: YES];
+    }
     return YES;
 }
 

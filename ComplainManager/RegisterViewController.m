@@ -58,10 +58,10 @@
     [_passwordTextField addTextFieldPadding:_passwordTextField];
     [_phoneNumberTextField addTextFieldPadding:_phoneNumberTextField];
     [_signUpButton setCornerRadius:3];
-    [_nameTextField setBottomBorder:_nameTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_passwordTextField setBottomBorder:_passwordTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
-    [_phoneNumberTextField setBottomBorder:_phoneNumberTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_nameTextField setBottomBorder:_nameTextField];
+    [_emailTextField setBottomBorder:_emailTextField];
+    [_passwordTextField setBottomBorder:_passwordTextField];
+    [_phoneNumberTextField setBottomBorder:_phoneNumberTextField];
 }
 #pragma mark - end
 
@@ -146,19 +146,19 @@
 #pragma mark - Register validation
 - (BOOL)performValidationsForRegister {
     if ([_emailTextField isEmpty] || [_passwordTextField isEmpty] || [_nameTextField isEmpty] || [_phoneNumberTextField isEmpty]) {
-        SCLAlertView *alert = [[SCLAlertView alloc] init];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }
     else {
         if ([_emailTextField isValidEmail]) {
             if (_passwordTextField.text.length < 6) {
-                SCLAlertView *alert = [[SCLAlertView alloc] init];
+                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
                 [alert showWarning:self title:@"Alert" subTitle:@"Your password must be atleast 6 characters long." closeButtonTitle:@"Done" duration:0.0f];
                 return NO;
             }
             else if ((_phoneNumberTextField.text.length<8)||(_phoneNumberTextField.text.length>12)) {
-                SCLAlertView *alert = [[SCLAlertView alloc] init];
+                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
                 [alert showWarning:self title:@"Alert" subTitle:@"The provided mobile number is incorrect." closeButtonTitle:@"Done" duration:0.0f];
                 return NO;
             }
@@ -167,7 +167,7 @@
             }
         }
         else {
-            SCLAlertView *alert = [[SCLAlertView alloc] init];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showWarning:self title:@"Alert" subTitle:@"Please enter a valid email address." closeButtonTitle:@"Done" duration:0.0f];
             return NO;
         }

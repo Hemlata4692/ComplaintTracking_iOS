@@ -14,5 +14,8 @@
 @synthesize complainTitle;
 @synthesize complainDescription;
 @synthesize complainStatus;
+@synthesize complainTime;
+@synthesize categoryName;
+@synthesize complainId;
 
 @end

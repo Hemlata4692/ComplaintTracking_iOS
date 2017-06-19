@@ -24,6 +24,8 @@
     self.navigationItem.title = @"Forgot Password";
     //UI customisation
     [self customiseView];
+    //AddBackButton
+    [self addBackButton];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -41,7 +43,7 @@
 #pragma mark - UI customisation
 - (void)customiseView {
     [_emailTextField addTextFieldPaddingWithoutImages:_emailTextField];
-    [_emailTextField setBottomBorder:_emailTextField color:[UIColor colorWithRed:244/255.0 green:243/255.0 blue:243/255.0 alpha:1.0]];
+    [_emailTextField setBottomBorder:_emailTextField];
     [_sendPasswordButton setCornerRadius:3];
 }
 #pragma mark - end
@@ -104,7 +106,10 @@
     [[UserService sharedManager] forgotPassword:_emailTextField.text success:^(id responseObject) {
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showSuccess:@"Success" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:@"OK" duration:0.0f];
+        [alert addButton:@"Ok" actionBlock:^(void) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         
     }] ;

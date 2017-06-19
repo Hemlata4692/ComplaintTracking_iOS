@@ -6,6 +6,7 @@
 //  Copyright © 2016 Ranosys. All rights reserved.
 //
 
+
 #import "Webservice.h"
 
 @implementation Webservice
@@ -38,19 +39,24 @@
     [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
     [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
     [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"accessToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"accessToken"] forHTTPHeaderField:@"access-token-key"];
+    if ([UserDefaultManager getValue:@"AuthenticationToken"] != NULL) {
+        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"AuthenticationToken"] forHTTPHeaderField:@"AuthenticationToken"];
     }
     manager.securityPolicy.allowInvalidCertificates = YES;
     [manager POST:path parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         success(responseObject);
     } failure:^(NSURLSessionDataTask * task, NSError * _Nonnull error) {
+        NSLog(@"error.localizedDescription %@",error.localizedDescription);
         [myDelegate stopIndicator];
-        NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
-                                                             options:kNilOptions error:&error];
-        NSLog(@"json %@",json);
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:[json objectForKey:@"message"] delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alert show];
+        if (error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] != nil) {
+            NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
+                                                                 options:kNilOptions error:&error];
+            NSLog(@"json %@",json);
+            [self isStatusOK:json];
+        } else {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"Ok" duration:0.0f];
+        }
     }];
 }
 
@@ -62,19 +68,23 @@
     [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
     [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
     [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"accessToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"accessToken"] forHTTPHeaderField:@"access-token-key"];
+    if ([UserDefaultManager getValue:@"AuthenticationToken"] != NULL) {
+        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"AuthenticationToken"] forHTTPHeaderField:@"AuthenticationToken"];
     }
     manager.securityPolicy.allowInvalidCertificates = YES;
     NSData *imageData = UIImageJPEGRepresentation(image, 0.3);
     [manager POST:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        [formData appendPartWithFileData:imageData name:@"profile_img" fileName:@"files.jpg" mimeType:@"image/jpeg"];
+        [formData appendPartWithFileData:imageData name:@"Images" fileName:@"files.jpg" mimeType:@"image/jpeg"];
+        //        [formData appendPartWithFormData:imageData name:@"Images"];
     } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         success(responseObject);
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         [myDelegate stopIndicator];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alert show];
+        NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
+                                                             options:kNilOptions error:&error];
+        NSLog(@"json %@",json);
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"Ok" duration:0.0f];
     }];
 }
 
@@ -86,8 +96,8 @@
     [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
     [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
     [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"accessToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"accessToken"] forHTTPHeaderField:@"access-token-key"];
+    if ([UserDefaultManager getValue:@"AuthenticationToken"] != NULL) {
+        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"AuthenticationToken"] forHTTPHeaderField:@"AuthenticationToken"];
     }
     manager.securityPolicy.allowInvalidCertificates = YES;
     [manager POST:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
@@ -102,8 +112,11 @@
         success(responseObject);
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         [myDelegate stopIndicator];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alert show];
+        NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
+                                                             options:kNilOptions error:&error];
+        NSLog(@"json %@",json);
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"Ok" duration:0.0f];
     }];
 }
 
@@ -114,21 +127,47 @@
     switch (number.integerValue) {
         case 400: {
             msg = responseObject[@"message"];
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:msg delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-            [alert show];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"Ok" duration:0.0f];
             return NO;
         }
         case 200:
             return YES;
             break;
-            
+        case 401: {
+            msg = responseObject[@"message"];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert addButton:@"Ok" actionBlock:^(void) {
+                [self removeDefaultValues];
+                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+                myDelegate.window.rootViewController = myDelegate.navigationController;
+            }];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
+        }
+            return NO;
+            break;
         default: {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:msg delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-            [alert show];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"Ok" duration:0.0f];
         }
             return NO;
             break;
     }
+}
+#pragma mark - end
+
+#pragma mark - Remove default values
+- (void)removeDefaultValues {
+    [UserDefaultManager removeValue:@"name"];
+    [UserDefaultManager removeValue:@"userId"];
+    [UserDefaultManager removeValue:@"AuthenticationToken"];
+    [UserDefaultManager removeValue:@"contactNumber"];
+    [UserDefaultManager removeValue:@"isFirsttime"];
+    [UserDefaultManager removeValue:@"role"];
+    [UserDefaultManager removeValue:@"email"];
+    myDelegate.isMyComplaintScreen= NO;
+    myDelegate.selectedMenuIndex = 0;
 }
 #pragma mark - end
 

@@ -7,11 +7,12 @@
 //
 
 #import "GlobalViewController.h"
+#import "SWRevealViewController.h"
 
-@interface GlobalViewController ()
+@interface GlobalViewController ()<SWRevealViewControllerDelegate>
 {
     UIBarButtonItem *backButton;
-    UIBarButtonItem *logoutButton;
+    UIBarButtonItem *menuButton;
 }
 @end
 
@@ -20,8 +21,10 @@
 #pragma mark - View life cycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    myDelegate.superViewController=self;
+    myDelegate.navigationController=self.navigationController;
+    SWRevealViewController *revealController = [self revealViewController];
+    [revealController panGestureRecognizer];
+    [revealController tapGestureRecognizer];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -31,11 +34,11 @@
 #pragma mark - end
 
 #pragma mark - Add back button
-- (void)addBackButtonWithImage:(UIImage *)buttonImage {
+- (void)addBackButton {
     //    CGRect framing = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
     CGRect framing = CGRectMake(0, 0, 20, 20);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
-    [button setBackgroundImage:buttonImage forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
     [button setContentMode:UIViewContentModeScaleAspectFit];
     backButton =[[UIBarButtonItem alloc] initWithCustomView:button];
     self.navigationItem.leftBarButtonItem = backButton;
@@ -47,26 +50,19 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark - end
-
-#pragma mark - Add logout button
-- (void)addLogoutButtonWithImage:(UIImage *)logoutImage {
-    //    CGRect framing = CGRectMake(0, 0, logoutImage.size.width, logoutImage.size.height);
+- (void)addMenuButton {
     CGRect framing = CGRectMake(0, 0, 20, 20);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
-    [button setBackgroundImage:logoutImage forState:UIControlStateNormal];
-    logoutButton =[[UIBarButtonItem alloc] initWithCustomView:button];
-    [button addTarget:self action:@selector(logoutButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.rightBarButtonItems=[NSArray arrayWithObjects:logoutButton, nil];
+    [button setBackgroundImage:[UIImage imageNamed:@"menu.png"] forState:UIControlStateNormal];
+    [button setContentMode:UIViewContentModeScaleAspectFit];
+    menuButton =[[UIBarButtonItem alloc] initWithCustomView:button];
+    self.navigationItem.leftBarButtonItem = menuButton;
+    SWRevealViewController *revealViewController = self.revealViewController;
+    if (revealViewController)
+    {
+        [button addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    }
 }
-
-//Logout button action
-- (void)logoutButtonAction :(id)sender{
-    [UserDefaultManager removeValue:@"userId"];
-    UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"LoginViewController"];
-    [self.navigationController setViewControllers: [NSArray arrayWithObject:loginView]
-                                         animated: NO];
-}
-#pragma mark - end
 
 @end
