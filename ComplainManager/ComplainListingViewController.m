@@ -37,6 +37,7 @@
         UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
         [self.navigationController pushViewController:complainDetail animated:YES];
     }
+    [UserDefaultManager setValue:@"ltc" key:@"role"];
 }
 
 - (void)didReceiveMemoryWarning {

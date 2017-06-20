@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "MMMaterialDesignSpinner.h"
 #import "UncaughtExceptionHandler.h"
+#import "UserService.h"
 
 #define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
@@ -97,7 +98,18 @@
     NSLog(@"My device token is: %@", deviceToken);
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
     [alert show];
+        [self sendDeviceToken];
 
+
+}
+- (void)sendDeviceToken {
+    [[UserService sharedManager] setDeviceToken:deviceToken success:^(id responseObject){
+        [myDelegate stopIndicator];
+        
+    } failure:^(NSError *error) {
+        
+    }] ;
+    
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {

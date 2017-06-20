@@ -836,14 +836,14 @@
                                                     <rect key="frame" x="73" y="61" width="239" height="20"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JBk-RI-xv4">
-                                                            <rect key="frame" x="120" y="4" width="120" height="13.5"/>
+                                                            <rect key="frame" x="120" y="3.5" width="120" height="13.5"/>
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                             <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="11"/>
                                                             <color key="textColor" red="0.0" green="0.55294117649999996" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5 minutes ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cYS-M5-ybX">
-                                                            <rect key="frame" x="0.0" y="4" width="120" height="13.5"/>
+                                                            <rect key="frame" x="0.0" y="3.5" width="120" height="13.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="120" id="4y3-cj-liC"/>
                                                             </constraints>
@@ -972,7 +972,7 @@
         <!--User Profile View Controller-->
         <scene sceneID="u9e-9e-QNS">
             <objects>
-                <viewController id="z4H-S3-ztd" customClass="UserProfileViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="UserProfileViewController" id="z4H-S3-ztd" customClass="UserProfileViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="f0T-lh-0oy"/>
                         <viewControllerLayoutGuide type="bottom" id="UA3-v2-sj2"/>
@@ -1084,6 +1084,7 @@
                     <navigationItem key="navigationItem" id="bCq-pw-Sw2"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
+                        <outlet property="editProfileButton" destination="u7j-ps-3sA" id="R6G-jz-Jkl"/>
                         <outlet property="profileImageView" destination="e5p-Q0-TU9" id="1hk-jv-drw"/>
                         <outlet property="profileTableView" destination="xci-7V-PAw" id="ssp-IZ-OsB"/>
                         <outlet property="userName" destination="Fom-I8-Rcs" id="wd9-db-Qj9"/>
@@ -1264,7 +1265,7 @@
                         <rect key="frame" x="0.0" y="64" width="320" height="504"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FaQ-s4-MS6">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="90" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FaQ-s4-MS6">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -1343,8 +1344,8 @@
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
-                                    <outlet property="dataSource" destination="vSg-8B-XRl" id="XCI-gk-c6H"/>
-                                    <outlet property="delegate" destination="vSg-8B-XRl" id="8jg-X9-vIN"/>
+                                    <outlet property="dataSource" destination="vSg-8B-XRl" id="XCa-14-8lk"/>
+                                    <outlet property="delegate" destination="vSg-8B-XRl" id="Rub-dC-7eg"/>
                                 </connections>
                             </tableView>
                             <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Tenants" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JKf-n6-ZL4">
@@ -1371,7 +1372,7 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="noTenantsLabel" destination="JKf-n6-ZL4" id="HJx-kg-cQY"/>
-                        <outlet property="tenantsTableView" destination="FaQ-s4-MS6" id="sLV-wn-qjN"/>
+                        <outlet property="tenantsTableView" destination="FaQ-s4-MS6" id="RKc-Yf-8IH"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3Wo-K5-unY" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1983,6 +1984,19 @@
                                                             <action selector="completeJobAction:" destination="vzF-7y-dlQ" eventType="touchUpInside" id="dYl-zb-CfQ"/>
                                                         </connections>
                                                     </button>
+                                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQC-Ek-W5u">
+                                                        <rect key="frame" x="30" y="250" width="260" height="45"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                        <color key="backgroundColor" red="0.0" green="0.55294117649999996" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <fontDescription key="fontDescription" name="Roboto-Medium" family="Roboto" pointSize="18"/>
+                                                        <state key="normal" title="Reopen Job">
+                                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="completeJobAction:" destination="vzF-7y-dlQ" eventType="touchUpInside" id="uM9-1G-pgP"/>
+                                                            <action selector="reopenJobAction:" destination="vzF-7y-dlQ" eventType="touchUpInside" id="mF8-hg-L3c"/>
+                                                        </connections>
+                                                    </button>
                                                     <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Sq3-lr-MLI">
                                                         <rect key="frame" x="10" y="0.0" width="300" height="40"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -2051,6 +2065,7 @@
                         <outlet property="locationLabel" destination="H2f-jA-584" id="M85-2S-M3k"/>
                         <outlet property="locationSeparatorLabel" destination="cAV-pT-Dea" id="ubi-TZ-rQe"/>
                         <outlet property="mainContainerView" destination="ccQ-Ai-VLJ" id="Ru1-BT-x9z"/>
+                        <outlet property="reonpenJobButton" destination="LQC-Ek-W5u" id="OQs-ef-7lm"/>
                         <outlet property="scrollView" destination="frd-hC-p3v" id="R42-dv-w5D"/>
                         <outlet property="sendCommentButton" destination="zHY-XY-1Ih" id="vy1-Tg-8Wp"/>
                         <outlet property="startJobButton" destination="9ZZ-BP-uEP" id="pjq-3J-sld"/>

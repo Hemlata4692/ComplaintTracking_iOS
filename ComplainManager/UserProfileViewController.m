@@ -15,16 +15,25 @@
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userName;
 @property (weak, nonatomic) IBOutlet UITableView *profileTableView;
+@property (weak, nonatomic) IBOutlet UIButton *editProfileButton;
 
 @end
 
 @implementation UserProfileViewController
+@synthesize isTenantDetailScreen;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title=@"My Profile";
-    [self addMenuButton];
+    if (isTenantDetailScreen) {
+        self.navigationItem.title=@"Tenant Details";
+        _editProfileButton.hidden = YES;
+        [self addBackButton];
+    } else {
+        self.navigationItem.title=@"My Profile";
+        _editProfileButton.hidden = NO;
+        [self addMenuButton];
+    }
     [self viewCustomisation];
 }
 
@@ -46,8 +55,7 @@
 - (void)setProfileData {
     NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
+                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     [_profileImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"sideBarPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         _profileImageView.contentMode = UIViewContentModeScaleAspectFill;
         _profileImageView.clipsToBounds = YES;

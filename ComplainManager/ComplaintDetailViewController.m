@@ -51,6 +51,7 @@
 @property (weak, nonatomic) IBOutlet UIView *UserStatusView;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complaintStatusLabel;
+@property (weak, nonatomic) IBOutlet UIButton *reonpenJobButton;
 
 @end
 
@@ -103,6 +104,7 @@
     _commentsTableView.translatesAutoresizingMaskIntoConstraints = YES;
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
+    _reonpenJobButton.translatesAutoresizingMaskIntoConstraints = YES;
     //Set title text frame
     size = CGSizeMake(self.view.frame.size.width-20,90);
     textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
@@ -141,48 +143,7 @@
     }
     _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
     //Comments container view frame
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
-        //Start job button frame
-        _startJobButton.frame = CGRectMake(_startJobButton.frame.origin.x, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
-        _commentsContainerView.hidden = YES;
-        _startJobButton.hidden = NO;
-        _scrollView.scrollEnabled= NO;
-    }
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
-        _startJobButton.hidden = YES;
-        _UserStatusView.hidden=YES;
-        _commentsContainerView.hidden=NO;
-        _addCommentContainerView.hidden=NO;
-        _scrollView.scrollEnabled= YES;
-        _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20, 30);
-        _addCommentTextView.text = @"";
-        [_addCommentTextView setPlaceholder:@" Add Comment"];
-        [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
-        messageHeight = 40;
-        _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
-        _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
-        [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
-        [_addCommentTextView setCornerRadius:3];
-        _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 5, 25, 30);
-        if ([_addCommentTextView.text isEqualToString:@""] || _addCommentTextView.text.length == 0) {
-            _sendCommentButton.enabled = NO;
-        }
-        else {
-            _sendCommentButton.enabled = YES;
-        }
-        if (commentsArray.count < 1) {
-            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, 0);
-        } else  if (commentsArray.count < 2) {
-            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, 60);
-        } else {
-            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
-        }
-        _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
-        [_completeJobAction setCornerRadius:3];
-        commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_startJobButton.frame.size.height+20;
-        
-    }
-    else  if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
+    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
         _scrollView.scrollEnabled= YES;
         _UserStatusView.hidden=NO;
         _addCommentContainerView.hidden=YES;
@@ -201,6 +162,57 @@
             _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
         }
         commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
+    }
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+        if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
+            //Start job button frame
+            _startJobButton.frame = CGRectMake(_startJobButton.frame.origin.x, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
+            _commentsContainerView.hidden = YES;
+            _startJobButton.hidden = NO;
+            _scrollView.scrollEnabled= NO;
+        } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
+            _startJobButton.hidden = YES;
+            _UserStatusView.hidden=YES;
+            _commentsContainerView.hidden=NO;
+            _addCommentContainerView.hidden=NO;
+            _scrollView.scrollEnabled= YES;
+            _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20, 30);
+            _addCommentTextView.text = @"";
+            [_addCommentTextView setPlaceholder:@" Add Comment"];
+            [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
+            messageHeight = 40;
+            _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
+            _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
+            [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
+            [_addCommentTextView setCornerRadius:3];
+            _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 5, 25, 30);
+            if ([_addCommentTextView.text isEqualToString:@""] || _addCommentTextView.text.length == 0) {
+                _sendCommentButton.enabled = NO;
+            }
+            else {
+                _sendCommentButton.enabled = YES;
+            }
+            if (commentsArray.count < 1) {
+                _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, 0);
+            } else  if (commentsArray.count < 2) {
+                _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, 60);
+            } else {
+                _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
+            }
+            if (([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
+                _reonpenJobButton.hidden = NO;
+                _completeJobAction.hidden = YES;
+                _reonpenJobButton.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _reonpenJobButton.frame.size.height);
+                [_reonpenJobButton setCornerRadius:3];
+                commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_reonpenJobButton.frame.size.height+20;
+            } else {
+                _reonpenJobButton.hidden = YES;
+                _completeJobAction.hidden = NO;
+                _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 30,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+                [_completeJobAction setCornerRadius:3];
+                commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_completeJobAction.frame.size.height+20;
+            }
+        }
     }
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight + 20);
     if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
@@ -408,6 +420,9 @@
 - (IBAction)sendCommentAction:(id)sender {
     [myDelegate showIndicator];
     [self performSelector:@selector(addComments) withObject:nil afterDelay:.1];
+}
+
+- (IBAction)reopenJobAction:(id)sender {
 }
 #pragma mark - end
 

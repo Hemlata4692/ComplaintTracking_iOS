@@ -31,7 +31,6 @@
 		5D8F63B91EC9BADD00111138 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B31EC9BADD00111138 /* Roboto-Light.ttf */; };
 		5D8F63BA1EC9BADD00111138 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B41EC9BADD00111138 /* Roboto-Medium.ttf */; };
 		5D8F63BB1EC9BADD00111138 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */; };
-		5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F63BE1EC9C73000111138 /* RegisterViewController.m */; };
 		5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D965A801ECD57D900748EAC /* AddComplainCell.m */; };
 		5D984B3C1EF39DA70074E29C /* TenantsListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B3B1EF39DA70074E29C /* TenantsListViewController.m */; };
 		5D984B411EF3A4090074E29C /* TenantsListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D984B401EF3A4090074E29C /* TenantsListCell.m */; };
@@ -111,8 +110,6 @@
 		5D8F63B31EC9BADD00111138 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Light.ttf"; sourceTree = "<group>"; };
 		5D8F63B41EC9BADD00111138 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		5D8F63BD1EC9C73000111138 /* RegisterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterViewController.h; sourceTree = "<group>"; };
-		5D8F63BE1EC9C73000111138 /* RegisterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = RegisterViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5D965A7F1ECD57D900748EAC /* AddComplainCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainCell.h; sourceTree = "<group>"; };
 		5D965A801ECD57D900748EAC /* AddComplainCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainCell.m; sourceTree = "<group>"; };
 		5D984B3A1EF39DA70074E29C /* TenantsListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TenantsListViewController.h; sourceTree = "<group>"; };
@@ -326,15 +323,6 @@
 				5D8F63B51EC9BADD00111138 /* Roboto-Regular.ttf */,
 			);
 			name = Font;
-			sourceTree = "<group>";
-		};
-		5D8F63BC1EC9C70E00111138 /* RegisterView */ = {
-			isa = PBXGroup;
-			children = (
-				5D8F63BD1EC9C73000111138 /* RegisterViewController.h */,
-				5D8F63BE1EC9C73000111138 /* RegisterViewController.m */,
-			);
-			name = RegisterView;
 			sourceTree = "<group>";
 		};
 		5D984B391EF39D4E0074E29C /* TenantsListView */ = {
@@ -772,7 +760,6 @@
 		5DD316561EC5AF48008FF487 /* LoginModule */ = {
 			isa = PBXGroup;
 			children = (
-				5D8F63BC1EC9C70E00111138 /* RegisterView */,
 				5DD316571EC5AF55008FF487 /* LoginViewController */,
 				5DD3165B1EC5AF7D008FF487 /* ForgotPasswordViewController */,
 			);
@@ -964,7 +951,6 @@
 				5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */,
 				5D8F63AA1EC9B22A00111138 /* SCLTextView.m in Sources */,
 				5DC0478D1EDC3FD400B31D51 /* CommentsModel.m in Sources */,
-				5D8F63BF1EC9C73000111138 /* RegisterViewController.m in Sources */,
 				5DCE18571ECC79E900F542BE /* UserProfileViewController.m in Sources */,
 				5D8F63A81EC9B22A00111138 /* SCLAlertViewStyleKit.m in Sources */,
 				5D3DA8221ED7F14A00AD0435 /* AddComplainModel.m in Sources */,
