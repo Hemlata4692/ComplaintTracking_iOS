@@ -48,10 +48,7 @@
 #pragma mark - UI customisation
 - (void)customiseView {
     [_changePasswordButton setCornerRadius:3];
-    [_oldPasswordText setBottomBorder:_oldPasswordText];
-    [_changePasswordText setBottomBorder:_changePasswordText];
-    [_confirmPasswordText setBottomBorder:_confirmPasswordText];
-}
+ }
 #pragma mark - end
 
 #pragma mark - Keyboard controls delegate

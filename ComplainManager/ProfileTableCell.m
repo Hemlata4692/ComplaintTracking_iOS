@@ -19,16 +19,20 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 #pragma mark - end
 
 #pragma mark - Display data
-- (void)displayProfileData:(NSMutableDictionary *)profileData {
-        NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
-    
- 
+- (void)displayProfileData:(long)index {
+    NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
+    NSArray *infoDetailArray = [NSArray arrayWithObjects:[UserDefaultManager getValue:@"contactNumber"],[UserDefaultManager getValue:@"email"],@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"", nil];
+    infoLabel.text = [infoArray objectAtIndex:index];
+    infoDetailLabel.text = [infoDetailArray objectAtIndex:index];
+    if (index == 6) {
+        infoDetailLabel.alpha = 0.5;
+    }
 }
 #pragma mark - end
 

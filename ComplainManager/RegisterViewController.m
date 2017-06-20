@@ -198,11 +198,11 @@
 
 #pragma mark - Webservice
 - (void)registerUser {
-    [[UserService sharedManager] userRegisteration:_nameTextField.text email:_emailTextField.text password:_passwordTextField.text mobileNumber:_phoneNumberTextField.text success:^(id responseObject){
-        [myDelegate stopIndicator];
-    } failure:^(NSError *error) {
-        
-    }] ;
+//    [[UserService sharedManager] userRegisteration:_nameTextField.text email:_emailTextField.text password:_passwordTextField.text mobileNumber:_phoneNumberTextField.text success:^(id responseObject){
+//        [myDelegate stopIndicator];
+//    } failure:^(NSError *error) {
+//        
+//    }] ;
 }
 #pragma mark - end
 

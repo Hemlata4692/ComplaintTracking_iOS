@@ -15,7 +15,7 @@
 @property (nonatomic,retain) UINavigationController *navigationController;
 @property (nonatomic)  BOOL isMyComplaintScreen;
 @property (nonatomic)  long selectedMenuIndex;
-
+@property (nonatomic, strong)NSString *deviceToken;
 //Show/Stop indicator
 - (void)showIndicator;
 - (void)stopIndicator;

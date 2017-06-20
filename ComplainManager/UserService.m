@@ -16,6 +16,7 @@
 #define kUrlChangePassword              @"ChangePassword"
 #define kUrlTenantsList                 @"GetTenantsDetails"
 #define kUrlGetProfile                  @"GetProfile"
+#define kUrlDeviceToken                 @"SendNotification"
 
 @implementation UserService
 
@@ -76,22 +77,9 @@
 }
 #pragma mark- end
 
-#pragma mark- User registeration
-//User registeration
-- (void)userRegisteration:(NSString *)name email:(NSString *)email password:(NSString *)password mobileNumber:(NSString *)mobileNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"name":name,@"email":email,@"password":password,@"mobile":mobileNumber};
-    [[Webservice sharedManager] post:kUrlRegister parameters:requestDict success:^(id responseObject) {
-        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        if([[Webservice sharedManager] isStatusOK:responseObject]) {
-            success(responseObject);
-        } else {
-            [myDelegate stopIndicator];
-            failure(nil);
-        }
-    } failure:^(NSError *error) {
-        [myDelegate stopIndicator];
-        failure(error);
-    }];
+#pragma mark- Edit user profile
+- (void)editProfile:(NSString *)name email:(NSString *)email address:(NSString *)address mobileNumber:(NSString *)mobileNumber unitNo:(NSString *)unitNo company:(NSString *)company property:(NSString *)property mcstNumber:(NSString *)mcstNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    
 }
 #pragma mark- end
 
@@ -167,6 +155,24 @@
             success(dataArray);
         }
         else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+
+#pragma mark- Device token
+- (void)setDeviceToken:(NSString *)deviceToken success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"deviceToken":deviceToken};
+    [[Webservice sharedManager] post:kUrlDeviceToken parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
             [myDelegate stopIndicator];
             failure(nil);
         }

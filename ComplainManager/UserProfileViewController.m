@@ -11,15 +11,9 @@
 #import "ProfileTableCell.h"
 
 @interface UserProfileViewController ()
-{
-    CGRect textRect;
-    CGSize size;
-}
 
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userName;
-@property (weak, nonatomic) IBOutlet UILabel *userContactNumber;
-@property (weak, nonatomic) IBOutlet UILabel *userEmailAddress;
 @property (weak, nonatomic) IBOutlet UITableView *profileTableView;
 
 @end
@@ -30,10 +24,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title=@"My Profile";
-    // Do any additional setup after loading the view.
     [self addMenuButton];
     [self viewCustomisation];
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -44,14 +36,8 @@
 
 #pragma mark - View customisation
 - (void)viewCustomisation {
-    _userEmailAddress.translatesAutoresizingMaskIntoConstraints=YES;
     _profileImageView.layer.cornerRadius = _profileImageView.frame.size.width / 2;
     _profileImageView.layer.masksToBounds = YES;
-    size = CGSizeMake(self.view.frame.size.width-125,60);
-    //    textRect=[self setDynamicHeight:size textString:@"shivendra.singh@ranosys.com"];
-    textRect=[self setDynamicHeight:size textString:[UserDefaultManager getValue:@"email"]];
-    _userEmailAddress.numberOfLines = 0;
-    _userEmailAddress.frame =CGRectMake(125, _userContactNumber.frame.origin.y + _userContactNumber.frame.size.height + 10, _userEmailAddress.frame.size.width, textRect.size.height+3);
     [self setProfileData];
 }
 #pragma mark - end
@@ -70,26 +56,21 @@
     }];
     _profileImageView.layer.cornerRadius = _profileImageView.frame.size.width / 2;
     _profileImageView.layer.masksToBounds = YES;
+    [_profileImageView setViewBorder:_profileImageView color:[UIColor whiteColor]];
     _userName.text = [UserDefaultManager getValue:@"name"];
-    _userContactNumber.text = [UserDefaultManager getValue:@"contactNumber"];
-    _userEmailAddress.text = [UserDefaultManager getValue:@"email"];
 }
 #pragma mark - end
 
-#pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
-    CGRect textHeight = [textString
-                         boundingRectWithSize:rectSize
-                         options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:14]}
-                         context:nil];
-    return textHeight;
+#pragma mark - IBActions
+- (IBAction)editProfileAction:(id)sender {
+    UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"EditProfileViewController"];
+    [self.navigationController pushViewController:complainDetail animated:YES];
 }
 #pragma mark - end
 
 #pragma mark - Table view methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 6;
+    return 8;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -98,9 +79,11 @@
     if (profileCell == nil) {
         profileCell = [[ProfileTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
-        //Display data on cells
-//        ProfileDataModel * data=[tenantsListingArray objectAtIndex:indexPath.row];
-//        [profileCell displayTenantsListData:data indexPath:(int)indexPath.row rectSize:_tenantsTableView.frame.size];
+    if([[UIScreen mainScreen] bounds].size.height>568) {
+        _profileTableView.scrollEnabled = NO;
+    }
+    // Display data on cells
+    [profileCell displayProfileData:indexPath.row];
     return profileCell;
 }
 #pragma mark - end

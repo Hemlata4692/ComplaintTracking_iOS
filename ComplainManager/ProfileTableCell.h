@@ -11,6 +11,6 @@
 @interface ProfileTableCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *infoLabel;
 @property (weak, nonatomic) IBOutlet UILabel *infoDetailLabel;
-- (void)displayProfileData:(NSMutableDictionary *)profileData ;
+- (void)displayProfileData:(long)index;
 
 @end

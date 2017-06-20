@@ -15,7 +15,7 @@
 @interface AppDelegate () {
     UIView *loaderView;
     UIImageView *logoImage;
-    NSString *deviceToken;
+//    NSString *deviceToken;
 }
 
 @property (nonatomic, strong) MMMaterialDesignSpinner *spinnerView;
@@ -23,7 +23,7 @@
 @end
 
 @implementation AppDelegate
-@synthesize navigationController;
+@synthesize navigationController,deviceToken;
 
 #pragma mark - Global indicator view
 - (void)showIndicator {
@@ -84,6 +84,8 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
     NSLog(@"User Info = %@",response.notification.request.content.userInfo);
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alert show];
 }
 #pragma mark - end
 
@@ -93,6 +95,9 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alert show];
+
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
@@ -101,6 +106,8 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"Received notification: %@", userInfo);
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alert show];
 }
 #pragma mark - end
 

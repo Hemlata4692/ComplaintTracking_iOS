@@ -50,9 +50,7 @@
 
 #pragma mark - UI customisation
 - (void)customiseView {
-    [_emailTextField setBottomBorder:_emailTextField];
-    [_passwordTextField setBottomBorder:_passwordTextField];
-    [_loginButton setCornerRadius:2];
+     [_loginButton setCornerRadius:2];
 }
 #pragma mark - end
 
@@ -106,6 +104,7 @@
 - (IBAction)loginAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
     [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+//    [self sendDeviceToken];
     if([self performValidationsForLogin]) {
         [myDelegate showIndicator];
         [self performSelector:@selector(loginUser) withObject:nil afterDelay:.1];
@@ -154,5 +153,13 @@
     }] ;
 }
 #pragma mark - end
-
+- (void)sendDeviceToken {
+    [[UserService sharedManager] setDeviceToken:myDelegate.deviceToken success:^(id responseObject){
+        [myDelegate stopIndicator];
+        
+    } failure:^(NSError *error) {
+        
+    }] ;
+    
+}
 @end
