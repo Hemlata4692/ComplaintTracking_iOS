@@ -6,6 +6,8 @@
 //  Copyright (c) 2015 Shivendra. All rights reserved.
 //
 
+
+
 #import "SidebarViewController.h"
 #import "SWRevealViewController.h"
 #import "LoginViewController.h"
@@ -30,30 +32,16 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-            myDelegate.selectedMenuIndex = 3;
-        }
-        else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             myDelegate.selectedMenuIndex = 4;
         } else {
             myDelegate.selectedMenuIndex = 2;
         }
     }
-    /*
-     MCST staff (s) - Dashboard, My profile, My feedback,Change password, Logout
-     MCST staff (s-bm/ic) - Dashboard, My profile, My feedback, Property feedback,Change password, Logout
-     tenants (t) - Dashboard, My profile,Change password, Logout
-     council member (cm) - Dashboard, My profile, Property feedback, Tenants, Change password, Logout
-     long term contractor (ltc) - Dashboard, My profile, Change password, Logout
-     */
-    
-    //If user role is MCST staff member
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
-    }
     //If user role is MCST building manager and MCST In charger
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
         menuItems = @[@"Dashboard", @"My Profile", @"My Feedback",@"Property Feedback", @"Change Password", @"Logout"];
     }
     //If user role is council member
@@ -67,7 +55,6 @@
     self.tableView.scrollEnabled=NO;
     [self.revealViewController.frontViewController.view setUserInteractionEnabled:NO];
     [self.tableView reloadData];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -98,7 +85,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *CellIdentifier = [menuItems objectAtIndex:indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    //Side bar customisation
+    //Side bar customisation - chage selected cell backround color
     cell.textLabel.text = [menuItems objectAtIndex:indexPath.row];
     cell.textLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15.0];
     [tableView setSeparatorColor:[UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0]];
@@ -176,7 +163,6 @@
     [headerView addSubview:nameLabel];
     [headerView addSubview:emailLabel];
     [headerView addSubview:ProfileImgView];
-    
     return headerView;   // return headerLabel;
 }
 
@@ -192,17 +178,22 @@
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     myDelegate.selectedMenuIndex = indexPath.row;
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-        if (indexPath.row == 0) {
-            myDelegate.isMyComplaintScreen = false;
-        } else if (indexPath.row == 2) {
-            myDelegate.isMyComplaintScreen = true;
-        } else if (indexPath.row == 4) {
-            [self logoutUser];
-        }
+    if (indexPath.row == 0) {
+        myDelegate.screenName = @"dashboard";
     }
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        if (indexPath.row == 5) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if (indexPath.row == 2) {
+            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+                myDelegate.screenName = @"propertyFeedback";
+            } else  {
+                myDelegate.screenName = @"myFeedback";
+            }
+        } else if (indexPath.row == 3) {
+            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+                myDelegate.screenName = @"propertyFeedback";
+            }
+        }
+        else if (indexPath.row == 5) {
             [self logoutUser];
         }
     } else {
@@ -211,7 +202,9 @@
         }
     }
 }
+#pragma mark - end
 
+#pragma mark - Logout user
 - (void)logoutUser {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
@@ -221,9 +214,9 @@
         myDelegate.window.rootViewController = myDelegate.navigationController;
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout" closeButtonTitle:@"No" duration:0.0f];
-    
 }
 
+//Remove default values
 - (void)removeDefaultValues {
     [UserDefaultManager removeValue:@"name"];
     [UserDefaultManager removeValue:@"userId"];
@@ -232,19 +225,17 @@
     [UserDefaultManager removeValue:@"isFirsttime"];
     [UserDefaultManager removeValue:@"role"];
     [UserDefaultManager removeValue:@"email"];
-    myDelegate.isMyComplaintScreen= NO;
+    myDelegate.screenName= @"dashboard";
     myDelegate.selectedMenuIndex = 0;
 }
 
+#pragma mark - end
+
+#pragma mark - Segue method
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    //If first time user clicks other tabs
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3){
-                [self.view makeToast:@"Please login."];
-                return NO;
-            }
-        }
-        else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3 ||[sender tag] == 4){
                 [self.view makeToast:@"Please login."];
                 return NO;
@@ -258,6 +249,5 @@
     }
     return YES;
 }
-
 #pragma mark - end
 @end

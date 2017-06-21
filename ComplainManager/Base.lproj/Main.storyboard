@@ -678,7 +678,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8cv-6l-X1l">
                                         <rect key="frame" x="0.0" y="0.0" width="93" height="75"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="15" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E2K-bZ-1vw">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E2K-bZ-1vw">
                                                 <rect key="frame" x="18" y="0.0" width="58" height="51"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
@@ -711,7 +711,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jg0-Tg-saS">
                                         <rect key="frame" x="103" y="0.0" width="93" height="75"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3w1-gD-yhB">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3w1-gD-yhB">
                                                 <rect key="frame" x="18" y="0.0" width="58" height="51"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
@@ -744,7 +744,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aZ2-9Z-9A8">
                                         <rect key="frame" x="206" y="0.0" width="93" height="75"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yH5-ZZ-py4">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yH5-ZZ-py4">
                                                 <rect key="frame" x="18" y="0.0" width="58" height="51"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 <constraints>
@@ -836,14 +836,14 @@
                                                     <rect key="frame" x="73" y="61" width="239" height="20"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JBk-RI-xv4">
-                                                            <rect key="frame" x="120" y="3.5" width="120" height="13.5"/>
+                                                            <rect key="frame" x="120" y="4" width="120" height="13.5"/>
                                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                             <fontDescription key="fontDescription" name="Roboto-Regular" family="Roboto" pointSize="11"/>
                                                             <color key="textColor" red="0.0" green="0.55294117649999996" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5 minutes ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cYS-M5-ybX">
-                                                            <rect key="frame" x="0.0" y="3.5" width="120" height="13.5"/>
+                                                            <rect key="frame" x="0.0" y="4" width="120" height="13.5"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="120" id="4y3-cj-liC"/>
                                                             </constraints>
@@ -960,8 +960,18 @@
                     <navigationItem key="navigationItem" id="2q2-EA-hyf"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
+                        <outlet property="addComplaintButton" destination="wDn-y8-qdV" id="5cm-Ou-gyE"/>
+                        <outlet property="assignedButton" destination="qbW-vB-AM6" id="tdD-Fp-05b"/>
+                        <outlet property="assignedCounterLabel" destination="E2K-bZ-1vw" id="HqV-6c-ARp"/>
+                        <outlet property="assignedView" destination="8cv-6l-X1l" id="o2x-Pl-Ea9"/>
                         <outlet property="complainListingTable" destination="Nu0-4i-Is7" id="JSp-7C-4tJ"/>
+                        <outlet property="completeButton" destination="mMt-d6-PsN" id="wXa-k2-ZDK"/>
+                        <outlet property="completeProgressLabel" destination="yH5-ZZ-py4" id="waO-Aj-vmc"/>
+                        <outlet property="completeView" destination="aZ2-9Z-9A8" id="xbY-3h-SBw"/>
                         <outlet property="noComplaintsLabel" destination="Cva-KY-ztM" id="slo-Hy-TF3"/>
+                        <outlet property="progressButton" destination="Ney-UT-k4N" id="ZBn-Zu-ZJV"/>
+                        <outlet property="progressCounterLabel" destination="3w1-gD-yhB" id="6wy-bn-aL2"/>
+                        <outlet property="progressView" destination="jg0-Tg-saS" id="O1W-RM-6p0"/>
                         <outlet property="searchTextField" destination="fgG-na-yKA" id="wu1-0g-a8D"/>
                     </connections>
                 </viewController>
@@ -2146,6 +2156,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="36.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="IHb-UM-ELj" kind="custom" customClass="SWRevealViewControllerSeguePushController" id="ZCM-LK-9fS"/>
+                                </connections>
                             </tableViewCell>
                             <tableViewCell tag="5" contentMode="scaleToFill" selectionStyle="none" indentationWidth="8" reuseIdentifier="Tenants" rowHeight="37" id="icj-bO-DR3">
                                 <rect key="frame" x="0.0" y="203.5" width="320" height="37"/>

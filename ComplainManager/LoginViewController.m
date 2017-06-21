@@ -50,7 +50,7 @@
 
 #pragma mark - UI customisation
 - (void)customiseView {
-     [_loginButton setCornerRadius:2];
+    [_loginButton setCornerRadius:2];
 }
 #pragma mark - end
 
@@ -119,6 +119,7 @@
 - (void)loginUser {
     [[UserService sharedManager] userLogin:_emailTextField.text password:_passwordTextField.text success:^(id responseObject){
         [myDelegate stopIndicator];
+        //Set login info
         NSDictionary *data = [responseObject objectForKey:@"data"];
         [UserDefaultManager setValue:_emailTextField.text key:@"email"];
         [UserDefaultManager setValue:[data objectForKey:@"userId"] key:@"userId"];
@@ -126,27 +127,29 @@
         [UserDefaultManager setValue:[data objectForKey:@"contactNumber"] key:@"contactNumber"];
         [UserDefaultManager setValue:[data objectForKey:@"isFirsttime"] key:@"isFirstTime"];
         [UserDefaultManager setValue:[data objectForKey:@"AuthenticationToken"] key:@"AuthenticationToken"];
-        
-        if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
+        //Set user roles
+        if ([[data objectForKey:@"RoleId"] intValue] == 6 ) {
             [UserDefaultManager setValue:@"t" key:@"role"];
-        } else {
-            [UserDefaultManager setValue:@"s" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
+            [UserDefaultManager setValue:@"cm" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 4 ) {
+            [UserDefaultManager setValue:@"ic" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 3 ) {
+            [UserDefaultManager setValue:@"ltc" key:@"role"];
         }
-        
         NSLog(@"AuthenticationToken %@",[UserDefaultManager getValue:@"AuthenticationToken"]);
         NSLog(@"role %@",[UserDefaultManager getValue:@"role"]);
         NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
         NSLog(@"name %@",[UserDefaultManager getValue:@"name"]);
         NSLog(@"contactNumber %@",[UserDefaultManager getValue:@"contactNumber"]);
         NSLog(@"isFirstTime %@",[UserDefaultManager getValue:@"isFirstTime"]);
-        
+        //Navigate to dashboard
         UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
         myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         [myDelegate.window setRootViewController:objReveal];
         [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
-        
     } failure:^(NSError *error) {
         
     }] ;

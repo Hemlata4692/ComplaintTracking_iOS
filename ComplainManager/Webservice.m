@@ -166,7 +166,7 @@
     [UserDefaultManager removeValue:@"isFirsttime"];
     [UserDefaultManager removeValue:@"role"];
     [UserDefaultManager removeValue:@"email"];
-    myDelegate.isMyComplaintScreen= NO;
+    myDelegate.screenName= @"dashboard";
     myDelegate.selectedMenuIndex = 0;
 }
 #pragma mark - end

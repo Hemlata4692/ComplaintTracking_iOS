@@ -139,7 +139,8 @@
                 [UserDefaultManager removeValue:@"isFirsttime"];
                 [UserDefaultManager removeValue:@"role"];
                 [UserDefaultManager removeValue:@"email"];
-                myDelegate.isMyComplaintScreen= NO;
+//                myDelegate.isMyComplaintScreen= NO;
+                myDelegate.screenName = @"dashboard";
                 myDelegate.selectedMenuIndex = 0;
                 myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
                 myDelegate.window.rootViewController = myDelegate.navigationController;

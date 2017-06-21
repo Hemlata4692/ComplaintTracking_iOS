@@ -447,10 +447,12 @@
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"Ok" actionBlock:^(void) {
-            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-                myDelegate.isMyComplaintScreen = YES;
+          if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+//                myDelegate.isMyComplaintScreen = YES;
+              myDelegate.screenName = @"myFeedback";
             } else {
-                myDelegate.isMyComplaintScreen = NO;
+//                myDelegate.isMyComplaintScreen = NO;
+                myDelegate.screenName = @"dashboard";
             }
             [self.navigationController popViewControllerAnimated:YES];
         }];

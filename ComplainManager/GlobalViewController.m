@@ -45,11 +45,13 @@
     [button addTarget:self action:@selector(backButtonAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 
-//Logout button action
+//Back button action
 -(void)backButtonAction :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark - end
+
+#pragma mark - Add menu button
 - (void)addMenuButton {
     CGRect framing = CGRectMake(0, 0, 20, 20);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
@@ -58,11 +60,11 @@
     menuButton =[[UIBarButtonItem alloc] initWithCustomView:button];
     self.navigationItem.leftBarButtonItem = menuButton;
     SWRevealViewController *revealViewController = self.revealViewController;
-    if (revealViewController)
-    {
+    if (revealViewController) {
         [button addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     }
 }
+#pragma mark - end
 
 @end
