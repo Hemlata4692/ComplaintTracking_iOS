@@ -11,6 +11,7 @@
 		5D3DA8221ED7F14A00AD0435 /* AddComplainModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8211ED7F14A00AD0435 /* AddComplainModel.m */; };
 		5D3DA8251ED824E600AD0435 /* ComplaintDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8241ED824E600AD0435 /* ComplaintDetailViewController.m */; };
 		5D3DA82A1ED84F6500AD0435 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8291ED84F6500AD0435 /* Base64.m */; };
+		5D47F5E41EFBF30100E20697 /* SidebarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D47F5E31EFBF30100E20697 /* SidebarCell.m */; };
 		5D4E1C021ED2EE44008B68F4 /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4E1C011ED2EE44008B68F4 /* UIView+Toast.m */; };
 		5D4E1C0E1ED30687008B68F4 /* ComplainDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4E1C0D1ED30687008B68F4 /* ComplainDetailCell.m */; };
 		5D7549811ECC5FBA00A775E4 /* NSString+CustomString.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D7549801ECC5FBA00A775E4 /* NSString+CustomString.m */; };
@@ -75,6 +76,8 @@
 		5D3DA8241ED824E600AD0435 /* ComplaintDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplaintDetailViewController.m; sourceTree = "<group>"; };
 		5D3DA8281ED84F6500AD0435 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
 		5D3DA8291ED84F6500AD0435 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
+		5D47F5E21EFBF30100E20697 /* SidebarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarCell.h; sourceTree = "<group>"; };
+		5D47F5E31EFBF30100E20697 /* SidebarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarCell.m; sourceTree = "<group>"; };
 		5D4E1C001ED2EE44008B68F4 /* UIView+Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Toast.h"; sourceTree = "<group>"; };
 		5D4E1C011ED2EE44008B68F4 /* UIView+Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Toast.m"; sourceTree = "<group>"; };
 		5D4E1C0C1ED30687008B68F4 /* ComplainDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainDetailCell.h; sourceTree = "<group>"; };
@@ -393,6 +396,8 @@
 			children = (
 				5DB168941ECE9DCC00E0A8E2 /* SidebarViewController.h */,
 				5DB168951ECE9DCC00E0A8E2 /* SidebarViewController.m */,
+				5D47F5E21EFBF30100E20697 /* SidebarCell.h */,
+				5D47F5E31EFBF30100E20697 /* SidebarCell.m */,
 			);
 			name = SideBar;
 			sourceTree = "<group>";
@@ -971,6 +976,7 @@
 				5DD316551EC5AF25008FF487 /* BSKeyboardControls.m in Sources */,
 				5D8F63A61EC9B22A00111138 /* SCLButton.m in Sources */,
 				5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */,
+				5D47F5E41EFBF30100E20697 /* SidebarCell.m in Sources */,
 				5D4E1C021ED2EE44008B68F4 /* UIView+Toast.m in Sources */,
 				5DD316141EC5AC80008FF487 /* AppDelegate.m in Sources */,
 				5D864D0A1ECADE97007FFC16 /* ComplainListDataModel.m in Sources */,

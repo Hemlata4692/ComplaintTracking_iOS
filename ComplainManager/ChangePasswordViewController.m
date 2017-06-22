@@ -48,7 +48,7 @@
 #pragma mark - UI customisation
 - (void)customiseView {
     [_changePasswordButton setCornerRadius:3];
- }
+}
 #pragma mark - end
 
 #pragma mark - Keyboard controls delegate
@@ -130,6 +130,8 @@
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"Ok" actionBlock:^(void) {
+            myDelegate.screenName = @"dashboard";
+            myDelegate.selectedMenuIndex = 0;
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
                 [UserDefaultManager removeValue:@"name"];
@@ -139,9 +141,6 @@
                 [UserDefaultManager removeValue:@"isFirsttime"];
                 [UserDefaultManager removeValue:@"role"];
                 [UserDefaultManager removeValue:@"email"];
-//                myDelegate.isMyComplaintScreen= NO;
-                myDelegate.screenName = @"dashboard";
-                myDelegate.selectedMenuIndex = 0;
                 myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
                 myDelegate.window.rootViewController = myDelegate.navigationController;
             } else {

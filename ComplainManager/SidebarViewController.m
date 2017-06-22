@@ -11,6 +11,7 @@
 #import "SidebarViewController.h"
 #import "SWRevealViewController.h"
 #import "LoginViewController.h"
+#import "SidebarCell.h"
 
 @interface SidebarViewController (){
     NSArray *menuItems;
@@ -84,19 +85,9 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *CellIdentifier = [menuItems objectAtIndex:indexPath.row];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    //Side bar customisation - chage selected cell backround color
-    cell.textLabel.text = [menuItems objectAtIndex:indexPath.row];
-    cell.textLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15.0];
-    [tableView setSeparatorColor:[UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0]];
-    if (indexPath.row == myDelegate.selectedMenuIndex) {
-        cell.backgroundColor= [UIColor colorWithRed:5/255.0 green:122/255.0 blue:165/255.0 alpha:1.0];
-        cell.textLabel.textColor = [UIColor whiteColor];
-    }
-    else {
-        cell.backgroundColor= [UIColor whiteColor];
-        cell.textLabel.textColor = [UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0];
-    }
+    SidebarCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    //Display data on cells
+    [cell displayCellData:menuItems index:(int)indexPath.row];
     return cell;
 }
 

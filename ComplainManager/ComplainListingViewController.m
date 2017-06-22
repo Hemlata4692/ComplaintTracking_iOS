@@ -85,6 +85,17 @@
 }
 
 - (IBAction)statusChangeAction:(id)sender {
+    if ([sender tag] == 0) {
+        //Set assigned view UI
+        [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    } else if ([sender tag] == 2) {
+        //Set complete view UI
+        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0] completeTextColor:[UIColor whiteColor]];
+    } else if ([sender tag] == 1) {
+        //Set progress view UI
+        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] progressTextColor:[UIColor whiteColor] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    }
+    
     [self filterStatusArray:(int)[sender tag]];
 }
 #pragma mark - end
@@ -99,20 +110,14 @@
             if ([data.complainStatus isEqualToString:@"Pending"]) {
                 [filteredComplainListArray addObject:data];
             }
-            //Set assigned view UI
-            [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
         } else if (buttonTag == 2) {
             if ([data.complainStatus isEqualToString:@"Complete"]) {
                 [filteredComplainListArray addObject:data];
             }
-            //Set complete view UI
-            [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0] completeTextColor:[UIColor whiteColor]];
         } else if (buttonTag == 1) {
             if ([data.complainStatus isEqualToString:@"In process"]) {
                 [filteredComplainListArray addObject:data];
             }
-            //Set progress view UI
-            [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] progressTextColor:[UIColor whiteColor] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
         }
         [_complainListingTable reloadData];
     }
@@ -122,14 +127,17 @@
     _assignedView.backgroundColor = assignedBackgroundColor;
     _assignedCounterLabel.textColor = assignedTextColor;
     [_assignedButton setTitleColor:assignedTextColor forState:UIControlStateNormal];
+    [_assignedView addShadow:_assignedView color:[UIColor lightGrayColor]];
     //Progress UI
     _progressView.backgroundColor = progressBackgroundColor;
     _progressCounterLabel.textColor = progressTextColor;
     [_progressButton setTitleColor:progressTextColor forState:UIControlStateNormal];
+    [_progressView addShadow:_progressView color:[UIColor lightGrayColor]];
     //Complete UI
     _completeView.backgroundColor = complteBackgroundColor;
     _completeProgressLabel.textColor = completeTextColor;
     [_completeButton setTitleColor:completeTextColor forState:UIControlStateNormal];
+    [_completeView addShadow:_completeView color:[UIColor lightGrayColor]];
 }
 #pragma mark - end
 

@@ -30,8 +30,8 @@
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *mainContainerView;
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
+//@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+//@property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *detailsTextView;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *categoryLabel;
@@ -85,8 +85,8 @@
 #pragma mark - View customisation
 - (void)setViewFrames: (NSDictionary *)data {
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
-    _titleLabel.translatesAutoresizingMaskIntoConstraints=YES;
-    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
+//    _titleLabel.translatesAutoresizingMaskIntoConstraints=YES;
+//    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
     _detailsTextView.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _categoryLabel.translatesAutoresizingMaskIntoConstraints = YES;
@@ -105,24 +105,24 @@
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
     _reonpenJobButton.translatesAutoresizingMaskIntoConstraints = YES;
-    //Set title text frame
+//    //Set title text frame
     size = CGSizeMake(self.view.frame.size.width-20,90);
-    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
-    _titleLabel.numberOfLines = 0;
-    if (textRect.size.height < 35) {
-        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, 40);
-    } else {
-        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, textRect.size.height + 5);
-    }
-    _titleLabel.text=[data objectForKey:@"Title"];
-    _titleSeparatorLabel.frame = CGRectMake(_titleSeparatorLabel.frame.origin.x, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+//    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
+//    _titleLabel.numberOfLines = 0;
+//    if (textRect.size.height < 35) {
+//        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, 40);
+//    } else {
+//        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, textRect.size.height + 5);
+//    }
+//    _titleLabel.text=[data objectForKey:@"Title"];
+//    _titleSeparatorLabel.frame = CGRectMake(_titleSeparatorLabel.frame.origin.x, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
     //Detail text view frame
     textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"]];
     if ((textRect.size.height < 90) && (textRect.size.height > 37)) {
-        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 20, self.view.frame.size.width-15, textRect.size.height+5);
+        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, self.view.frame.origin.y+20, self.view.frame.size.width-15, textRect.size.height+5);
     }
     else if(textRect.size.height < 40) {
-        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 15, self.view.frame.size.width-15, 35);
+        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, self.view.frame.origin.y + 15, self.view.frame.size.width-15, 35);
     }
     _detailsTextView.text = [data objectForKey:@"FullDescription"];
     _detailSeparatorLabel.frame = CGRectMake(_detailSeparatorLabel.frame.origin.x, _detailsTextView.frame.origin.y+_detailsTextView.frame.size.height + 1, self.view.frame.size.width-20, 1);
@@ -218,7 +218,7 @@
     if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
         mainContainerHeight = self.view.frame.size.height;
     } else {
-        mainContainerHeight = 20 +_titleLabel.frame.origin.y+21+_detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
+        mainContainerHeight = 20 + _detailsTextView.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
     }
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);

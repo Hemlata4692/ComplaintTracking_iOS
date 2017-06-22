@@ -44,7 +44,6 @@
 - (void)viewWillAppear:(BOOL)animated {
     //Hide navigation bar
     [[self navigationController] setNavigationBarHidden:YES animated:YES];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 #pragma mark - end
 
@@ -69,6 +68,12 @@
 #pragma mark - Textfield delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self.keyboardControls setActiveField:textField];
+    if (textField.frame.origin.y+textField.frame.size.height+15<([UIScreen mainScreen].bounds.size.height)-256) {
+        [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else {
+        [_loginScrollView setContentOffset:CGPointMake(0, ((textField.frame.origin.y+textField.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-256))+5) animated:NO];
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

@@ -92,7 +92,6 @@
 #pragma mark - Textfield delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self.keyboardControls setActiveField:textField];
-    
     if (textField.frame.origin.y+textField.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
         [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }

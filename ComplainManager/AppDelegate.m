@@ -96,9 +96,9 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-    [alert show];
-        [self sendDeviceToken];
+//    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+//    [alert show];
+//        [self sendDeviceToken];
 
 
 }
@@ -125,6 +125,7 @@
 
 #pragma mark - Appdelegate methods
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [UserDefaultManager setValue:@"bm" key:@"role"];
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0]];
