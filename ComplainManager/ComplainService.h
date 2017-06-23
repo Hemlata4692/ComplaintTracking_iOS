@@ -22,11 +22,11 @@
 //end
 
 //Category listing
-- (void)getCategories:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+- (void)getCategories:(BOOL)isCategoryService success:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
 //end
 
 //Add complaint
-- (void)addComplait:(NSString *)complainTitle complainDescription:(NSString *)complainDescription categoryId:(NSString *)categoryId complainId:(NSString *)complainId imageNameArray:(NSMutableArray *)imageNameArray success:(void (^)(id data))success failure:(void (^)(NSError *error))failure ;
+- (void)addComplait:(NSString *)complainDescription categoryId:(NSString *)categoryId imageNameArray:(NSMutableArray *)imageNameArray PropertyLocationId:(NSString *)PropertyLocationId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure ;
 //end
 
 //Complaint detail

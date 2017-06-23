@@ -14,7 +14,8 @@
 
 @interface ComplainListingViewController ()
 {
-    NSMutableArray *complainListArray, *filteredComplainListArray ,*searchArray;
+    NSMutableArray *complainListArray, *filteredComplainListArray;
+    NSArray *searchArray;
     BOOL isSearch;
 }
 
@@ -31,6 +32,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *progressButton;
 @property (weak, nonatomic) IBOutlet UIButton *completeButton;
 @property (weak, nonatomic) IBOutlet UIButton *addComplaintButton;
+@property (weak, nonatomic) IBOutlet UIImageView *searchImage;
 
 @end
 
@@ -41,7 +43,7 @@
     [super viewDidLoad];
     filteredComplainListArray=[[NSMutableArray alloc]init];
     complainListArray=[[NSMutableArray alloc]init];
-    searchArray=[[NSMutableArray alloc]init];
+    searchArray=[[NSArray alloc]init];
     [self addMenuButton];
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
@@ -151,13 +153,19 @@
     else if(string.length) {
         isSearch = YES;
         searchKey = [textField.text stringByAppendingString:string];
-        NSPredicate *filter = [NSPredicate predicateWithFormat:@"complainTitle CONTAINS[cd] %@", searchKey];
-        searchArray = [[filteredComplainListArray filteredArrayUsingPredicate:filter] mutableCopy];
+        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
+        NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
+        NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
+        searchArray = [filteredComplainListArray filteredArrayUsingPredicate:orPredicate];
     }
     else if((textField.text.length-1)!=0) {
         searchKey = [textField.text substringWithRange:NSMakeRange(0, textField.text.length-1)];
-        NSPredicate *filter = [NSPredicate predicateWithFormat:@"complainTitle CONTAINS[cd] %@", searchKey];
-        searchArray = [[filteredComplainListArray filteredArrayUsingPredicate:filter] mutableCopy];
+        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
+        NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
+        NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
+        searchArray = [filteredComplainListArray filteredArrayUsingPredicate:orPredicate];
     }
     else {
         searchKey = @"";

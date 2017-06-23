@@ -56,7 +56,7 @@
     NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
-    [_profileImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"sideBarPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+    [_profileImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         _profileImageView.contentMode = UIViewContentModeScaleAspectFill;
         _profileImageView.clipsToBounds = YES;
         _profileImageView.image = image;

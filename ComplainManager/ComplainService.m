@@ -14,6 +14,7 @@
 #define kUrlComplainList                  @"ComplainList"
 #define kUrlUploadImage                   @"UploadImage"
 #define kUrlCategoryListing               @"ComplainCategoryList"
+#define kUrlLocationListing               @"ComplainLocationList"
 #define kUrlAddComplain                   @"AddComplain"
 #define kUrlGetComplainDetail             @"GetComplainDetails"
 #define kUrlJobStatus                     @"JobStatus"
@@ -41,7 +42,13 @@
 
 #pragma mark - Conference Listing
 - (void)getComplainListing:(NSString *)screenName success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"DisplayBoard":screenName};
+    NSString * isBuildingManager;
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        isBuildingManager = @"true";
+    } else {
+        isBuildingManager = @"false";
+    }
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"DisplayBoard":screenName,@"UserRoleId":[UserDefaultManager getValue:@"RoleId"],@"PropertyId":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
     NSLog(@"complainListing requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlComplainList parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
@@ -55,13 +62,14 @@
                 for (int i =0; i<complainArray.count; i++) {
                     ComplainListDataModel *complainDataModel = [[ComplainListDataModel alloc]init];
                     NSDictionary * complainDict =[complainArray objectAtIndex:i];
-                    complainDataModel.complainTitle =[complainDict objectForKey:@"Title"];
+                    complainDataModel.userName =[complainDict objectForKey:@"Title"];
                     complainDataModel.complainDescription =[complainDict objectForKey:@"FullDescription"];
                     complainDataModel.complainStatus =[complainDict objectForKey:@"ComplainStatus"];
                     complainDataModel.complainImageString =[complainDict objectForKey:@"UserImage"];
                     complainDataModel.complainId =[complainDict objectForKey:@"Id"];
                     complainDataModel.categoryName =[complainDict objectForKey:@"CategoryName"];
                     complainDataModel.complainTime =[complainDict objectForKey:@"SubmittedOn"];
+                    complainDataModel.userName =[complainDict objectForKey:@"UserName"];
                     [dataArray addObject:complainDataModel];
                 }
                 success(dataArray);
@@ -101,10 +109,16 @@
 #pragma mark - end
 
 #pragma mark - Category listing
-- (void)getCategories:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+- (void)getCategories:(BOOL)isCategoryService success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"propertyId":[UserDefaultManager getValue:@"propertyId"]};
     NSLog(@"Categories requestDict %@",requestDict);
-    [[Webservice sharedManager] post:kUrlCategoryListing parameters:requestDict success:^(id responseObject) {
+    NSString *method;
+    if (isCategoryService) {
+        method = kUrlCategoryListing;
+    } else {
+        method = kUrlLocationListing;
+    }
+    [[Webservice sharedManager] post:method parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"Categories response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
@@ -114,9 +128,15 @@
                 NSMutableArray *dataArray = [NSMutableArray new];
                 for (int i =0; i<categoryArray.count; i++) {
                     AddComplainModel *categoryModel = [[AddComplainModel alloc]init];
-                    NSDictionary * complainDict =[categoryArray objectAtIndex:i];
-                    categoryModel.categoryId =[complainDict objectForKey:@"Id"];
-                    categoryModel.categoryName =[complainDict objectForKey:@"Name"];
+                    if (isCategoryService) {
+                        NSDictionary * complainDict =[categoryArray objectAtIndex:i];
+                        categoryModel.categoryId =[complainDict objectForKey:@"Id"];
+                        categoryModel.categoryName =[complainDict objectForKey:@"Name"];
+                    } else {
+                        NSDictionary * complainDict =[categoryArray objectAtIndex:i];
+                        categoryModel.locationId =[complainDict objectForKey:@"Id"];
+                        categoryModel.locationName =[complainDict objectForKey:@"Name"];
+                    }
                     [dataArray addObject:categoryModel];
                 }
                 success(dataArray);
@@ -134,9 +154,9 @@
 #pragma mark - end
 
 #pragma mark - Add complaint
-- (void)addComplait:(NSString *)complainTitle complainDescription:(NSString *)complainDescription categoryId:(NSString *)categoryId complainId:(NSString *)complainId imageNameArray:(NSMutableArray *)imageNameArray success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"title":complainTitle,@"fullDescription":complainDescription,@"categoryId":categoryId,@"imageName":imageNameArray};
-    NSLog(@"complain requestDict %@",requestDict);
+- (void)addComplait:(NSString *)complainDescription categoryId:(NSString *)categoryId imageNameArray:(NSMutableArray *)imageNameArray PropertyLocationId:(NSString *)PropertyLocationId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"fullDescription":complainDescription,@"categoryId":categoryId,@"imageName":imageNameArray,@"PropertyLocationId":PropertyLocationId,@"propertyId":[UserDefaultManager getValue:@"propertyId"]};
+    NSLog(@"add feedback requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlAddComplain parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);

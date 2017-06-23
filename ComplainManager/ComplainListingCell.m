@@ -9,7 +9,7 @@
 #import "ComplainListingCell.h"
 
 @implementation ComplainListingCell
-@synthesize userImageView, complainTitleLabel, complainDescriptionLabel, complainStatusLabel;
+@synthesize userImageView, userNameLabel, complainDescriptionLabel, complainStatusLabel;
 
 #pragma mark - Load nib
 - (void)awakeFromNib {
@@ -35,19 +35,11 @@
     //    complainTitleLabel.backgroundColor = [UIColor redColor];
     //
     
-    //UI customisation
-    //        complainTitleLabel.attributedText = [complainTitleLabel.text setAttributrdString:@"John Doe" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:12.0] selectedColor:[UIColor blackColor]];
-    //    set complain image
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:complainList.complainImageString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
-    __weak UIImageView *weakRef = userImageView;
-    [userImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"placeholder.png"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        weakRef.contentMode = UIViewContentModeScaleAspectFill;
-        weakRef.clipsToBounds = YES;
-        weakRef.image = image;
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-    }];
+    //    UI customisation
+    NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] setAttributrdString:complainList.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:12.0] selectedColor:[UIColor blackColor]];
+    userNameLabel.attributedText = nameStr;
+    [userImageView setImageWithURL:[NSURL URLWithString:complainList.complainImageString] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
+    
     userImageView.layer.cornerRadius = userImageView.frame.size.width / 2;
     userImageView.layer.masksToBounds = YES;
     NSString *dateString = complainList.complainTime;
@@ -58,7 +50,6 @@
     [dateFormatter setDateFormat:@"dd-MM-yyyy"];
     NSString *newDateString = [dateFormatter stringFromDate:date];
     _complainTimeLabel.text=newDateString;
-    complainTitleLabel.text=complainList.complainTitle;
     complainDescriptionLabel.text = complainList.complainDescription;
 }
 
@@ -71,7 +62,6 @@
                          context:nil];
     return textHeight;
 }
-
 #pragma mark - end
 
 @end

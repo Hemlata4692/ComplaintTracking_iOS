@@ -68,6 +68,9 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
+    
+    _detailTextView.textColor = [UIColor lightGrayColor];
+    _detailTextView.text = @"To help us attend to your feedback promptly, please add details here";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -88,7 +91,7 @@
 }
 
 - (void)customiseView {
-    [_detailTextView setPlaceholder:@"To help us attend to your feedback promptly, please add details here"];
+    //    [_detailTextView setPlaceholder:@"To help us attend to your feedback promptly, please add details here"];
     [_detailTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
 }
 #pragma mark - end
@@ -97,11 +100,31 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
     [self hidePickerWithAnimation];
+       [textView becomeFirstResponder];
+}
+
+- (BOOL) textViewShouldBeginEditing:(UITextView *)textView1
+{
+    if (_detailTextView.textColor == [UIColor lightGrayColor]) {
+        _detailTextView.text = @"To help us attend to your feedback promptly, please add details here";
+        _detailTextView.textColor = [UIColor colorWithRed:121/255.0 green:121/255.0 blue:121/255.0 alpha:1.0];
+    }
+    
+    return YES;
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     [_detailTextView setSelectedRange:range];
     [_detailTextView scrollRangeToVisible:range];
+    if([text isEqualToString:@"\n"]) {
+        [textView resignFirstResponder];
+        if(textView.text.length == 0){
+            textView.textColor = [UIColor lightGrayColor];
+            textView.text = @"To help us attend to your feedback promptly, please add details here";
+            [textView resignFirstResponder];
+        }
+        return NO;
+    }
     return YES;
 }
 
@@ -115,6 +138,11 @@
         else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 50) {
             _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _locationPickerContainerView.frame.origin.y + _locationPickerContainerView.frame.size.height + 15, _detailTextView.frame.size.width, 50);
         }
+    }
+    if(textView.text.length == 0){
+        textView.textColor = [UIColor lightGrayColor];
+        textView.text = @"To help us attend to your feedback promptly, please add details here";
+        [textView resignFirstResponder];
     }
 }
 #pragma mark - end
@@ -374,8 +402,19 @@
 #pragma mark - Webservices
 //Get complain categories
 - (void)getCategories {
-    [[ComplainService sharedManager] getCategories:^(NSMutableArray *dataArray){
+    [[ComplainService sharedManager] getCategories:YES success:^(NSMutableArray *dataArray){
         categoryArray = dataArray;
+        [_pickerView reloadAllComponents];
+        [self getLocations];
+        //        [myDelegate stopIndicator];
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+    }] ;
+}
+
+- (void)getLocations {
+    [[ComplainService sharedManager] getCategories:NO success:^(NSMutableArray *dataArray){
+        locationArray = dataArray;
         [_pickerView reloadAllComponents];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
@@ -400,16 +439,16 @@
 
 //Add complaint
 - (void)addComplaint {
-    [[ComplainService sharedManager] addComplait:@"" complainDescription:_detailTextView.text categoryId:selectedCategoryId complainId:@"" imageNameArray:imagesNameArray success:^(id responseObject) {
+    [[ComplainService sharedManager] addComplait:_detailTextView.text categoryId:selectedCategoryId imageNameArray:imagesNameArray PropertyLocationId:selectedLocationId success:^(id responseObject) {
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"Ok" actionBlock:^(void) {
             if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
-                //                myDelegate.isMyComplaintScreen = YES;
                 myDelegate.screenName = @"myFeedback";
+                myDelegate.selectedMenuIndex = 2;
             } else {
-                //                myDelegate.isMyComplaintScreen = NO;
                 myDelegate.screenName = @"dashboard";
+                myDelegate.selectedMenuIndex = 0;
             }
             [self.navigationController popViewControllerAnimated:YES];
         }];

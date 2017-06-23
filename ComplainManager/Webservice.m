@@ -166,6 +166,7 @@
     [UserDefaultManager removeValue:@"isFirsttime"];
     [UserDefaultManager removeValue:@"role"];
     [UserDefaultManager removeValue:@"email"];
+    [UserDefaultManager removeValue:@"propertyId"];
     myDelegate.screenName= @"dashboard";
     myDelegate.selectedMenuIndex = 0;
 }

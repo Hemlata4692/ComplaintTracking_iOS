@@ -110,18 +110,19 @@
     ProfileImgView.contentMode = UIViewContentModeScaleAspectFill;
     ProfileImgView.clipsToBounds = YES;
     ProfileImgView.backgroundColor=[UIColor whiteColor];
-    // profile image url
-    __weak UIImageView *weakRef = ProfileImgView;
-    NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
-    [ProfileImgView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"sideBarPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        weakRef.contentMode = UIViewContentModeScaleAspectFill;
-        weakRef.clipsToBounds = YES;
-        weakRef.image = image;
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-    }];
+//    // profile image url
+//    __weak UIImageView *weakRef = ProfileImgView;
+//    NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
+//    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
+//                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
+//                                              timeoutInterval:60];
+//    [ProfileImgView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+//        weakRef.contentMode = UIViewContentModeScaleAspectFill;
+//        weakRef.clipsToBounds = YES;
+//        weakRef.image = image;
+//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+//    }];
+    [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
     ProfileImgView.layer.cornerRadius = ProfileImgView.frame.size.width / 2;
     ProfileImgView.layer.masksToBounds = YES;
     //Name label
@@ -132,7 +133,7 @@
     
     if (textRect.size.height < 40){
         nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 15, tableView.bounds.size.width - 10, textRect.size.height+1)];
-        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +10, tableView.bounds.size.width - 10, nameHeight)];
+        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height + 1, tableView.bounds.size.width - 10, nameHeight)];
     }
     else {
         nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 5, tableView.bounds.size.width - 10, textRect.size.height+1)];
@@ -168,7 +169,9 @@
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    myDelegate.selectedMenuIndex = indexPath.row;
+    if (indexPath.row != (menuItems.count-1)) {
+        myDelegate.selectedMenuIndex = indexPath.row;
+    }
     if (indexPath.row == 0) {
         myDelegate.screenName = @"dashboard";
     }
@@ -216,6 +219,7 @@
     [UserDefaultManager removeValue:@"isFirsttime"];
     [UserDefaultManager removeValue:@"role"];
     [UserDefaultManager removeValue:@"email"];
+    [UserDefaultManager removeValue:@"propertyId"];
     myDelegate.screenName= @"dashboard";
     myDelegate.selectedMenuIndex = 0;
 }

@@ -10,8 +10,8 @@
 #import "ComplainListDataModel.h"
 @interface ComplainListingCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
-@property (weak, nonatomic) IBOutlet UILabel *complainTitleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complainDescriptionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complainTimeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complainStatusLabel;
