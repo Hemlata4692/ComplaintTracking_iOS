@@ -15,7 +15,7 @@
 #define kUrlRegister                    @"register"
 #define kUrlChangePassword              @"ChangePassword"
 #define kUrlTenantsList                 @"GetTenantsDetails"
-#define kUrlGetProfile                  @"GetProfile"
+#define kUrlGetProfile                  @"ViewProfile"
 #define kUrlDeviceToken                 @"SendNotification"
 
 @implementation UserService
@@ -144,15 +144,15 @@
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"Profile response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
-            NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
-            NSMutableArray *dataArray = [NSMutableArray new];
-            for (int i =0; i<infoArray.count; i++) {
-                ProfileDataModel *dataModel = [[ProfileDataModel alloc]init];
-//                NSDictionary * dict =[infoArray objectAtIndex:i];
-                dataModel.info =[infoArray objectAtIndex:i];
-                [dataArray addObject:dataModel];
-            }
-            success(dataArray);
+//            NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
+//            NSMutableArray *dataArray = [NSMutableArray new];
+//            for (int i =0; i<infoArray.count; i++) {
+//                ProfileDataModel *dataModel = [[ProfileDataModel alloc]init];
+////                NSDictionary * dict =[infoArray objectAtIndex:i];
+//                dataModel.info =[infoArray objectAtIndex:i];
+//                [dataArray addObject:dataModel];
+//            }
+            success(responseObject);
         }
         else {
             [myDelegate stopIndicator];

@@ -27,6 +27,7 @@
 
 //@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *titleTextView;
 //@property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *detailLabel;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *detailTextView;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UITextField *categoryTextField;
@@ -68,9 +69,6 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
-    
-    _detailTextView.textColor = [UIColor lightGrayColor];
-    _detailTextView.text = @"To help us attend to your feedback promptly, please add details here";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -91,7 +89,7 @@
 }
 
 - (void)customiseView {
-    //    [_detailTextView setPlaceholder:@"To help us attend to your feedback promptly, please add details here"];
+        [_detailTextView setPlaceholder:@"To help us attend to your feedback promptly, please add details here"];
     [_detailTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
 }
 #pragma mark - end
@@ -103,46 +101,16 @@
        [textView becomeFirstResponder];
 }
 
-- (BOOL) textViewShouldBeginEditing:(UITextView *)textView1
-{
-    if (_detailTextView.textColor == [UIColor lightGrayColor]) {
-        _detailTextView.text = @"To help us attend to your feedback promptly, please add details here";
-        _detailTextView.textColor = [UIColor colorWithRed:121/255.0 green:121/255.0 blue:121/255.0 alpha:1.0];
-    }
-    
-    return YES;
-}
-
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    [_detailTextView setSelectedRange:range];
-    [_detailTextView scrollRangeToVisible:range];
-    if([text isEqualToString:@"\n"]) {
-        [textView resignFirstResponder];
-        if(textView.text.length == 0){
-            textView.textColor = [UIColor lightGrayColor];
-            textView.text = @"To help us attend to your feedback promptly, please add details here";
-            [textView resignFirstResponder];
-        }
-        return NO;
-    }
-    return YES;
-}
-
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _detailTextView) {
         _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
         if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 120) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 50)) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_locationPickerContainerView.frame.origin.y + _locationPickerContainerView.frame.size.height + 15, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
             [self setViewFrames];
         }
         else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 50) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _locationPickerContainerView.frame.origin.y + _locationPickerContainerView.frame.size.height + 15, _detailTextView.frame.size.width, 50);
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 50);
         }
-    }
-    if(textView.text.length == 0){
-        textView.textColor = [UIColor lightGrayColor];
-        textView.text = @"To help us attend to your feedback promptly, please add details here";
-        [textView resignFirstResponder];
     }
 }
 #pragma mark - end

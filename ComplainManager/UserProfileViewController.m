@@ -9,8 +9,13 @@
 #import "UserProfileViewController.h"
 #import "ProfileDataModel.h"
 #import "ProfileTableCell.h"
+#import "UserService.h"
 
 @interface UserProfileViewController ()
+{
+    NSDictionary *userData;
+    NSArray *infoDetailArray;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userName;
@@ -25,6 +30,8 @@
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
+    userData = [[NSDictionary alloc]init];
+    infoDetailArray = [[NSArray alloc]init];
     if (isTenantDetailScreen) {
         self.navigationItem.title=@"Tenant Details";
         _editProfileButton.hidden = YES;
@@ -35,6 +42,8 @@
         [self addMenuButton];
     }
     [self viewCustomisation];
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getProfileDetail) withObject:nil afterDelay:.1];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -48,6 +57,7 @@
     _profileImageView.layer.cornerRadius = _profileImageView.frame.size.width / 2;
     _profileImageView.layer.masksToBounds = YES;
     [self setProfileData];
+    [_editProfileButton addShadow:_editProfileButton color:[UIColor grayColor]];
 }
 #pragma mark - end
 
@@ -64,7 +74,7 @@
     }];
     _profileImageView.layer.cornerRadius = _profileImageView.frame.size.width / 2;
     _profileImageView.layer.masksToBounds = YES;
-    [_profileImageView setViewBorder:_profileImageView color:[UIColor whiteColor]];
+    [_profileImageView setImageViewBorder:_profileImageView color:[UIColor whiteColor]];
     _userName.text = [UserDefaultManager getValue:@"name"];
 }
 #pragma mark - end
@@ -78,7 +88,14 @@
 
 #pragma mark - Table view methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 8;
+    if (userData.count > 1) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+            return 8;
+        } else {
+            return 7;
+        }
+    }
+    return NO;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -87,12 +104,44 @@
     if (profileCell == nil) {
         profileCell = [[ProfileTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
-    if([[UIScreen mainScreen] bounds].size.height>568) {
-        _profileTableView.scrollEnabled = NO;
-    }
+    //    if([[UIScreen mainScreen] bounds].size.height>568) {
+    //        _profileTableView.scrollEnabled = NO;
+    //    }
     // Display data on cells
-    [profileCell displayProfileData:indexPath.row];
+    [profileCell displayProfileData:indexPath.row userData:userData infoString:[infoDetailArray objectAtIndex:indexPath.row]];
     return profileCell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGRect textRect;
+    NSString * titleTextStr = [infoDetailArray objectAtIndex:indexPath.row];
+    CGSize size;
+    size = CGSizeMake(_profileTableView.frame.size.width-20,150);
+    textRect=[self setDynamicHeight:size textString:titleTextStr];
+    return 35+textRect.size.height;
+}
+
+#pragma mark - Set dynamic height
+-(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+    CGRect textHeight = [textString
+                         boundingRectWithSize:rectSize
+                         options:NSStringDrawingUsesLineFragmentOrigin
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:15]}
+                         context:nil];
+    return textHeight;
+}
+#pragma mark - end
+
+#pragma mark - Web services
+- (void)getProfileDetail {
+    [[UserService sharedManager] getProfileDetail:^(id responseObject){
+        userData = [responseObject objectForKey:@"data"];
+        infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"contactNumber"],[userData objectForKey:@"email"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];
+        [_profileTableView reloadData];
+        [myDelegate stopIndicator];
+    } failure:^(NSError *error) {
+        
+    }] ;
 }
 #pragma mark - end
 

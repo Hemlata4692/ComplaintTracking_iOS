@@ -78,6 +78,7 @@
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
         _addComplaintButton.hidden= YES;
     }
+    [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
 }
 #pragma mark - end
 

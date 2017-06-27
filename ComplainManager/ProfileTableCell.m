@@ -25,14 +25,33 @@
 #pragma mark - end
 
 #pragma mark - Display data
-- (void)displayProfileData:(long)index {
-    NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
-    NSArray *infoDetailArray = [NSArray arrayWithObjects:[UserDefaultManager getValue:@"contactNumber"],[UserDefaultManager getValue:@"email"],@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"", nil];
+- (void)displayProfileData:(long)index userData:(NSDictionary *)userData infoString:(NSString *)infoString {
+    NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number",@"MCST Council Member", nil];
+    NSString * titleTextStr = infoString;
+    CGRect textRect;
+    CGSize size;
+    infoDetailLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,150);
+    textRect=[self setDynamicHeight:size textString:titleTextStr];
+    infoDetailLabel.numberOfLines = 0;
+    infoDetailLabel.frame =CGRectMake(10, infoLabel.frame.origin.y + infoLabel.frame.size.height+2, [[UIScreen mainScreen] bounds].size.width - 20, textRect.size.height+5);
+    infoDetailLabel.text=titleTextStr;
     infoLabel.text = [infoArray objectAtIndex:index];
-    infoDetailLabel.text = [infoDetailArray objectAtIndex:index];
+    infoDetailLabel.text = infoString;
     if (index == 6) {
         infoDetailLabel.alpha = 0.5;
     }
+}
+#pragma mark - end
+
+#pragma mark - Set dynamic height
+-(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+    CGRect textHeight = [textString
+                         boundingRectWithSize:rectSize
+                         options:NSStringDrawingUsesLineFragmentOrigin
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:15]}
+                         context:nil];
+    return textHeight;
 }
 #pragma mark - end
 

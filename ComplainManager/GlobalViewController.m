@@ -35,7 +35,6 @@
 
 #pragma mark - Add back button
 - (void)addBackButton {
-    //    CGRect framing = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
     CGRect framing = CGRectMake(0, 0, 20, 20);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
     [button setBackgroundImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
@@ -53,9 +52,10 @@
 
 #pragma mark - Add menu button
 - (void)addMenuButton {
-    CGRect framing = CGRectMake(0, 0, 20, 20);
+    CGRect framing = CGRectMake(0, 0, 30, 30);
     UIButton *button = [[UIButton alloc] initWithFrame:framing];
-    [button setBackgroundImage:[UIImage imageNamed:@"menu.png"] forState:UIControlStateNormal];
+    [button setImage:[UIImage imageNamed:@"menu.png"] forState:UIControlStateNormal];
+    [button setContentMode:UIViewContentModeCenter];
     [button setContentMode:UIViewContentModeScaleAspectFit];
     menuButton =[[UIBarButtonItem alloc] initWithCustomView:button];
     self.navigationItem.leftBarButtonItem = menuButton;

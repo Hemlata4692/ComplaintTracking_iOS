@@ -47,7 +47,7 @@
     }
     else {
         self.backgroundColor= [UIColor whiteColor];
-        label.textColor = [UIColor colorWithRed:121/255.0 green:121/255.0 blue:121/255.0 alpha:1.0];
+        label.textColor = [UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:1.0];
         if ([label.text isEqualToString:@"Dashboard"]) {
             dashboardIcon.image = [UIImage imageNamed:@"dashboardIcon"];
         } else if ([label.text isEqualToString:@"My Profile"]) {

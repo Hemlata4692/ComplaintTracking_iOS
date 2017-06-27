@@ -31,6 +31,13 @@
     view.layer.borderColor =[UIColor colorWithRed:206/255.0 green:206/255.0 blue:206/255.0 alpha:1.0].CGColor;
     view.layer.borderWidth = 1.5f;
 }
+
+//Set view border
+- (void)setImageViewBorder: (UIView *)view  color:(UIColor *)color {
+    view.layer.borderColor =color.CGColor;
+    view.layer.borderWidth = 2.0f;
+}
+
 //Set label border
 - (void)setLabelBorder: (UIView *)view  color:(UIColor *)color {
     view.layer.borderColor =color.CGColor;

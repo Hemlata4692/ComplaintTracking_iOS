@@ -134,14 +134,14 @@
         [UserDefaultManager setValue:[data objectForKey:@"AuthenticationToken"] key:@"AuthenticationToken"];
         [UserDefaultManager setValue:[data objectForKey:@"propertyId"] key:@"propertyId"];
         [UserDefaultManager setValue:[data objectForKey:@"RoleId"] key:@"RoleId"];
-
+        
         //Set user roles
         if ([[data objectForKey:@"RoleId"] intValue] == 6 ) {
             [UserDefaultManager setValue:@"t" key:@"role"];
         } else  if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
             [UserDefaultManager setValue:@"cm" key:@"role"];
         } else  if ([[data objectForKey:@"RoleId"] intValue] == 4 ) {
-            if ([[data objectForKey:@"IsBuildingManager"] isEqualToString:@"1"]) {
+            if ([[NSString stringWithFormat:@"%@",[data objectForKey:@"IsBuildingManager"]] isEqualToString:@"1"]) {
                 [UserDefaultManager setValue:@"bm" key:@"role"];
             } else {
                 [UserDefaultManager setValue:@"ic" key:@"role"];

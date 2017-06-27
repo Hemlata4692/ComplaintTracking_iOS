@@ -12,6 +12,7 @@
 - (void)setCornerRadius:(CGFloat)radius;
 - (void)setTextBorder:(UITextField *)textField color:(UIColor *)color;
 - (void)setViewBorder: (UIView *)view color:(UIColor *)color;
+- (void)setImageViewBorder: (UIView *)view  color:(UIColor *)color;
 - (void)setTextViewBorder:(UITextView *)textView color:(UIColor *)color;
 - (void)setBottomBorder: (UIView *)view;
 - (void)addShadow: (UIView *)view color:(UIColor *)color;
