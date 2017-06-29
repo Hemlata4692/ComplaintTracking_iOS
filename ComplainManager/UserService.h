@@ -24,7 +24,7 @@
 //end
 
 //Edit user profile
-- (void)editProfile:(NSString *)name email:(NSString *)email address:(NSString *)address mobileNumber:(NSString *)mobileNumber unitNo:(NSString *)unitNo company:(NSString *)company property:(NSString *)property mcstNumber:(NSString *)mcstNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+- (void)editProfile:(NSString *)name address:(NSString *)address mobileNumber:(NSString *)mobileNumber image:(NSString *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
 //Change password

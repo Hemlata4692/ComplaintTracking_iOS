@@ -16,7 +16,6 @@
 @interface AppDelegate () {
     UIView *loaderView;
     UIImageView *logoImage;
-    NSString *deviceToken;
 }
 
 @property (nonatomic, strong) MMMaterialDesignSpinner *spinnerView;
@@ -24,7 +23,7 @@
 @end
 
 @implementation AppDelegate
-@synthesize navigationController,screenName;
+@synthesize navigationController,screenName,deviceToken;
 
 #pragma mark - Global indicator view
 - (void)showIndicator {
@@ -96,12 +95,11 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
-//    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
-//    [alert show];
-//        [self sendDeviceToken];
-
-
+    //    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    //    [alert show];
+    //        [self sendDeviceToken];
 }
+
 - (void)sendDeviceToken {
     [[UserService sharedManager] setDeviceToken:deviceToken success:^(id responseObject){
         [myDelegate stopIndicator];
@@ -109,7 +107,6 @@
     } failure:^(NSError *error) {
         
     }] ;
-    
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
@@ -133,7 +130,7 @@
     deviceToken = @"";
     [self registerForRemoteNotification];
     //Call crashlytics method
-//    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
+    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
     //Check internet connectivity
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     //Navigation to view

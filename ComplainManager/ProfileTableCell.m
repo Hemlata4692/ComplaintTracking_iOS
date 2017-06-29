@@ -26,7 +26,16 @@
 
 #pragma mark - Display data
 - (void)displayProfileData:(long)index userData:(NSDictionary *)userData infoString:(NSString *)infoString {
-    NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number",@"MCST Council Member", nil];
+    NSArray *infoArray;
+    if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+            infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number",@"MCST Council Member", nil];
+        } else {
+            infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number", nil];
+        }
+    } else {
+        infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Property",@"MCST Number", nil];
+    }
     NSString * titleTextStr = infoString;
     CGRect textRect;
     CGSize size;
@@ -38,9 +47,6 @@
     infoDetailLabel.text=titleTextStr;
     infoLabel.text = [infoArray objectAtIndex:index];
     infoDetailLabel.text = infoString;
-    if (index == 6) {
-        infoDetailLabel.alpha = 0.5;
-    }
 }
 #pragma mark - end
 

@@ -25,8 +25,6 @@
     BOOL isCategoryPicker;
 }
 
-//@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *titleTextView;
-//@property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailLabel;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *detailTextView;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
@@ -41,6 +39,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *categorySeparatorLabel;
 @property (weak, nonatomic) IBOutlet UIView *locationPickerContainerView;
 @property (weak, nonatomic) IBOutlet UILabel *locationSeaparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *detailNotesLabel;
 
 @end
 
@@ -69,6 +68,7 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
+    _detailTextView.textContainerInset = UIEdgeInsetsZero;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -81,16 +81,18 @@
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _pickerView.translatesAutoresizingMaskIntoConstraints = YES;
     _toolBar.translatesAutoresizingMaskIntoConstraints = YES;
+    _detailNotesLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _addComplainCollectionView.translatesAutoresizingMaskIntoConstraints = YES;
     _registerButton.translatesAutoresizingMaskIntoConstraints = YES;
-    _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height-1, self.view.frame.size.width - 20, 1);
-    _addComplainCollectionView.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
+    _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
+    _detailNotesLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, _detailNotesLabel.frame.size.height);
+    _addComplainCollectionView.frame = CGRectMake(10, _detailNotesLabel.frame.origin.y +_detailNotesLabel.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
     _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+20, self.view.frame.size.width - 60, _registerButton.frame.size.height);
 }
 
 - (void)customiseView {
-        [_detailTextView setPlaceholder:@"To help us attend to your feedback promptly, please add details here"];
-    [_detailTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
+    [_detailTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:16.0]];
+    [_registerButton setCornerRadius:2];
 }
 #pragma mark - end
 
@@ -98,20 +100,26 @@
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
     [self hidePickerWithAnimation];
-       [textView becomeFirstResponder];
+    [textView becomeFirstResponder];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _detailTextView) {
         _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 120) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 50)) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 100) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 25)) {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+            _detailTextView.textContainerInset = UIEdgeInsetsZero;
             [self setViewFrames];
         }
-        else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 50) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 50);
+        else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 25) {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, 25);
+            _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
         }
     }
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView{
+    [textView layoutIfNeeded];
 }
 #pragma mark - end
 
@@ -258,6 +266,7 @@
 
 - (IBAction)showPickerAction:(id)sender {
     [_keyboardControls.activeField resignFirstResponder];
+    [_pickerView reloadAllComponents];
     if ([sender tag] == 1) {
         isCategoryPicker = false;
     } else {
@@ -273,13 +282,17 @@
 - (IBAction)pickerDoneAction:(id)sender {
     NSInteger index = [_pickerView selectedRowInComponent:0];
     if (isCategoryPicker) {
-        complainModel=[categoryArray objectAtIndex:index];
-        _categoryTextField.text=complainModel.categoryName;
-        selectedCategoryId=complainModel.categoryId;
+        if (categoryArray.count >= 1) {
+            complainModel=[categoryArray objectAtIndex:index];
+            _categoryTextField.text=complainModel.categoryName;
+            selectedCategoryId=complainModel.categoryId;
+        }
     } else {
-        complainModel=[locationArray objectAtIndex:index];
-        _locationTextField.text=complainModel.locationName;
-        selectedLocationId=complainModel.locationId;
+        if (locationArray.count >= 1) {
+            complainModel=[locationArray objectAtIndex:index];
+            _locationTextField.text=complainModel.locationName;
+            selectedLocationId=complainModel.locationId;
+        }
     }
     [self hidePickerWithAnimation];
 }
@@ -295,11 +308,15 @@
         pickerLabel.textAlignment=NSTextAlignmentCenter;
     }
     if (isCategoryPicker) {
-        complainModel=[categoryArray objectAtIndex:row];
-        pickerLabel.text=complainModel.categoryName;
+        if (categoryArray.count >= 1) {
+            complainModel=[categoryArray objectAtIndex:row];
+            pickerLabel.text=complainModel.categoryName;
+        }
     } else {
-        complainModel=[locationArray objectAtIndex:row];
-        pickerLabel.text=complainModel.locationName;
+        if (locationArray.count >= 1) {
+            complainModel=[locationArray objectAtIndex:row];
+            pickerLabel.text=complainModel.locationName;
+        }
     }
     return pickerLabel;
 }
@@ -372,7 +389,6 @@
 - (void)getCategories {
     [[ComplainService sharedManager] getCategories:YES success:^(NSMutableArray *dataArray){
         categoryArray = dataArray;
-        [_pickerView reloadAllComponents];
         [self getLocations];
         //        [myDelegate stopIndicator];
     } failure:^(NSError *error) {
@@ -383,7 +399,6 @@
 - (void)getLocations {
     [[ComplainService sharedManager] getCategories:NO success:^(NSMutableArray *dataArray){
         locationArray = dataArray;
-        [_pickerView reloadAllComponents];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];

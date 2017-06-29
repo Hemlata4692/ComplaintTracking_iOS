@@ -87,7 +87,7 @@
 - (BOOL)performValidationsForLogin{
     if ([_emailTextField isEmpty] || [_passwordTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] init];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email and password." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     } else if (![_emailTextField isValidEmail]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];

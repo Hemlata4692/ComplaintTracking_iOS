@@ -42,8 +42,11 @@
         }
     }
     //If user role is MCST building manager and MCST In charger
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
         menuItems = @[@"Dashboard", @"My Profile", @"My Feedback",@"Property Feedback", @"Change Password", @"Logout"];
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
     }
     //If user role is council member
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
@@ -110,18 +113,6 @@
     ProfileImgView.contentMode = UIViewContentModeScaleAspectFill;
     ProfileImgView.clipsToBounds = YES;
     ProfileImgView.backgroundColor=[UIColor whiteColor];
-//    // profile image url
-//    __weak UIImageView *weakRef = ProfileImgView;
-//    NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
-//    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
-//                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-//                                              timeoutInterval:60];
-//    [ProfileImgView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-//        weakRef.contentMode = UIViewContentModeScaleAspectFill;
-//        weakRef.clipsToBounds = YES;
-//        weakRef.image = image;
-//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-//    }];
     [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
     ProfileImgView.layer.cornerRadius = ProfileImgView.frame.size.width / 2;
     ProfileImgView.layer.masksToBounds = YES;
@@ -175,22 +166,32 @@
     if (indexPath.row == 0) {
         myDelegate.screenName = @"dashboard";
     }
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
         if (indexPath.row == 2) {
-            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-                myDelegate.screenName = @"propertyFeedback";
-            } else  {
-                myDelegate.screenName = @"myFeedback";
-            }
-        } else if (indexPath.row == 3) {
-            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
-                myDelegate.screenName = @"propertyFeedback";
-            }
+            myDelegate.screenName = @"myFeedback";
+        }
+        else if (indexPath.row == 3) {
+            myDelegate.screenName = @"propertyFeedback";
         }
         else if (indexPath.row == 5) {
             [self logoutUser];
         }
-    } else {
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if (indexPath.row == 2) {
+            myDelegate.screenName = @"propertyFeedback";
+        }
+        else if (indexPath.row == 5) {
+            [self logoutUser];
+        }
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        if (indexPath.row == 2) {
+            myDelegate.screenName = @"myFeedback";
+        } else if (indexPath.row == 4) {
+            [self logoutUser];
+        }
+    }
+    else {
         if (indexPath.row == 3) {
             [self logoutUser];
         }
@@ -207,7 +208,7 @@
         myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
         myDelegate.window.rootViewController = myDelegate.navigationController;
     }];
-    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout" closeButtonTitle:@"No" duration:0.0f];
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout?" closeButtonTitle:@"No" duration:0.0f];
 }
 
 //Remove default values
@@ -228,16 +229,23 @@
 
 #pragma mark - Segue method
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    NSLog(@"tag = %ld",(long)[sender tag]);
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]){
+        if ([sender tag] == 4){
+            [self.view makeToast:@"This feature will be available in Milestone 2."];
+            return NO;
+        }
+    }
     //If first time user clicks other tabs
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3 ||[sender tag] == 4){
-                [self.view makeToast:@"Please login."];
+                [self.view makeToast:@"Please change the password before entering into other fields."];
                 return NO;
             }
         } else {
             if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2){
-                [self.view makeToast:@"Please login."];
+                [self.view makeToast:@"Please change the password before entering into other fields."];
                 return NO;
             }
         }

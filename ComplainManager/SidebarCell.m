@@ -10,6 +10,7 @@
 
 @implementation SidebarCell
 @synthesize dashboardIcon,myProfileIcon,propertyIcon,tenantsIcon,changePasswordIcon,logoutIcon;
+#pragma mark - Load nib
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
@@ -19,6 +20,9 @@
     [super setSelected:selected animated:animated];
     // Configure the view for the selected state
 }
+#pragma mark - end
+
+#pragma mark - Display cell data
 - (void)displayCellData:(NSArray *)menuItems index:(int)index {
     //Side bar customisation - chage selected cell backround color
     CGSize size = self.bounds.size;
@@ -65,5 +69,5 @@
         }
     }
 }
-
+#pragma mark - end
 @end

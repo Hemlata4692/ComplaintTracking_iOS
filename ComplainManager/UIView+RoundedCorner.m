@@ -65,5 +65,20 @@
     [view.layer setShadowRadius:3.0f];
     [view.layer setShouldRasterize:YES];
 }
+
+- (void)addShadowWithCornerRadius: (UIView *)_myView color:(UIColor *)color borderColor:(UIColor *)borderColor radius:(CGFloat)radius {
+    [_myView.layer setCornerRadius:radius];
+    
+    // border
+    [_myView.layer setBorderColor:borderColor.CGColor];
+    [_myView.layer setBorderWidth:1.5f];
+    
+    // drop shadow
+    [_myView.layer setShadowColor:color.CGColor];
+    [_myView.layer setShadowOpacity:0.8];
+    [_myView.layer setShadowRadius:3.0];
+    [_myView.layer setShadowOffset:CGSizeMake(1.0, 1.0)];
+}
+
 #pragma mark - end
 @end

@@ -10,6 +10,7 @@
 #import "ProfileDataModel.h"
 #import "ProfileTableCell.h"
 #import "UserService.h"
+#import "EditProfileViewController.h"
 
 @interface UserProfileViewController ()
 {
@@ -32,6 +33,10 @@
     [super viewDidLoad];
     userData = [[NSDictionary alloc]init];
     infoDetailArray = [[NSArray alloc]init];
+}
+
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:YES];
     if (isTenantDetailScreen) {
         self.navigationItem.title=@"Tenant Details";
         _editProfileButton.hidden = YES;
@@ -40,10 +45,10 @@
         self.navigationItem.title=@"My Profile";
         _editProfileButton.hidden = NO;
         [self addMenuButton];
+        [myDelegate showIndicator];
+        [self performSelector:@selector(getProfileDetail) withObject:nil afterDelay:.1];
     }
     [self viewCustomisation];
-    [myDelegate showIndicator];
-    [self performSelector:@selector(getProfileDetail) withObject:nil afterDelay:.1];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -81,32 +86,26 @@
 
 #pragma mark - IBActions
 - (IBAction)editProfileAction:(id)sender {
-    UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"EditProfileViewController"];
-    [self.navigationController pushViewController:complainDetail animated:YES];
+    EditProfileViewController * editProfile = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"EditProfileViewController"];
+    editProfile.userData = userData;
+    [self.navigationController pushViewController:editProfile animated:YES];
 }
 #pragma mark - end
 
 #pragma mark - Table view methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (userData.count > 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-            return 8;
-        } else {
-            return 7;
-        }
+        return  infoDetailArray.count;
+    } else {
+        return 0;
     }
-    return NO;
 }
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *simpleTableIdentifier = @"ProfileCell";
     ProfileTableCell *profileCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
     if (profileCell == nil) {
         profileCell = [[ProfileTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
-    //    if([[UIScreen mainScreen] bounds].size.height>568) {
-    //        _profileTableView.scrollEnabled = NO;
-    //    }
     // Display data on cells
     [profileCell displayProfileData:indexPath.row userData:userData infoString:[infoDetailArray objectAtIndex:indexPath.row]];
     return profileCell;
@@ -120,6 +119,7 @@
     textRect=[self setDynamicHeight:size textString:titleTextStr];
     return 35+textRect.size.height;
 }
+#pragma mark - end
 
 #pragma mark - Set dynamic height
 -(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
@@ -136,7 +136,18 @@
 - (void)getProfileDetail {
     [[UserService sharedManager] getProfileDetail:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
-        infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"contactNumber"],[userData objectForKey:@"email"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];
+        [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
+        [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
+        [self setProfileData];
+        if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
+            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"contactNumber"],[userData objectForKey:@"email"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];
+            } else {
+                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"contactNumber"],[userData objectForKey:@"email"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
+            }
+        } else {
+            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"contactNumber"],[userData objectForKey:@"email"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
+        }
         [_profileTableView reloadData];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {

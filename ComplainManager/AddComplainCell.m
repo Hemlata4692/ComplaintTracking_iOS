@@ -11,6 +11,7 @@
 @implementation AddComplainCell
 @synthesize complainImageView,deleteImageButton;
 
+#pragma mark - Load nib
 - (void)displayData:(long)index data:(NSMutableArray *)imageArray isAddComplainScreen:(bool)isAddComplainScreen {
     if (isAddComplainScreen) {
         complainImageView.image = [imageArray objectAtIndex:index];
@@ -33,5 +34,5 @@
         }
     }
 }
-
+#pragma mark - end
 @end

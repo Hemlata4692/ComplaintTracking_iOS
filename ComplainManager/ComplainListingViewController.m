@@ -111,16 +111,31 @@
         ComplainListDataModel *data=[complainListArray objectAtIndex:i];
         if (buttonTag == 0) {
             if ([data.complainStatus isEqualToString:@"Pending"]) {
+                _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
+            } else {
+                _noComplaintsLabel.hidden = NO;
+                _noComplaintsLabel.text = @"No feedback pending.";
             }
         } else if (buttonTag == 2) {
             if ([data.complainStatus isEqualToString:@"Complete"]) {
+                _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }
+            else {
+                _noComplaintsLabel.hidden = NO;
+                _noComplaintsLabel.text = @"No feedback is completed yet.";
+            }
+            
         } else if (buttonTag == 1) {
             if ([data.complainStatus isEqualToString:@"In process"]) {
+                _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
+            }  else {
+                _noComplaintsLabel.hidden = NO;
+                _noComplaintsLabel.text = @"No feedback is in progress.";
             }
+            
         }
         [_complainListingTable reloadData];
     }
@@ -130,17 +145,17 @@
     _assignedView.backgroundColor = assignedBackgroundColor;
     _assignedCounterLabel.textColor = assignedTextColor;
     [_assignedButton setTitleColor:assignedTextColor forState:UIControlStateNormal];
-    [_assignedView addShadow:_assignedView color:[UIColor lightGrayColor]];
+    [_assignedView addShadowWithCornerRadius:_assignedView color:[UIColor lightGrayColor] borderColor:[UIColor clearColor] radius:2.0];
     //Progress UI
     _progressView.backgroundColor = progressBackgroundColor;
     _progressCounterLabel.textColor = progressTextColor;
     [_progressButton setTitleColor:progressTextColor forState:UIControlStateNormal];
-    [_progressView addShadow:_progressView color:[UIColor lightGrayColor]];
+    [_progressView addShadowWithCornerRadius:_progressView color:[UIColor lightGrayColor] borderColor:[UIColor clearColor] radius:2.0];
     //Complete UI
     _completeView.backgroundColor = complteBackgroundColor;
     _completeProgressLabel.textColor = completeTextColor;
     [_completeButton setTitleColor:completeTextColor forState:UIControlStateNormal];
-    [_completeView addShadow:_completeView color:[UIColor lightGrayColor]];
+    [_completeView addShadowWithCornerRadius:_completeView color:[UIColor lightGrayColor] borderColor:[UIColor clearColor] radius:2.0];
 }
 #pragma mark - end
 
@@ -209,10 +224,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
-    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
-    complainDetail.complainId = data.complainId;
-    [self.navigationController pushViewController:complainDetail animated:YES];
+    //    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    //    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
+    //    complainDetail.complainId = data.complainId;
+    //    [self.navigationController pushViewController:complainDetail animated:YES];
 }
 #pragma mark - end
 
@@ -222,7 +237,10 @@
     NSString *previousScreen;
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         previousScreen = @"MYCOMPLAIN";
-    } else {
+    } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
+        previousScreen = @"PROPERTYFEEDBACK";
+    }
+    else {
         previousScreen = @"DASHBOARD";
     }
     [[ComplainService sharedManager] getComplainListing:previousScreen success:^(NSMutableArray *dataArray){

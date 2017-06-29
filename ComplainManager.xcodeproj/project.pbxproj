@@ -10,7 +10,6 @@
 		1788E5AF008AF0001CABD06F /* libPods-ComplainManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9679971C0780180C9C56DF99 /* libPods-ComplainManager.a */; };
 		5D3DA8221ED7F14A00AD0435 /* AddComplainModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8211ED7F14A00AD0435 /* AddComplainModel.m */; };
 		5D3DA8251ED824E600AD0435 /* ComplaintDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8241ED824E600AD0435 /* ComplaintDetailViewController.m */; };
-		5D3DA82A1ED84F6500AD0435 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8291ED84F6500AD0435 /* Base64.m */; };
 		5D47F5E41EFBF30100E20697 /* SidebarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D47F5E31EFBF30100E20697 /* SidebarCell.m */; };
 		5D4E1C021ED2EE44008B68F4 /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4E1C011ED2EE44008B68F4 /* UIView+Toast.m */; };
 		5D4E1C0E1ED30687008B68F4 /* ComplainDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4E1C0D1ED30687008B68F4 /* ComplainDetailCell.m */; };
@@ -43,8 +42,6 @@
 		5DB1689F1ECEB46B00E0A8E2 /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DB1689E1ECEB46B00E0A8E2 /* ChangePasswordViewController.m */; };
 		5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */; };
 		5DBE04A01ECC54DE005EC7A2 /* ComplainListingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DBE049E1ECC54DE005EC7A2 /* ComplainListingCell.m */; };
-		5DBE04A51ECC560B005EC7A2 /* logout.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE04A31ECC560B005EC7A2 /* logout.png */; };
-		5DBE04A61ECC560B005EC7A2 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DBE04A41ECC560B005EC7A2 /* back.png */; };
 		5DC047891EDC146400B31D51 /* EditProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DC047881EDC146400B31D51 /* EditProfileViewController.m */; };
 		5DC0478D1EDC3FD400B31D51 /* CommentsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0478C1EDC3FD400B31D51 /* CommentsModel.m */; };
 		5DCE18571ECC79E900F542BE /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCE18561ECC79E900F542BE /* UserProfileViewController.m */; };
@@ -74,8 +71,6 @@
 		5D3DA8211ED7F14A00AD0435 /* AddComplainModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainModel.m; sourceTree = "<group>"; };
 		5D3DA8231ED824E600AD0435 /* ComplaintDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplaintDetailViewController.h; sourceTree = "<group>"; };
 		5D3DA8241ED824E600AD0435 /* ComplaintDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplaintDetailViewController.m; sourceTree = "<group>"; };
-		5D3DA8281ED84F6500AD0435 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
-		5D3DA8291ED84F6500AD0435 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		5D47F5E21EFBF30100E20697 /* SidebarCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SidebarCell.h; sourceTree = "<group>"; };
 		5D47F5E31EFBF30100E20697 /* SidebarCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SidebarCell.m; sourceTree = "<group>"; };
 		5D4E1C001ED2EE44008B68F4 /* UIView+Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Toast.h"; sourceTree = "<group>"; };
@@ -136,8 +131,6 @@
 		5DBE049C1ECC54DE005EC7A2 /* ComplainListingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainListingViewController.m; sourceTree = "<group>"; };
 		5DBE049D1ECC54DE005EC7A2 /* ComplainListingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainListingCell.h; sourceTree = "<group>"; };
 		5DBE049E1ECC54DE005EC7A2 /* ComplainListingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainListingCell.m; sourceTree = "<group>"; };
-		5DBE04A31ECC560B005EC7A2 /* logout.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logout.png; sourceTree = "<group>"; };
-		5DBE04A41ECC560B005EC7A2 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		5DC047871EDC146400B31D51 /* EditProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditProfileViewController.h; sourceTree = "<group>"; };
 		5DC047881EDC146400B31D51 /* EditProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditProfileViewController.m; sourceTree = "<group>"; };
 		5DC0478B1EDC3FD400B31D51 /* CommentsModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommentsModel.h; sourceTree = "<group>"; };
@@ -215,15 +208,6 @@
 				5D3DA8241ED824E600AD0435 /* ComplaintDetailViewController.m */,
 			);
 			name = ComplaintDetailView;
-			sourceTree = "<group>";
-		};
-		5D3DA8271ED84F5200AD0435 /* Base64File */ = {
-			isa = PBXGroup;
-			children = (
-				5D3DA8281ED84F6500AD0435 /* Base64.h */,
-				5D3DA8291ED84F6500AD0435 /* Base64.m */,
-			);
-			name = Base64File;
 			sourceTree = "<group>";
 		};
 		5D4E1BFF1ED2EE30008B68F4 /* ToastFile */ = {
@@ -477,15 +461,6 @@
 			name = ComplainListingView;
 			sourceTree = "<group>";
 		};
-		5DBE04A71ECC560E005EC7A2 /* OtherImages */ = {
-			isa = PBXGroup;
-			children = (
-				5DBE04A31ECC560B005EC7A2 /* logout.png */,
-				5DBE04A41ECC560B005EC7A2 /* back.png */,
-			);
-			name = OtherImages;
-			sourceTree = "<group>";
-		};
 		5DC047851EDC143D00B31D51 /* MyProfileView */ = {
 			isa = PBXGroup;
 			children = (
@@ -561,7 +536,6 @@
 		5DD3160E1EC5AC80008FF487 /* ComplainManager */ = {
 			isa = PBXGroup;
 			children = (
-				5DBE04A71ECC560E005EC7A2 /* OtherImages */,
 				5DBE04981ECC1F1D005EC7A2 /* ComplainManager.entitlements */,
 				5DD316261EC5AC87008FF487 /* AppDelegate */,
 				5DD316291EC5ACC1008FF487 /* Classes */,
@@ -619,7 +593,6 @@
 		5DD3162C1EC5AD86008FF487 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				5D3DA8271ED84F5200AD0435 /* Base64File */,
 				5D4E1BFF1ED2EE30008B68F4 /* ToastFile */,
 				5D7549821ECC5FDB00A775E4 /* CustomString */,
 				5D8F63951EC9B21800111138 /* AlertView */,
@@ -880,8 +853,6 @@
 				5D8F63B71EC9BADD00111138 /* Roboto-Bold.ttf in Resources */,
 				5D8F63B91EC9BADD00111138 /* Roboto-Light.ttf in Resources */,
 				5D8F63BB1EC9BADD00111138 /* Roboto-Regular.ttf in Resources */,
-				5DBE04A61ECC560B005EC7A2 /* back.png in Resources */,
-				5DBE04A51ECC560B005EC7A2 /* logout.png in Resources */,
 				5DD3161A1EC5AC80008FF487 /* Main.storyboard in Resources */,
 				5D8F63B61EC9BADD00111138 /* Roboto-Black.ttf in Resources */,
 			);
@@ -960,7 +931,6 @@
 				5D8F63A81EC9B22A00111138 /* SCLAlertViewStyleKit.m in Sources */,
 				5D3DA8221ED7F14A00AD0435 /* AddComplainModel.m in Sources */,
 				5D8F63A71EC9B22A00111138 /* SCLAlertViewResponder.m in Sources */,
-				5D3DA82A1ED84F6500AD0435 /* Base64.m in Sources */,
 				5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */,
 				5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */,
 				5DD3165F1EC5AF91008FF487 /* ForgotPasswordViewController.m in Sources */,

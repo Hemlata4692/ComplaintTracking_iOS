@@ -19,7 +19,7 @@
 #pragma mark - Check email validity
 - (BOOL)isValidEmail {
     //use when "+" is not allowed
-    NSString *emailRegEx = @"(?:[A-Za-z0-9!#$%\\&'*/=?\\^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%\\&'*/=?\\^_`{|}"
+    NSString *emailRegEx = @"(?:[A-Za-z0-9!#$%\\&'*+/=?\\^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%\\&'*+/=?\\^_`{|}"
     @"~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\"
     @"x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[A-Za-z0-9](?:[A-Za-"
     @"z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?|\\[(?:(?:25[0-5"
@@ -40,12 +40,12 @@
 }
 
 - (void)setPlaceholderFontSize : (UITextField *)textfield string:(NSString *)string{
-textfield.attributedPlaceholder =
-[[NSAttributedString alloc] initWithString:string
-                                attributes:@{
-                                             NSFontAttributeName : [UIFont fontWithName:@"OpenSans" size:20.0]
-                                             }
- ];
+    textfield.attributedPlaceholder =
+    [[NSAttributedString alloc] initWithString:string
+                                    attributes:@{
+                                                 NSFontAttributeName : [UIFont fontWithName:@"OpenSans" size:20.0]
+                                                 }
+     ];
 }
 #pragma mark - end
 @end

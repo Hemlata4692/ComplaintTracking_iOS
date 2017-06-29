@@ -17,6 +17,7 @@
 #define kUrlTenantsList                 @"GetTenantsDetails"
 #define kUrlGetProfile                  @"ViewProfile"
 #define kUrlDeviceToken                 @"SendNotification"
+#define kUrlEditProfile                 @"UpdateProfile"
 
 @implementation UserService
 
@@ -41,7 +42,7 @@
 #pragma mark- Login
 //Login
 - (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    NSDictionary *requestDict = @{@"email":email,@"password":password,@"deviceId":@"123456",@"devicetype":@"iOS"};
+    NSDictionary *requestDict = @{@"email":email,@"password":password,@"deviceId":myDelegate.deviceToken,@"devicetype":@"iOS"};
     [[Webservice sharedManager] post:kUrlLogin parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);
@@ -64,6 +65,7 @@
     NSDictionary *requestDict = @{@"email":email};
     [[Webservice sharedManager] post:kUrlForgotPassword parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"responseObject = %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -78,8 +80,23 @@
 #pragma mark- end
 
 #pragma mark- Edit user profile
-- (void)editProfile:(NSString *)name email:(NSString *)email address:(NSString *)address mobileNumber:(NSString *)mobileNumber unitNo:(NSString *)unitNo company:(NSString *)company property:(NSString *)property mcstNumber:(NSString *)mcstNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    
+- (void)editProfile:(NSString *)name address:(NSString *)address mobileNumber:(NSString *)mobileNumber image:(NSString *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"Name":name,@"Phone":mobileNumber, @"AddressBlock":address,@"Image":image};
+    NSLog(@"edit dict = %@",requestDict);
+    [[Webservice sharedManager] post:kUrlEditProfile parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"responseObject = %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+
 }
 #pragma mark- end
 
@@ -144,14 +161,6 @@
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"Profile response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
-//            NSArray *infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Complany",@"Property",@"MCST Number",@"MCST Council Number", nil];
-//            NSMutableArray *dataArray = [NSMutableArray new];
-//            for (int i =0; i<infoArray.count; i++) {
-//                ProfileDataModel *dataModel = [[ProfileDataModel alloc]init];
-////                NSDictionary * dict =[infoArray objectAtIndex:i];
-//                dataModel.info =[infoArray objectAtIndex:i];
-//                [dataArray addObject:dataModel];
-//            }
             success(responseObject);
         }
         else {

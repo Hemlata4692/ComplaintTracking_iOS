@@ -9,10 +9,13 @@
 #import "EditProfileViewController.h"
 #import <AVFoundation/AVFoundation.h>
 #import "UserService.h"
+#import "ComplainService.h"
 
 @interface EditProfileViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,BSKeyboardControlsDelegate,UINavigationControllerDelegate>
 {
     NSArray *textFieldArray;
+    UIImage *userImage;
+    NSString *userImageName;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -21,23 +24,28 @@
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
 @property (weak, nonatomic) IBOutlet UITextField *phoneNumberTextField;
-@property (weak, nonatomic) IBOutlet UITextField *addressTextField;
+@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *addressTextView;
 @property (weak, nonatomic) IBOutlet UITextField *unitNoTextField;
 @property (weak, nonatomic) IBOutlet UITextField *companyTextField;
 @property (weak, nonatomic) IBOutlet UITextField *propertyTextField;
 @property (weak, nonatomic) IBOutlet UITextField *mcstNumberTextField;
 @property (weak, nonatomic) IBOutlet UIButton *signUpButton;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
+@property (weak, nonatomic) IBOutlet UIView *unitContainerView;
+@property (weak, nonatomic) IBOutlet UIView *propertyContainerView;
+@property (weak, nonatomic) IBOutlet UILabel *addressSeparatorLabel;
 
 @end
 
 @implementation EditProfileViewController
+@synthesize userData;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    //Set text view offset
     self.navigationItem.title = @"Edit Profile";
     //Adding textfield to array
-    textFieldArray = @[_nameTextField,_emailTextField,_phoneNumberTextField,_addressTextField];
+    textFieldArray = @[_nameTextField,_phoneNumberTextField,_addressTextView];
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
     [self.keyboardControls setDelegate:self];
     //UI customisation
@@ -54,12 +62,16 @@
     [super viewWillAppear:YES];
     [[self navigationController] setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+        _scrollView.scrollEnabled = NO;
+    }
 }
 #pragma mark - end
 
 #pragma mark - Display data
 - (void)displayProfileData {
     [_signUpButton setCornerRadius:3];
+    userImageName = @"";
     // profile image url
     NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
@@ -71,9 +83,47 @@
     }];
     _userProfileImage.layer.cornerRadius = _userProfileImage.frame.size.width / 2;
     _userProfileImage.layer.masksToBounds = YES;
-    _nameTextField.text = [UserDefaultManager getValue:@"name"];
-    _emailTextField.text = [UserDefaultManager getValue:@"email"];
-    _phoneNumberTextField.text = [UserDefaultManager getValue:@"contactNumber"];
+    _nameTextField.text = [userData objectForKey:@"name"];
+    _emailTextField.text = [userData objectForKey:@"email"];
+    _phoneNumberTextField.text = [userData objectForKey:@"contactNumber"];
+    if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
+        [_addressTextView setPlaceholder:@"Address"];
+        _addressTextView.text = [userData objectForKey:@"address"];
+        _addressTextView.translatesAutoresizingMaskIntoConstraints = YES;
+        _addressTextView.textContainerInset = UIEdgeInsetsZero;
+        CGRect textRect;
+        CGSize size;
+        size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,150);
+        textRect=[self setDynamicHeight:size textString:[userData objectForKey:@"address"]];
+        if (textRect.size.height > 35) {
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height+5);
+        } else {
+            _addressTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
+        }
+        _unitNoTextField.text = [userData objectForKey:@"unitnumber"];
+        _companyTextField.text = [userData objectForKey:@"company"];
+    } else {
+        _addressTextView.translatesAutoresizingMaskIntoConstraints = YES;
+        _unitContainerView.translatesAutoresizingMaskIntoConstraints = YES;
+        _propertyContainerView.translatesAutoresizingMaskIntoConstraints = YES;
+        _addressSeparatorLabel.hidden = YES;
+        _addressTextView.frame = CGRectMake(10, _phoneNumberTextField.frame.origin.y+_phoneNumberTextField.frame.size.height+10, self.view.frame.size.width - 20, 0);
+        _unitContainerView.frame = CGRectMake(10, _addressTextView.frame.origin.y+_addressTextView.frame.size.height, self.view.frame.size.width - 20, 0);
+        _propertyContainerView.frame = CGRectMake(10, _unitContainerView.frame.origin.y+_unitContainerView.frame.size.height , self.view.frame.size.width - 20, _propertyContainerView.frame.size.height);    }
+    _propertyTextField.text = [userData objectForKey:@"property"];
+    _mcstNumberTextField.text = [userData objectForKey:@"mcstnumber"];
+}
+#pragma mark - end
+
+#pragma mark - Set dynamic height
+-(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+    CGRect textHeight = [textString
+                         boundingRectWithSize:rectSize
+                         options:NSStringDrawingUsesLineFragmentOrigin
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:15]}
+                         context:nil];
+    return textHeight;
 }
 #pragma mark - end
 
@@ -86,6 +136,32 @@
 - (void)keyboardControlsDonePressed:(BSKeyboardControls *)keyboardControls {
     [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     [keyboardControls.activeField resignFirstResponder];
+}
+#pragma mark - end
+
+#pragma mark - Textview delegates
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    [self.keyboardControls setActiveField:textView];
+    if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+        [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else {
+        [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:NO];
+    }
+}
+
+- (void)textViewDidChange:(UITextView *)textView {
+    if (textView == _addressTextView) {
+        _addressTextView.translatesAutoresizingMaskIntoConstraints = YES;
+        if (([_addressTextView sizeThatFits:_addressTextView.frame.size].height < 80) && ([_addressTextView sizeThatFits:_addressTextView.frame.size].height > 40)) {
+            _addressTextView.textContainerInset = UIEdgeInsetsZero;
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, [_addressTextView sizeThatFits:_addressTextView.frame.size].height);
+        }
+        else if([_addressTextView sizeThatFits:_addressTextView.frame.size].height <= 40) {
+            textView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
+        }
+    }
 }
 #pragma mark - end
 
@@ -164,7 +240,8 @@
 
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
-    [self displayUserImage:image];
+    userImage = image;
+    [self displayUserImage:userImage];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
 }
@@ -181,31 +258,19 @@
 
 #pragma mark - Register validation
 - (BOOL)performValidationsForEditProfile {
-    if ([_emailTextField isEmpty] || [_nameTextField isEmpty] || [_addressTextField isEmpty] || [_phoneNumberTextField isEmpty]) {
+    if ([_nameTextField isEmpty] || [_phoneNumberTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     }
     else {
-        if ([_emailTextField isValidEmail]) {
-            if (_nameTextField.text.length < 6) {
-                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-                [alert showWarning:self title:@"Alert" subTitle:@"Your password must be atleast 6 characters long." closeButtonTitle:@"Done" duration:0.0f];
-                return NO;
-            }
-            else if ((_phoneNumberTextField.text.length<8)||(_phoneNumberTextField.text.length>12)) {
-                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-                [alert showWarning:self title:@"Alert" subTitle:@"The provided mobile number is incorrect." closeButtonTitle:@"Done" duration:0.0f];
-                return NO;
-            }
-            else {
-                return YES;
-            }
+        if ((_phoneNumberTextField.text.length<8)||(_phoneNumberTextField.text.length>12)) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:self title:@"Alert" subTitle:@"The provided mobile number is incorrect." closeButtonTitle:@"Done" duration:0.0f];
+            return NO;
         }
         else {
-            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:self title:@"Alert" subTitle:@"Please enter a valid email address." closeButtonTitle:@"Done" duration:0.0f];
-            return NO;
+            return YES;
         }
     }
 }
@@ -221,16 +286,41 @@
     [self.keyboardControls.activeField resignFirstResponder];
     [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     if([self performValidationsForEditProfile]) {
-        //        [myDelegate showIndicator];
-        //        [self performSelector:@selector(editUserProfile) withObject:nil afterDelay:.1];
+        if (userImage != nil) {
+            [myDelegate showIndicator];
+            [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
+        } else {
+            [myDelegate showIndicator];
+            [self performSelector:@selector(editUserProfile) withObject:nil afterDelay:.1];
+        }
     }
 }
 #pragma mark - end
 
 #pragma mark - Webservice
-- (void)editUserProfile {
-    [[UserService sharedManager] editProfile:_nameTextField.text email:_emailTextField.text address:_addressTextField.text mobileNumber:_phoneNumberTextField.text unitNo:_unitNoTextField.text company:_companyTextField.text property:_propertyTextField.text mcstNumber:_mcstNumberTextField.text success:^(id responseObject){
+//Upload image
+- (void)uploadImage {
+    [[ComplainService sharedManager] uploadImage:userImage screenName:@"USER" success:^(id responseObject){
+        userImageName = [responseObject objectForKey:@"list"];
+        [self editUserProfile];
+    } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+    }] ;
+}
+
+- (void)editUserProfile {
+    if ([_addressTextView.text isEqualToString:@""]) {
+        _addressTextView.text = @"";
+    }
+    [[UserService sharedManager] editProfile:_nameTextField.text address:_addressTextView.text mobileNumber:_phoneNumberTextField.text image:userImageName success:^(id responseObject){
+        [myDelegate stopIndicator];
+        
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"Ok" actionBlock:^(void) {
+            [self.navigationController popToRootViewControllerAnimated:YES];
+            
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         
     }] ;
