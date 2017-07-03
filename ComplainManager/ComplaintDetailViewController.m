@@ -69,6 +69,9 @@
     complainImageArray = [[NSMutableArray alloc]init];
     imagesNameArray = [[NSMutableArray alloc]init];
     detailDict = [[NSMutableDictionary alloc]init];
+//    CGPoint offset = _detailsTextView.contentOffset;
+//    [_detailsTextView setContentOffset:offset];
+    _detailsTextView.textContainerInset = UIEdgeInsetsZero;
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
 }
@@ -85,8 +88,8 @@
 #pragma mark - View customisation
 - (void)setViewFrames: (NSDictionary *)data {
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
-//    _titleLabel.translatesAutoresizingMaskIntoConstraints=YES;
-//    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
+    //    _titleLabel.translatesAutoresizingMaskIntoConstraints=YES;
+    //    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
     _detailsTextView.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _categoryLabel.translatesAutoresizingMaskIntoConstraints = YES;
@@ -105,24 +108,24 @@
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
     _reonpenJobButton.translatesAutoresizingMaskIntoConstraints = YES;
-//    //Set title text frame
+    //    //Set title text frame
     size = CGSizeMake(self.view.frame.size.width-20,90);
-//    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
-//    _titleLabel.numberOfLines = 0;
-//    if (textRect.size.height < 35) {
-//        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, 40);
-//    } else {
-//        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, textRect.size.height + 5);
-//    }
-//    _titleLabel.text=[data objectForKey:@"Title"];
-//    _titleSeparatorLabel.frame = CGRectMake(_titleSeparatorLabel.frame.origin.x, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+    //    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
+    //    _titleLabel.numberOfLines = 0;
+    //    if (textRect.size.height < 35) {
+    //        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, 40);
+    //    } else {
+    //        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, textRect.size.height + 5);
+    //    }
+    //    _titleLabel.text=[data objectForKey:@"Title"];
+    //    _titleSeparatorLabel.frame = CGRectMake(_titleSeparatorLabel.frame.origin.x, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
     //Detail text view frame
-    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"]];
-    if ((textRect.size.height < 90) && (textRect.size.height > 37)) {
-        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, self.view.frame.origin.y+20, self.view.frame.size.width-15, textRect.size.height+5);
+    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"] textSize:16];
+    if ((textRect.size.height < 90) && (textRect.size.height > 39)) {
+        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, 20, self.view.frame.size.width-15, textRect.size.height+5);
     }
     else if(textRect.size.height < 40) {
-        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, self.view.frame.origin.y + 15, self.view.frame.size.width-15, 35);
+        _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, 20, self.view.frame.size.width-15, 40);
     }
     _detailsTextView.text = [data objectForKey:@"FullDescription"];
     _detailSeparatorLabel.frame = CGRectMake(_detailSeparatorLabel.frame.origin.x, _detailsTextView.frame.origin.y+_detailsTextView.frame.size.height + 1, self.view.frame.size.width-20, 1);
@@ -166,7 +169,7 @@
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
         if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
             //Start job button frame
-            _startJobButton.frame = CGRectMake(_startJobButton.frame.origin.x, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
+            _startJobButton.frame = CGRectMake(30, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
             _commentsContainerView.hidden = YES;
             _startJobButton.hidden = NO;
             _scrollView.scrollEnabled= NO;
@@ -179,7 +182,7 @@
             _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20, 30);
             _addCommentTextView.text = @"";
             [_addCommentTextView setPlaceholder:@" Add Comment"];
-            [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0]];
+            [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:15.0]];
             messageHeight = 40;
             _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
             _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
@@ -225,8 +228,8 @@
 }
 
 //Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
-    CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:13]} context:nil];
+-(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
+    CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:textSize]} context:nil];
     return textHeight;
 }
 #pragma mark - end
@@ -258,7 +261,7 @@
             NSString *string = textView.text;
             NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             text = [NSString stringWithFormat:@"%@%@",_addCommentTextView.text,text];
-            textRect=[self setDynamicHeight:size textString:text];
+            textRect=[self setDynamicHeight:size textString:text textSize:14];
             if ((textRect.size.height < 80) && (textRect.size.height > 50)) {
                 _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, textRect.size.height+8);
                 messageHeight = textRect.size.height + 8;
@@ -501,12 +504,12 @@
 //Get complaint details
 - (void)getComplaintDetails {
     [[ComplainService sharedManager] getComplaitDetail:complainId success:^(NSMutableDictionary * responseObject){
+        [myDelegate stopIndicator];
         detailDict = responseObject;
         commentsArray = [[NSMutableArray alloc]init];
         commentsArray = [responseObject objectForKey:@"comments"];
         [self setViewFrames:detailDict];
         [_commentsTableView reloadData];
-        [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
     }] ;

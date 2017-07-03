@@ -95,11 +95,14 @@
         CGSize size;
         size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,150);
         textRect=[self setDynamicHeight:size textString:[userData objectForKey:@"address"]];
-        if (textRect.size.height > 35) {
-            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height+5);
-        } else {
+        if (textRect.size.height <= 35) {
             _addressTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
+            
+        } else if (textRect.size.height <= 90) {
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height +5);
+        } else {
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 75);
         }
         _unitNoTextField.text = [userData objectForKey:@"unitnumber"];
         _companyTextField.text = [userData objectForKey:@"company"];
@@ -121,7 +124,7 @@
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:15]}
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:18]}
                          context:nil];
     return textHeight;
 }
@@ -156,10 +159,22 @@
         if (([_addressTextView sizeThatFits:_addressTextView.frame.size].height < 80) && ([_addressTextView sizeThatFits:_addressTextView.frame.size].height > 40)) {
             _addressTextView.textContainerInset = UIEdgeInsetsZero;
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, [_addressTextView sizeThatFits:_addressTextView.frame.size].height);
+            if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+                [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+            }
+            else {
+                [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+15) animated:NO];
+            }
         }
         else if([_addressTextView sizeThatFits:_addressTextView.frame.size].height <= 40) {
             textView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
+            if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+                [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+            }
+            else {
+                [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:NO];
+            }
         }
     }
 }

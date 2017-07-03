@@ -175,7 +175,13 @@
 
 #pragma mark - Complaint detail
 - (void)getComplaitDetail:(NSString *)complainId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId};
+    NSString *isBuildingManager;
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        isBuildingManager = @"true";
+    } else {
+        isBuildingManager = @"false";
+    }
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"propertyId":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
     NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetComplainDetail parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
@@ -195,8 +201,9 @@
                     [dataArray addObject:commentModel];
                 }
                 [detailDict setObject:dataArray forKey:@"comments"];
-                success(detailDict);
             }
+            success(detailDict);
+
         } else {
             [myDelegate stopIndicator];
             failure(nil);

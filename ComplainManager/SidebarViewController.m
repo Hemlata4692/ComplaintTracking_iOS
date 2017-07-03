@@ -31,7 +31,7 @@
     [self.view addSubview:statusBarView];
 }
 
--(void)viewWillAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
@@ -95,7 +95,17 @@
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 180;
+    if ([UIScreen mainScreen].bounds.size.height < 590) {
+        CGSize size = CGSizeMake(self.view.frame.size.width-10,80);
+        CGRect textRect = [self setDynamicHeight:size textString:[UserDefaultManager getValue:@"name"]];
+        if (textRect.size.height < 30){
+            return 180;
+        } else {
+            return 195;
+        }
+    } else {
+        return 180;
+    }
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -103,7 +113,7 @@
     float aspectHeight, profileViewHeight, nameHeight;
     nameHeight = 18;
     aspectHeight = 186.0/480.0;
-    profileViewHeight = 80;
+    profileViewHeight = 100;
     aspectHeight = 180;
     //Header view frame
     UIView *headerView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, aspectHeight)];
@@ -119,16 +129,20 @@
     //Name label
     UILabel * nameLabel;
     UILabel *emailLabel;
-    CGSize size = CGSizeMake(self.view.frame.size.width-10,50);
+    CGSize size = CGSizeMake(self.view.frame.size.width-10,80);
     CGRect textRect = [self setDynamicHeight:size textString:[UserDefaultManager getValue:@"name"]];
-    
-    if (textRect.size.height < 40){
-        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 15, tableView.bounds.size.width - 10, textRect.size.height+1)];
+    if (textRect.size.height < 30){
+        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 8, tableView.bounds.size.width - 10, textRect.size.height)];
         emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height + 1, tableView.bounds.size.width - 10, nameHeight)];
     }
     else {
-        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 5, tableView.bounds.size.width - 10, textRect.size.height+1)];
-        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+        if ([UIScreen mainScreen].bounds.size.height < 590) {
+            nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 2, tableView.bounds.size.width - 10, textRect.size.height)];
+            emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+        } else {
+            nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 5, tableView.bounds.size.width - 10, 30)];
+            emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+        }
     }
     nameLabel.backgroundColor = [UIColor clearColor];
     nameLabel.textAlignment=NSTextAlignmentCenter;
@@ -141,7 +155,7 @@
     emailLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emailLabel.numberOfLines = 1;
     emailLabel.textColor=[UIColor whiteColor];
-    emailLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14];
+    emailLabel.font = [UIFont fontWithName:@"Roboto-Light" size:15];
     emailLabel.text = [UserDefaultManager getValue:@"email"];
     [headerView addSubview:nameLabel];
     [headerView addSubview:emailLabel];
@@ -154,48 +168,101 @@
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:18]}
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Medium" size:19]}
                          context:nil];
     return textHeight;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row != (menuItems.count-1)) {
-        myDelegate.selectedMenuIndex = indexPath.row;
-    }
-    if (indexPath.row == 0) {
-        myDelegate.screenName = @"dashboard";
-    }
+    //    if (indexPath.row != (menuItems.count-1)) {
+    //        myDelegate.selectedMenuIndex = indexPath.row;
+    //    }
+    //    if (indexPath.row == 0) {
+    //        myDelegate.screenName = @"dashboard";
+    //    }
+    //    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+    //        if (indexPath.row == 2) {
+    //            myDelegate.screenName = @"myFeedback";
+    //        }
+    //        else if (indexPath.row == 3) {
+    //            myDelegate.screenName = @"propertyFeedback";
+    //        }
+    //        else if (indexPath.row == 5) {
+    //            [self logoutUser];
+    //        }
+    //    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+    //        if (indexPath.row == 2) {
+    //            myDelegate.screenName = @"propertyFeedback";
+    //        }
+    //        else if (indexPath.row == 5) {
+    //            [self logoutUser];
+    //        }
+    //    }
+    //    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+    //        if (indexPath.row == 2) {
+    //            myDelegate.screenName = @"myFeedback";
+    //        } else if (indexPath.row == 4) {
+    //            [self logoutUser];
+    //        }
+    //    }
+    //    else {
+    //        if (indexPath.row == 3) {
+    //            [self logoutUser];
+    //        }
+    //    }
+    
+    //    if (indexPath.row != (menuItems.count-1)) {
+    //        myDelegate.selectedMenuIndex = indexPath.row;
+    //    }
+    
+    //Comment Milestone 2features
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
         if (indexPath.row == 2) {
-            myDelegate.screenName = @"myFeedback";
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"myFeedback";
         }
         else if (indexPath.row == 3) {
-            myDelegate.screenName = @"propertyFeedback";
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"propertyFeedback";
         }
         else if (indexPath.row == 5) {
             [self logoutUser];
         }
+        else {
+            myDelegate.selectedMenuIndex = indexPath.row;
+        }
+        
     } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        if (indexPath.row == 2) {
-            myDelegate.screenName = @"propertyFeedback";
+        NSLog(@"myDelegate.selectedMenuIndex %ld",myDelegate.selectedMenuIndex);
+        if (indexPath.row == 2 || indexPath.row == 3) {
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"propertyFeedback";
         }
         else if (indexPath.row == 5) {
             [self logoutUser];
+        }
+        else {
+            myDelegate.selectedMenuIndex = indexPath.row;
         }
     }
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
         if (indexPath.row == 2) {
-            myDelegate.screenName = @"myFeedback";
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"myFeedback";
         } else if (indexPath.row == 4) {
             [self logoutUser];
         }
+        else {
+            myDelegate.selectedMenuIndex = indexPath.row;
+        }
     }
     else {
+        myDelegate.selectedMenuIndex = indexPath.row;
         if (indexPath.row == 3) {
             [self logoutUser];
         }
     }
+    
 }
 #pragma mark - end
 
@@ -230,8 +297,23 @@
 #pragma mark - Segue method
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     NSLog(@"tag = %ld",(long)[sender tag]);
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]){
-        if ([sender tag] == 4){
+    //Milestone 2 features
+    //If user role is MCST building manager and MCST In charger
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        if ([sender tag] == 2 ||[sender tag] == 3 ){
+            [self.view makeToast:@"This feature will be available in Milestone 2."];
+            return NO;
+        }
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        if ([sender tag] == 2 ){
+            [self.view makeToast:@"This feature will be available in Milestone 2."];
+            return NO;
+        }
+    }
+    //If user role is council member
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]){
+        if ([sender tag] == 3 ||[sender tag] == 4){
             [self.view makeToast:@"This feature will be available in Milestone 2."];
             return NO;
         }

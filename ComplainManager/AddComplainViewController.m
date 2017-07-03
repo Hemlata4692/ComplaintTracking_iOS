@@ -91,7 +91,7 @@
 }
 
 - (void)customiseView {
-    [_detailTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:16.0]];
+    [_detailTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:15.0]];
     [_registerButton setCornerRadius:2];
 }
 #pragma mark - end
@@ -106,7 +106,7 @@
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _detailTextView) {
         _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 100) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 25)) {
+        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 25)) {
             _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
             _detailTextView.textContainerInset = UIEdgeInsetsZero;
             [self setViewFrames];
@@ -259,8 +259,13 @@
     [self.keyboardControls.activeField resignFirstResponder];
     imagesNameArray = [NSMutableArray new];
     if([self performValidationsForAddComplain]) {
-        [myDelegate showIndicator];
-        [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
+        if (imagesArray.count < 1) {
+            [myDelegate showIndicator];
+            [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
+        } else {
+            [myDelegate showIndicator];
+            [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
+        }
     }
 }
 
@@ -303,7 +308,7 @@
     UILabel* pickerLabel = (UILabel*)view;
     if (!pickerLabel) {
         pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
-        pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14];
+        pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15];
         pickerLabel.textColor = [UIColor colorWithRed:147/255.0 green:148/255.0 blue:153/255.0 alpha:1.0];
         pickerLabel.textAlignment=NSTextAlignmentCenter;
     }
@@ -372,13 +377,7 @@
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Ok" duration:0.0f];
         return NO;
-    }
-    else if (imagesArray.count < 1) {
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please select atleast one image" closeButtonTitle:@"Ok" duration:0.0f];
-        return NO;
-    }
-    else {
+    } else {
         return YES;
     }
 }

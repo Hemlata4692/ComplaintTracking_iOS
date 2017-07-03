@@ -84,7 +84,12 @@
 
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
-    
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
+        UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
+        [self.navigationController pushViewController:complainDetail animated:YES];
+    } else {
+        [self.view makeToast:@"This feature will be available in Milestone 2."];
+    }
 }
 
 - (IBAction)statusChangeAction:(id)sender {
@@ -224,10 +229,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    //    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
-    //    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
-    //    complainDetail.complainId = data.complainId;
-    //    [self.navigationController pushViewController:complainDetail animated:YES];
+    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
+    complainDetail.complainId = data.complainId;
+    [self.navigationController pushViewController:complainDetail animated:YES];
 }
 #pragma mark - end
 
