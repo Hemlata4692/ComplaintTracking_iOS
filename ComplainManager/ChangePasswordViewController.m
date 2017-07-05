@@ -37,6 +37,7 @@
     [self addMenuButton];
     //UI customisation
     [self customiseView];
+    self.navigationItem.title = @"Change Password";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -48,9 +49,6 @@
 #pragma mark - UI customisation
 - (void)customiseView {
     [_changePasswordButton setCornerRadius:3];
-    [_oldPasswordText setBottomBorder:_oldPasswordText];
-    [_changePasswordText setBottomBorder:_changePasswordText];
-    [_confirmPasswordText setBottomBorder:_confirmPasswordText];
 }
 #pragma mark - end
 
@@ -133,6 +131,8 @@
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"Ok" actionBlock:^(void) {
+            myDelegate.screenName = @"dashboard";
+            myDelegate.selectedMenuIndex = 0;
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
             if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
                 [UserDefaultManager removeValue:@"name"];
@@ -142,8 +142,7 @@
                 [UserDefaultManager removeValue:@"isFirsttime"];
                 [UserDefaultManager removeValue:@"role"];
                 [UserDefaultManager removeValue:@"email"];
-                myDelegate.isMyComplaintScreen= NO;
-                myDelegate.selectedMenuIndex = 0;
+                [UserDefaultManager removeValue:@"propertyId"];
                 myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
                 myDelegate.window.rootViewController = myDelegate.navigationController;
             } else {

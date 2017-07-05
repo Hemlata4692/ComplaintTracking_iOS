@@ -31,6 +31,13 @@
     view.layer.borderColor =[UIColor colorWithRed:206/255.0 green:206/255.0 blue:206/255.0 alpha:1.0].CGColor;
     view.layer.borderWidth = 1.5f;
 }
+
+//Set view border
+- (void)setImageViewBorder: (UIView *)view  color:(UIColor *)color {
+    view.layer.borderColor =color.CGColor;
+    view.layer.borderWidth = 2.0f;
+}
+
 //Set label border
 - (void)setLabelBorder: (UIView *)view  color:(UIColor *)color {
     view.layer.borderColor =color.CGColor;
@@ -58,5 +65,20 @@
     [view.layer setShadowRadius:3.0f];
     [view.layer setShouldRasterize:YES];
 }
+
+- (void)addShadowWithCornerRadius: (UIView *)_myView color:(UIColor *)color borderColor:(UIColor *)borderColor radius:(CGFloat)radius {
+    [_myView.layer setCornerRadius:radius];
+    
+    // border
+    [_myView.layer setBorderColor:borderColor.CGColor];
+    [_myView.layer setBorderWidth:1.5f];
+    
+    // drop shadow
+    [_myView.layer setShadowColor:color.CGColor];
+    [_myView.layer setShadowOpacity:0.8];
+    [_myView.layer setShadowRadius:3.0];
+    [_myView.layer setShadowOffset:CGSizeMake(1.0, 1.0)];
+}
+
 #pragma mark - end
 @end

@@ -6,9 +6,12 @@
 //  Copyright (c) 2015 Shivendra. All rights reserved.
 //
 
+
+
 #import "SidebarViewController.h"
 #import "SWRevealViewController.h"
 #import "LoginViewController.h"
+#import "SidebarCell.h"
 
 @interface SidebarViewController (){
     NSArray *menuItems;
@@ -28,33 +31,22 @@
     [self.view addSubview:statusBarView];
 }
 
--(void)viewWillAppear:(BOOL)animated{
+-(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
+    //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-            myDelegate.selectedMenuIndex = 3;
-        }
-        else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             myDelegate.selectedMenuIndex = 4;
         } else {
             myDelegate.selectedMenuIndex = 2;
         }
     }
-    /*
-     MCST staff (s) - Dashboard, My profile, My feedback,Change password, Logout
-     MCST staff (s-bm/ic) - Dashboard, My profile, My feedback, Property feedback,Change password, Logout
-     tenants (t) - Dashboard, My profile,Change password, Logout
-     council member (cm) - Dashboard, My profile, Property feedback, Tenants, Change password, Logout
-     long term contractor (ltc) - Dashboard, My profile, Change password, Logout
-     */
-    
-    //If user role is MCST staff member
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
-    }
     //If user role is MCST building manager and MCST In charger
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
         menuItems = @[@"Dashboard", @"My Profile", @"My Feedback",@"Property Feedback", @"Change Password", @"Logout"];
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
     }
     //If user role is council member
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
@@ -67,7 +59,6 @@
     self.tableView.scrollEnabled=NO;
     [self.revealViewController.frontViewController.view setUserInteractionEnabled:NO];
     [self.tableView reloadData];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -97,24 +88,24 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *CellIdentifier = [menuItems objectAtIndex:indexPath.row];
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    //Side bar customisation
-    cell.textLabel.text = [menuItems objectAtIndex:indexPath.row];
-    cell.textLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15.0];
-    [tableView setSeparatorColor:[UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0]];
-    if (indexPath.row == myDelegate.selectedMenuIndex) {
-        cell.backgroundColor= [UIColor colorWithRed:5/255.0 green:122/255.0 blue:165/255.0 alpha:1.0];
-        cell.textLabel.textColor = [UIColor whiteColor];
-    }
-    else {
-        cell.backgroundColor= [UIColor whiteColor];
-        cell.textLabel.textColor = [UIColor colorWithRed:145/255.0 green:145/255.0 blue:145/255.0 alpha:1.0];
-    }
+    SidebarCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    //Display data on cells
+    [cell displayCellData:menuItems index:(int)indexPath.row];
     return cell;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 180;
+    if ([UIScreen mainScreen].bounds.size.height < 590) {
+        CGSize size = CGSizeMake(self.view.frame.size.width-10,80);
+        CGRect textRect = [self setDynamicHeight:size textString:[UserDefaultManager getValue:@"name"]];
+        if (textRect.size.height < 30){
+            return 180;
+        } else {
+            return 195;
+        }
+    } else {
+        return 180;
+    }
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
@@ -122,7 +113,7 @@
     float aspectHeight, profileViewHeight, nameHeight;
     nameHeight = 18;
     aspectHeight = 186.0/480.0;
-    profileViewHeight = 80;
+    profileViewHeight = 100;
     aspectHeight = 180;
     //Header view frame
     UIView *headerView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, aspectHeight)];
@@ -132,33 +123,26 @@
     ProfileImgView.contentMode = UIViewContentModeScaleAspectFill;
     ProfileImgView.clipsToBounds = YES;
     ProfileImgView.backgroundColor=[UIColor whiteColor];
-    // profile image url
-    __weak UIImageView *weakRef = ProfileImgView;
-    NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
-    [ProfileImgView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"sideBarPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        weakRef.contentMode = UIViewContentModeScaleAspectFill;
-        weakRef.clipsToBounds = YES;
-        weakRef.image = image;
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-    }];
+    [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
     ProfileImgView.layer.cornerRadius = ProfileImgView.frame.size.width / 2;
     ProfileImgView.layer.masksToBounds = YES;
     //Name label
     UILabel * nameLabel;
     UILabel *emailLabel;
-    CGSize size = CGSizeMake(self.view.frame.size.width-10,50);
+    CGSize size = CGSizeMake(self.view.frame.size.width-10,80);
     CGRect textRect = [self setDynamicHeight:size textString:[UserDefaultManager getValue:@"name"]];
-    
-    if (textRect.size.height < 40){
-        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 15, tableView.bounds.size.width - 10, textRect.size.height+1)];
-        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +10, tableView.bounds.size.width - 10, nameHeight)];
+    if (textRect.size.height < 30){
+        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 8, tableView.bounds.size.width - 10, textRect.size.height)];
+        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height + 1, tableView.bounds.size.width - 10, nameHeight)];
     }
     else {
-        nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 5, tableView.bounds.size.width - 10, textRect.size.height+1)];
-        emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+        if ([UIScreen mainScreen].bounds.size.height < 590) {
+            nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 2, tableView.bounds.size.width - 10, textRect.size.height)];
+            emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+        } else {
+            nameLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, ProfileImgView.frame.origin.y + ProfileImgView.frame.size.height + 5, tableView.bounds.size.width - 10, 30)];
+            emailLabel = [[UILabel alloc] initWithFrame:CGRectMake(5, nameLabel.frame.origin.y + nameLabel.frame.size.height +1, tableView.bounds.size.width - 10, nameHeight)];
+        }
     }
     nameLabel.backgroundColor = [UIColor clearColor];
     nameLabel.textAlignment=NSTextAlignmentCenter;
@@ -171,12 +155,11 @@
     emailLabel.lineBreakMode = NSLineBreakByWordWrapping;
     emailLabel.numberOfLines = 1;
     emailLabel.textColor=[UIColor whiteColor];
-    emailLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:14];
+    emailLabel.font = [UIFont fontWithName:@"Roboto-Light" size:15];
     emailLabel.text = [UserDefaultManager getValue:@"email"];
     [headerView addSubview:nameLabel];
     [headerView addSubview:emailLabel];
     [headerView addSubview:ProfileImgView];
-    
     return headerView;   // return headerLabel;
 }
 
@@ -185,33 +168,105 @@
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:18]}
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Medium" size:19]}
                          context:nil];
     return textHeight;
 }
 
 -(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    myDelegate.selectedMenuIndex = indexPath.row;
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-        if (indexPath.row == 0) {
-            myDelegate.isMyComplaintScreen = false;
-        } else if (indexPath.row == 2) {
-            myDelegate.isMyComplaintScreen = true;
+    //    if (indexPath.row != (menuItems.count-1)) {
+    //        myDelegate.selectedMenuIndex = indexPath.row;
+    //    }
+    //    if (indexPath.row == 0) {
+    //        myDelegate.screenName = @"dashboard";
+    //    }
+    //    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+    //        if (indexPath.row == 2) {
+    //            myDelegate.screenName = @"myFeedback";
+    //        }
+    //        else if (indexPath.row == 3) {
+    //            myDelegate.screenName = @"propertyFeedback";
+    //        }
+    //        else if (indexPath.row == 5) {
+    //            [self logoutUser];
+    //        }
+    //    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+    //        if (indexPath.row == 2) {
+    //            myDelegate.screenName = @"propertyFeedback";
+    //        }
+    //        else if (indexPath.row == 5) {
+    //            [self logoutUser];
+    //        }
+    //    }
+    //    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+    //        if (indexPath.row == 2) {
+    //            myDelegate.screenName = @"myFeedback";
+    //        } else if (indexPath.row == 4) {
+    //            [self logoutUser];
+    //        }
+    //    }
+    //    else {
+    //        if (indexPath.row == 3) {
+    //            [self logoutUser];
+    //        }
+    //    }
+    
+    //    if (indexPath.row != (menuItems.count-1)) {
+    //        myDelegate.selectedMenuIndex = indexPath.row;
+    //    }
+    
+    //Comment Milestone 2features
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        if (indexPath.row == 2) {
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"myFeedback";
+        }
+        else if (indexPath.row == 3) {
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"propertyFeedback";
+        }
+        else if (indexPath.row == 5) {
+            [self logoutUser];
+        }
+        else {
+            myDelegate.selectedMenuIndex = indexPath.row;
+        }
+        
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        NSLog(@"myDelegate.selectedMenuIndex %ld",myDelegate.selectedMenuIndex);
+        if (indexPath.row == 2 || indexPath.row == 3) {
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"propertyFeedback";
+        }
+        else if (indexPath.row == 5) {
+            [self logoutUser];
+        }
+        else {
+            myDelegate.selectedMenuIndex = indexPath.row;
+        }
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        if (indexPath.row == 2) {
+            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
+            //            myDelegate.screenName = @"myFeedback";
         } else if (indexPath.row == 4) {
             [self logoutUser];
         }
-    }
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        if (indexPath.row == 5) {
-            [self logoutUser];
+        else {
+            myDelegate.selectedMenuIndex = indexPath.row;
         }
-    } else {
+    }
+    else {
+        myDelegate.selectedMenuIndex = indexPath.row;
         if (indexPath.row == 3) {
             [self logoutUser];
         }
     }
+    
 }
+#pragma mark - end
 
+#pragma mark - Logout user
 - (void)logoutUser {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
@@ -220,10 +275,10 @@
         myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
         myDelegate.window.rootViewController = myDelegate.navigationController;
     }];
-    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout" closeButtonTitle:@"No" duration:0.0f];
-    
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout?" closeButtonTitle:@"No" duration:0.0f];
 }
 
+//Remove default values
 - (void)removeDefaultValues {
     [UserDefaultManager removeValue:@"name"];
     [UserDefaultManager removeValue:@"userId"];
@@ -232,32 +287,52 @@
     [UserDefaultManager removeValue:@"isFirsttime"];
     [UserDefaultManager removeValue:@"role"];
     [UserDefaultManager removeValue:@"email"];
-    myDelegate.isMyComplaintScreen= NO;
+    [UserDefaultManager removeValue:@"propertyId"];
+    myDelegate.screenName= @"dashboard";
     myDelegate.selectedMenuIndex = 0;
 }
 
+#pragma mark - end
+
+#pragma mark - Segue method
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"s"]) {
-            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3){
-                [self.view makeToast:@"Please login."];
-                return NO;
-            }
+    NSLog(@"tag = %ld",(long)[sender tag]);
+    //Milestone 2 features
+    //If user role is MCST building manager and MCST In charger
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        if ([sender tag] == 2 ||[sender tag] == 3 ){
+            [self.view makeToast:@"This feature will be available in Milestone 2."];
+            return NO;
         }
-        else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+    }
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        if ([sender tag] == 2 ){
+            [self.view makeToast:@"This feature will be available in Milestone 2."];
+            return NO;
+        }
+    }
+    //If user role is council member
+    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]){
+        if ([sender tag] == 3 ||[sender tag] == 4){
+            [self.view makeToast:@"This feature will be available in Milestone 2."];
+            return NO;
+        }
+    }
+    //If first time user clicks other tabs
+    if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3 ||[sender tag] == 4){
-                [self.view makeToast:@"Please login."];
+                [self.view makeToast:@"Please change the password before entering into other fields."];
                 return NO;
             }
         } else {
             if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2){
-                [self.view makeToast:@"Please login."];
+                [self.view makeToast:@"Please change the password before entering into other fields."];
                 return NO;
             }
         }
     }
     return YES;
 }
-
 #pragma mark - end
 @end

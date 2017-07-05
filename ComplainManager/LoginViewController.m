@@ -44,14 +44,11 @@
 - (void)viewWillAppear:(BOOL)animated {
     //Hide navigation bar
     [[self navigationController] setNavigationBarHidden:YES animated:YES];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 #pragma mark - end
 
 #pragma mark - UI customisation
 - (void)customiseView {
-    [_emailTextField setBottomBorder:_emailTextField];
-    [_passwordTextField setBottomBorder:_passwordTextField];
     [_loginButton setCornerRadius:2];
 }
 #pragma mark - end
@@ -71,6 +68,12 @@
 #pragma mark - Textfield delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self.keyboardControls setActiveField:textField];
+    if (textField.frame.origin.y+textField.frame.size.height+15<([UIScreen mainScreen].bounds.size.height)-256) {
+        [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else {
+        [_loginScrollView setContentOffset:CGPointMake(0, ((textField.frame.origin.y+textField.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-256))+5) animated:NO];
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -84,7 +87,7 @@
 - (BOOL)performValidationsForLogin{
     if ([_emailTextField isEmpty] || [_passwordTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] init];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email and password." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"Done" duration:0.0f];
         return NO;
     } else if (![_emailTextField isValidEmail]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -121,6 +124,7 @@
 - (void)loginUser {
     [[UserService sharedManager] userLogin:_emailTextField.text password:_passwordTextField.text success:^(id responseObject){
         [myDelegate stopIndicator];
+        //Set login info
         NSDictionary *data = [responseObject objectForKey:@"data"];
         [UserDefaultManager setValue:_emailTextField.text key:@"email"];
         [UserDefaultManager setValue:[data objectForKey:@"userId"] key:@"userId"];
@@ -128,31 +132,39 @@
         [UserDefaultManager setValue:[data objectForKey:@"contactNumber"] key:@"contactNumber"];
         [UserDefaultManager setValue:[data objectForKey:@"isFirsttime"] key:@"isFirstTime"];
         [UserDefaultManager setValue:[data objectForKey:@"AuthenticationToken"] key:@"AuthenticationToken"];
+        [UserDefaultManager setValue:[data objectForKey:@"propertyId"] key:@"propertyId"];
+        [UserDefaultManager setValue:[data objectForKey:@"RoleId"] key:@"RoleId"];
         
-        if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
+        //Set user roles
+        if ([[data objectForKey:@"RoleId"] intValue] == 6 ) {
             [UserDefaultManager setValue:@"t" key:@"role"];
-        } else {
-            [UserDefaultManager setValue:@"s" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
+            [UserDefaultManager setValue:@"cm" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 4 ) {
+            if ([[NSString stringWithFormat:@"%@",[data objectForKey:@"IsBuildingManager"]] isEqualToString:@"1"]) {
+                [UserDefaultManager setValue:@"bm" key:@"role"];
+            } else {
+                [UserDefaultManager setValue:@"ic" key:@"role"];
+            }
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 3 ) {
+            [UserDefaultManager setValue:@"ltc" key:@"role"];
         }
-        
         NSLog(@"AuthenticationToken %@",[UserDefaultManager getValue:@"AuthenticationToken"]);
         NSLog(@"role %@",[UserDefaultManager getValue:@"role"]);
         NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
         NSLog(@"name %@",[UserDefaultManager getValue:@"name"]);
         NSLog(@"contactNumber %@",[UserDefaultManager getValue:@"contactNumber"]);
         NSLog(@"isFirstTime %@",[UserDefaultManager getValue:@"isFirstTime"]);
-        
+        //Navigate to dashboard
         UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
         myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         [myDelegate.window setRootViewController:objReveal];
         [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
-        
     } failure:^(NSError *error) {
         
     }] ;
 }
 #pragma mark - end
-
 @end

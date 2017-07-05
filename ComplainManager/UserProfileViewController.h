@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface UserProfileViewController : GlobalViewController
-
+@property (nonatomic) BOOL isTenantDetailScreen;
 @end

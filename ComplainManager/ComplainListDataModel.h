@@ -11,7 +11,7 @@
 @interface ComplainListDataModel : NSObject
 
 @property(nonatomic,retain)NSString * complainImageString;
-@property(nonatomic,retain)NSString * complainTitle;
+@property(nonatomic,retain)NSString * userName;
 @property(nonatomic,retain)NSString * complainDescription;
 @property(nonatomic,retain)NSString * complainStatus;
 @property(nonatomic,retain)NSString * complainId;

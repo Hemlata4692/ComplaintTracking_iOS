@@ -9,13 +9,13 @@
 #import "AppDelegate.h"
 #import "MMMaterialDesignSpinner.h"
 #import "UncaughtExceptionHandler.h"
+#import "UserService.h"
 
 #define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 @interface AppDelegate () {
     UIView *loaderView;
     UIImageView *logoImage;
-    NSString *deviceToken;
 }
 
 @property (nonatomic, strong) MMMaterialDesignSpinner *spinnerView;
@@ -23,7 +23,7 @@
 @end
 
 @implementation AppDelegate
-@synthesize navigationController;
+@synthesize navigationController,screenName,deviceToken;
 
 #pragma mark - Global indicator view
 - (void)showIndicator {
@@ -84,6 +84,8 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
     NSLog(@"User Info = %@",response.notification.request.content.userInfo);
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alert show];
 }
 #pragma mark - end
 
@@ -93,6 +95,18 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
+    //    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    //    [alert show];
+    //        [self sendDeviceToken];
+}
+
+- (void)sendDeviceToken {
+    [[UserService sharedManager] setDeviceToken:deviceToken success:^(id responseObject){
+        [myDelegate stopIndicator];
+        
+    } failure:^(NSError *error) {
+        
+    }] ;
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
@@ -101,6 +115,8 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"Received notification: %@", userInfo);
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    [alert show];
 }
 #pragma mark - end
 
@@ -109,15 +125,14 @@
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0]];
-    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"Roboto-Regular" size:17.0], NSFontAttributeName, nil]];
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor whiteColor], NSForegroundColorAttributeName, [UIFont fontWithName:@"Roboto-Regular" size:20.0], NSFontAttributeName, nil]];
     //Push notification
     deviceToken = @"";
     [self registerForRemoteNotification];
     //Call crashlytics method
-//    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
+    [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
     //Check internet connectivity
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
-
     //Navigation to view
     NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];

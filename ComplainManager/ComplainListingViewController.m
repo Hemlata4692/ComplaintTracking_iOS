@@ -14,13 +14,25 @@
 
 @interface ComplainListingViewController ()
 {
-    NSMutableArray *complainListArray, *filteredComplainListArray ,*searchArray;
+    NSMutableArray *complainListArray, *filteredComplainListArray;
+    NSArray *searchArray;
     BOOL isSearch;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *searchTextField;
 @property (weak, nonatomic) IBOutlet UITableView *complainListingTable;
 @property (weak, nonatomic) IBOutlet UILabel *noComplaintsLabel;
+@property (weak, nonatomic) IBOutlet UILabel *assignedCounterLabel;
+@property (weak, nonatomic) IBOutlet UILabel *progressCounterLabel;
+@property (weak, nonatomic) IBOutlet UILabel *completeProgressLabel;
+@property (weak, nonatomic) IBOutlet UIView *assignedView;
+@property (weak, nonatomic) IBOutlet UIView *progressView;
+@property (weak, nonatomic) IBOutlet UIView *completeView;
+@property (weak, nonatomic) IBOutlet UIButton *assignedButton;
+@property (weak, nonatomic) IBOutlet UIButton *progressButton;
+@property (weak, nonatomic) IBOutlet UIButton *completeButton;
+@property (weak, nonatomic) IBOutlet UIButton *addComplaintButton;
+@property (weak, nonatomic) IBOutlet UIImageView *searchImage;
 
 @end
 
@@ -31,12 +43,14 @@
     [super viewDidLoad];
     filteredComplainListArray=[[NSMutableArray alloc]init];
     complainListArray=[[NSMutableArray alloc]init];
-    searchArray=[[NSMutableArray alloc]init];
+    searchArray=[[NSArray alloc]init];
     [self addMenuButton];
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
         [self.navigationController pushViewController:complainDetail animated:YES];
     }
+    //Set assigned view UI
+    [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -46,12 +60,12 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
-    if (myDelegate.isMyComplaintScreen) {
+    if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
-        myDelegate.selectedMenuIndex = 2;
+    } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
+        self.navigationItem.title=@"Property Feedback";
     } else {
         self.navigationItem.title=@"Dashboard";
-        myDelegate.selectedMenuIndex = 0;
     }
     [[self navigationController] setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
@@ -60,35 +74,93 @@
         [myDelegate showIndicator];
         [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
     }
+    //If user is long term contractor
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+        _addComplaintButton.hidden= YES;
+    }
+    [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
 }
 #pragma mark - end
 
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
-    
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
+        UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
+        [self.navigationController pushViewController:complainDetail animated:YES];
+    } else {
+        [self.view makeToast:@"This feature will be available in Milestone 2."];
+    }
 }
 
 - (IBAction)statusChangeAction:(id)sender {
+    if ([sender tag] == 0) {
+        //Set assigned view UI
+        [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    } else if ([sender tag] == 2) {
+        //Set complete view UI
+        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0] completeTextColor:[UIColor whiteColor]];
+    } else if ([sender tag] == 1) {
+        //Set progress view UI
+        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] progressTextColor:[UIColor whiteColor] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    }
+    
     [self filterStatusArray:(int)[sender tag]];
 }
-
 #pragma mark - end
 
 #pragma mark - Filter status data
 - (void)filterStatusArray:(int)buttonTag {
+    //Show feedback listing with different status
     [filteredComplainListArray removeAllObjects];
     for (int i = 0; i < complainListArray.count; i++) {
         ComplainListDataModel *data=[complainListArray objectAtIndex:i];
-        if (buttonTag == 0 && [data.complainStatus isEqualToString:@"Pending"]) {
-            [filteredComplainListArray addObject:data];
-        } else if (buttonTag == 2 && [data.complainStatus isEqualToString:@"Complete"]) {
-            [filteredComplainListArray addObject:data];
+        if (buttonTag == 0) {
+            if ([data.complainStatus isEqualToString:@"Pending"]) {
+                _noComplaintsLabel.hidden = YES;
+                [filteredComplainListArray addObject:data];
+            } else {
+                _noComplaintsLabel.hidden = NO;
+                _noComplaintsLabel.text = @"No feedback pending.";
+            }
+        } else if (buttonTag == 2) {
+            if ([data.complainStatus isEqualToString:@"Complete"]) {
+                _noComplaintsLabel.hidden = YES;
+                [filteredComplainListArray addObject:data];
+            }
+            else {
+                _noComplaintsLabel.hidden = NO;
+                _noComplaintsLabel.text = @"No feedback is completed yet.";
+            }
             
-        } else if (buttonTag == 1 && [data.complainStatus isEqualToString:@"In process"]) {
-            [filteredComplainListArray addObject:data];
+        } else if (buttonTag == 1) {
+            if ([data.complainStatus isEqualToString:@"In process"]) {
+                _noComplaintsLabel.hidden = YES;
+                [filteredComplainListArray addObject:data];
+            }  else {
+                _noComplaintsLabel.hidden = NO;
+                _noComplaintsLabel.text = @"No feedback is in progress.";
+            }
+            
         }
         [_complainListingTable reloadData];
     }
+}
+- (void)setStatusViewDesign:(UIColor *)assignedBackgroundColor assignedTextColor:(UIColor *)assignedTextColor  progressBackgroundColor:(UIColor *)progressBackgroundColor progressTextColor:(UIColor *)progressTextColor complteBackgroundColor:(UIColor *)complteBackgroundColor completeTextColor:(UIColor *)completeTextColor {
+    //Assigned UI
+    _assignedView.backgroundColor = assignedBackgroundColor;
+    _assignedCounterLabel.textColor = assignedTextColor;
+    [_assignedButton setTitleColor:assignedTextColor forState:UIControlStateNormal];
+    [_assignedView addShadowWithCornerRadius:_assignedView color:[UIColor lightGrayColor] borderColor:[UIColor clearColor] radius:2.0];
+    //Progress UI
+    _progressView.backgroundColor = progressBackgroundColor;
+    _progressCounterLabel.textColor = progressTextColor;
+    [_progressButton setTitleColor:progressTextColor forState:UIControlStateNormal];
+    [_progressView addShadowWithCornerRadius:_progressView color:[UIColor lightGrayColor] borderColor:[UIColor clearColor] radius:2.0];
+    //Complete UI
+    _completeView.backgroundColor = complteBackgroundColor;
+    _completeProgressLabel.textColor = completeTextColor;
+    [_completeButton setTitleColor:completeTextColor forState:UIControlStateNormal];
+    [_completeView addShadowWithCornerRadius:_completeView color:[UIColor lightGrayColor] borderColor:[UIColor clearColor] radius:2.0];
 }
 #pragma mark - end
 
@@ -102,13 +174,19 @@
     else if(string.length) {
         isSearch = YES;
         searchKey = [textField.text stringByAppendingString:string];
-        NSPredicate *filter = [NSPredicate predicateWithFormat:@"complainTitle CONTAINS[cd] %@", searchKey];
-        searchArray = [[filteredComplainListArray filteredArrayUsingPredicate:filter] mutableCopy];
+        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
+        NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
+        NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
+        searchArray = [filteredComplainListArray filteredArrayUsingPredicate:orPredicate];
     }
     else if((textField.text.length-1)!=0) {
         searchKey = [textField.text substringWithRange:NSMakeRange(0, textField.text.length-1)];
-        NSPredicate *filter = [NSPredicate predicateWithFormat:@"complainTitle CONTAINS[cd] %@", searchKey];
-        searchArray = [[filteredComplainListArray filteredArrayUsingPredicate:filter] mutableCopy];
+        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
+        NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
+        NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
+        searchArray = [filteredComplainListArray filteredArrayUsingPredicate:orPredicate];
     }
     else {
         searchKey = @"";
@@ -162,20 +240,41 @@
 //Get complain list data from webservice
 - (void)getComplainListing {
     NSString *previousScreen;
-    if (myDelegate.isMyComplaintScreen) {
+    if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         previousScreen = @"MYCOMPLAIN";
-    } else {
+    } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
+        previousScreen = @"PROPERTYFEEDBACK";
+    }
+    else {
         previousScreen = @"DASHBOARD";
     }
     [[ComplainService sharedManager] getComplainListing:previousScreen success:^(NSMutableArray *dataArray){
         complainListArray = dataArray;
+        //Show feedback status counts
+        NSMutableArray *pendingArray = [[NSMutableArray alloc]init];
+        NSMutableArray *progressArray = [[NSMutableArray alloc]init];
+        NSMutableArray *completeArray = [[NSMutableArray alloc]init];
+        for (int i = 0; i < complainListArray.count; i++) {
+            ComplainListDataModel *data=[complainListArray objectAtIndex:i];
+            if ([data.complainStatus isEqualToString:@"Pending"]) {
+                [pendingArray addObject:data];
+                _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",pendingArray.count] ;
+            } else if ([data.complainStatus isEqualToString:@"Complete"]) {
+                [progressArray addObject:data];
+                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",progressArray.count] ;
+            } else if ([data.complainStatus isEqualToString:@"In process"]) {
+                [completeArray addObject:data];
+                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",completeArray.count] ;
+            }
+        }
+        //If no feedbacks
         if (complainListArray.count<1) {
             _noComplaintsLabel.hidden = NO;
         } else {
             _noComplaintsLabel.hidden = YES;
         }
+        //Filter array
         [self filterStatusArray:0];
-        //        [_complainListingTable reloadData];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         

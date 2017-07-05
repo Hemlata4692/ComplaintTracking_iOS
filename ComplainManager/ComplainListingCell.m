@@ -9,7 +9,7 @@
 #import "ComplainListingCell.h"
 
 @implementation ComplainListingCell
-@synthesize userImageView, complainTitleLabel, complainDescriptionLabel, complainStatusLabel;
+@synthesize userImageView, userNameLabel, complainDescriptionLabel, complainStatusLabel;
 
 #pragma mark - Load nib
 - (void)awakeFromNib {
@@ -23,31 +23,10 @@
 
 #pragma mark - Display data in cell
 - (void)displayComplainListData :(ComplainListDataModel *)complainList indexPath:(int)indexPath rectSize:(CGSize)rectSize {
-    //    NSString * titleTextStr = @"Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ";
-    //    CGRect textRect;
-    //    CGSize size;
-    //    complainTitleLabel.translatesAutoresizingMaskIntoConstraints = YES;
-    //    size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-userImageView.frame.origin.x+20,80);
-    //    textRect=[self setDynamicHeight:size textString:titleTextStr];
-    //    complainTitleLabel.numberOfLines = 0;
-    //    complainTitleLabel.frame =CGRectMake(userImageView.frame.origin.x+userImageView.frame.size.width+20, 5, [[UIScreen mainScreen] bounds].size.width - (userImageView.frame.size.width+30), textRect.size.height+3);
-    //    complainTitleLabel.text=titleTextStr;
-    //    complainTitleLabel.backgroundColor = [UIColor redColor];
-    //
-    
-    //UI customisation
-    //        complainTitleLabel.attributedText = [complainTitleLabel.text setAttributrdString:@"John Doe" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:12.0] selectedColor:[UIColor blackColor]];
-    //    set complain image
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:complainList.complainImageString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
-    __weak UIImageView *weakRef = userImageView;
-    [userImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"placeholder.png"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        weakRef.contentMode = UIViewContentModeScaleAspectFill;
-        weakRef.clipsToBounds = YES;
-        weakRef.image = image;
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-    }];
+    //    UI customisation
+    NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] setAttributrdString:complainList.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:16.0] selectedColor:[UIColor blackColor]];
+    userNameLabel.attributedText = nameStr;
+    [userImageView setImageWithURL:[NSURL URLWithString:complainList.complainImageString] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
     userImageView.layer.cornerRadius = userImageView.frame.size.width / 2;
     userImageView.layer.masksToBounds = YES;
     NSString *dateString = complainList.complainTime;
@@ -58,7 +37,6 @@
     [dateFormatter setDateFormat:@"dd-MM-yyyy"];
     NSString *newDateString = [dateFormatter stringFromDate:date];
     _complainTimeLabel.text=newDateString;
-    complainTitleLabel.text=complainList.complainTitle;
     complainDescriptionLabel.text = complainList.complainDescription;
 }
 
@@ -67,11 +45,10 @@
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:13]}
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:16]}
                          context:nil];
     return textHeight;
 }
-
 #pragma mark - end
 
 @end

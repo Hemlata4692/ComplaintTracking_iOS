@@ -42,8 +42,6 @@
 
 #pragma mark - UI customisation
 - (void)customiseView {
-    [_emailTextField addTextFieldPaddingWithoutImages:_emailTextField];
-    [_emailTextField setBottomBorder:_emailTextField];
     [_sendPasswordButton setCornerRadius:3];
 }
 #pragma mark - end

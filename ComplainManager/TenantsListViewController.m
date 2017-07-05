@@ -9,6 +9,7 @@
 #import "TenantsListViewController.h"
 #import "TenantsListCell.h"
 #import "UserService.h"
+#import "UserProfileViewController.h"
 
 @interface TenantsListViewController ()
 {
@@ -55,6 +56,14 @@
 //    [tenantsCell displayTenantsListData:data indexPath:(int)indexPath.row rectSize:_tenantsTableView.frame.size];
     return tenantsCell;
 }
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"dis select");
+    UserProfileViewController * detailView = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"UserProfileViewController"];
+    detailView.isTenantDetailScreen = YES;
+    [self.navigationController pushViewController:detailView animated:YES];
+}
+
 #pragma mark - end
 
 #pragma mark - Webservice

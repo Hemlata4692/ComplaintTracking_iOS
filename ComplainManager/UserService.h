@@ -23,8 +23,8 @@
 - (void)forgotPassword:(NSString *)email success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
-//User registeration
-- (void)userRegisteration:(NSString *)name email:(NSString *)email password:(NSString *)password mobileNumber:(NSString *)mobileNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+//Edit user profile
+- (void)editProfile:(NSString *)name address:(NSString *)address mobileNumber:(NSString *)mobileNumber image:(NSString *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
 //Change password
@@ -38,5 +38,10 @@
 //Profile details
 - (void)getProfileDetail:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
 //end
+
+//Device token
+- (void)setDeviceToken:(NSString *)deviceToken success:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
 
 @end
