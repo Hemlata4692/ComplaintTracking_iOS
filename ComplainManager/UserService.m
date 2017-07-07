@@ -43,6 +43,7 @@
 //Login
 - (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure {
     NSDictionary *requestDict = @{@"email":email,@"password":password,@"deviceId":myDelegate.deviceToken,@"devicetype":@"iOS"};
+    NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlLogin parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);

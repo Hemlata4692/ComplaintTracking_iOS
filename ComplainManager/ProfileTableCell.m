@@ -29,24 +29,27 @@
     NSArray *infoArray;
     if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-            infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number",@"MCST Council Member", nil];
+            infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number",@"MCST Council Member", nil];
         } else {
-            infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number", nil];
+            infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number", nil];
         }
     } else {
-        infoArray = [NSArray arrayWithObjects:@"Contact Number",@"Email",@"Property",@"MCST Number", nil];
+        infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Property",@"MCST Number", nil];
     }
-    NSString * titleTextStr = infoString;
     CGRect textRect;
     CGSize size;
     infoDetailLabel.translatesAutoresizingMaskIntoConstraints = YES;
     size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,150);
-    textRect=[self setDynamicHeight:size textString:titleTextStr];
+    textRect=[self setDynamicHeight:size textString:infoString];
     infoDetailLabel.numberOfLines = 0;
     infoDetailLabel.frame =CGRectMake(10, infoLabel.frame.origin.y + infoLabel.frame.size.height+2, [[UIScreen mainScreen] bounds].size.width - 20, textRect.size.height+5);
-    infoDetailLabel.text=titleTextStr;
+    if ([infoString isEqualToString:@""]) {
+        infoDetailLabel.text = @"NA";
+    } else {
+        infoDetailLabel.text=infoString;
+    }
     infoLabel.text = [infoArray objectAtIndex:index];
-    infoDetailLabel.text = infoString;
+    //    infoDetailLabel.text = infoString;
 }
 #pragma mark - end
 

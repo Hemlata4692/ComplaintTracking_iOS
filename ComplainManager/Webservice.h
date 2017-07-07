@@ -9,7 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
 //testing link
-#define BASE_URL                          @"http://ranosys.info/complianttracking/api/ComplaintsManager/"
+//#define BASE_URL                          @"http://ranosys.info/complianttracking/api/ComplaintsManager/"
+#define BASE_URL                            @"http://ranosys.info/feedbacktrackingqa/api/ComplaintsManager/"
 
 @interface Webservice : NSObject
 

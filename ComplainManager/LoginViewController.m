@@ -87,16 +87,16 @@
 - (BOOL)performValidationsForLogin{
     if ([_emailTextField isEmpty] || [_passwordTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] init];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     } else if (![_emailTextField isValidEmail]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please enter a valid email address." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the valid email address." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else  if (_passwordTextField.text.length < 6) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Your password must be atleast 6 characters long." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 6 characters." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
@@ -134,7 +134,6 @@
         [UserDefaultManager setValue:[data objectForKey:@"AuthenticationToken"] key:@"AuthenticationToken"];
         [UserDefaultManager setValue:[data objectForKey:@"propertyId"] key:@"propertyId"];
         [UserDefaultManager setValue:[data objectForKey:@"RoleId"] key:@"RoleId"];
-        
         //Set user roles
         if ([[data objectForKey:@"RoleId"] intValue] == 6 ) {
             [UserDefaultManager setValue:@"t" key:@"role"];

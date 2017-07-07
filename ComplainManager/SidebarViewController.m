@@ -123,10 +123,10 @@
     ProfileImgView.contentMode = UIViewContentModeScaleAspectFill;
     ProfileImgView.clipsToBounds = YES;
     ProfileImgView.backgroundColor=[UIColor whiteColor];
-    [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
+    [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"userPlaceholder"]];
     ProfileImgView.layer.cornerRadius = ProfileImgView.frame.size.width / 2;
     ProfileImgView.layer.masksToBounds = YES;
-    //Name label
+    //Name labeluserPlaceholder
     UILabel * nameLabel;
     UILabel *emailLabel;
     CGSize size = CGSizeMake(self.view.frame.size.width-10,80);
@@ -229,7 +229,9 @@
             [self logoutUser];
         }
         else {
-            myDelegate.selectedMenuIndex = indexPath.row;
+            if (indexPath.row != (menuItems.count-1)) {
+                myDelegate.selectedMenuIndex = indexPath.row;
+            }
         }
         
     } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
@@ -242,7 +244,9 @@
             [self logoutUser];
         }
         else {
-            myDelegate.selectedMenuIndex = indexPath.row;
+            if (indexPath.row != (menuItems.count-1)) {
+                myDelegate.selectedMenuIndex = indexPath.row;
+            }
         }
     }
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
@@ -253,11 +257,15 @@
             [self logoutUser];
         }
         else {
-            myDelegate.selectedMenuIndex = indexPath.row;
+            if (indexPath.row != (menuItems.count-1)) {
+                myDelegate.selectedMenuIndex = indexPath.row;
+            }
         }
     }
     else {
-        myDelegate.selectedMenuIndex = indexPath.row;
+        if (indexPath.row != (menuItems.count-1)) {
+            myDelegate.selectedMenuIndex = indexPath.row;
+        }
         if (indexPath.row == 3) {
             [self logoutUser];
         }
@@ -275,7 +283,7 @@
         myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
         myDelegate.window.rootViewController = myDelegate.navigationController;
     }];
-    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure, you want to logout?" closeButtonTitle:@"No" duration:0.0f];
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to logout?" closeButtonTitle:@"No" duration:0.0f];
 }
 
 //Remove default values
