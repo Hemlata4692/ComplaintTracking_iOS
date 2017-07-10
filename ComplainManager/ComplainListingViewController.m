@@ -33,6 +33,9 @@
 @property (weak, nonatomic) IBOutlet UIButton *completeButton;
 @property (weak, nonatomic) IBOutlet UIButton *addComplaintButton;
 @property (weak, nonatomic) IBOutlet UIImageView *searchImage;
+//Pull to refresh
+@property (nonatomic, strong)UIRefreshControl *refreshControl;
+@property (nonatomic, strong)UIRefreshControl *refreshControlIpad;
 
 @end
 
@@ -51,6 +54,12 @@
     }
     //Set assigned view UI
     [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    
+    // Pull To Refresh
+    _refreshControl = [[UIRefreshControl alloc] initWithFrame:CGRectMake(160, 0, 20, 20)];
+    [_complainListingTable addSubview:_refreshControl];
+    [_refreshControl addTarget:self action:@selector(refershControlAction) forControlEvents:UIControlEventValueChanged];
+    _complainListingTable.alwaysBounceVertical = YES;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -78,18 +87,17 @@
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
         _addComplaintButton.hidden= YES;
     }
+    //Add button shadow
     [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
 }
 #pragma mark - end
 
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
-        UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
-        [self.navigationController pushViewController:complainDetail animated:YES];
-    } else {
-        [self.view makeToast:@"This feature will be available in Milestone 2."];
-    }
+    [self.view makeToast:@"This feature will be available in Milestone 2."];
+    //    Milestone 2 features
+    //            UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
+    //            [self.navigationController pushViewController:complainDetail animated:YES];
 }
 
 - (IBAction)statusChangeAction:(id)sender {
@@ -120,7 +128,7 @@
                 [filteredComplainListArray addObject:data];
             } else {
                 _noComplaintsLabel.hidden = NO;
-                _noComplaintsLabel.text = @"No feedback pending.";
+                _noComplaintsLabel.text = @"No Records Found.";
             }
         } else if (buttonTag == 2) {
             if ([data.complainStatus isEqualToString:@"Complete"]) {
@@ -129,7 +137,7 @@
             }
             else {
                 _noComplaintsLabel.hidden = NO;
-                _noComplaintsLabel.text = @"No feedback is completed yet.";
+                _noComplaintsLabel.text = @"No Records Found.";
             }
             
         } else if (buttonTag == 1) {
@@ -138,9 +146,8 @@
                 [filteredComplainListArray addObject:data];
             }  else {
                 _noComplaintsLabel.hidden = NO;
-                _noComplaintsLabel.text = @"No feedback is in progress.";
+                _noComplaintsLabel.text = @"No Records Found.";
             }
-            
         }
         [_complainListingTable reloadData];
     }
@@ -229,10 +236,19 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
-    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
-    complainDetail.complainId = data.complainId;
-    [self.navigationController pushViewController:complainDetail animated:YES];
+    [self.view makeToast:@"This feature will be available in Milestone 2."];
+    //            Milestone 2 features
+    //    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    //    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
+    //    complainDetail.complainId = data.complainId;
+    //    [self.navigationController pushViewController:complainDetail animated:YES];
+}
+#pragma mark - end
+
+#pragma mark - Pull to refresh
+- (void)refershControlAction
+{
+    [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
 }
 #pragma mark - end
 
@@ -258,13 +274,13 @@
             ComplainListDataModel *data=[complainListArray objectAtIndex:i];
             if ([data.complainStatus isEqualToString:@"Pending"]) {
                 [pendingArray addObject:data];
-                _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",pendingArray.count] ;
+                _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)pendingArray.count] ;
             } else if ([data.complainStatus isEqualToString:@"Complete"]) {
                 [progressArray addObject:data];
-                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",progressArray.count] ;
+                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
             } else if ([data.complainStatus isEqualToString:@"In process"]) {
                 [completeArray addObject:data];
-                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",completeArray.count] ;
+                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
             }
         }
         //If no feedbacks
@@ -275,9 +291,10 @@
         }
         //Filter array
         [self filterStatusArray:0];
+        [_refreshControl endRefreshing];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
-        
+        [_refreshControl endRefreshing];
     }] ;
 }
 #pragma mark - end

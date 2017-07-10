@@ -12,5 +12,4 @@
 
 @property(nonatomic,retain)NSString * commnts;
 @property(nonatomic,retain)NSString * time;
-
 @end

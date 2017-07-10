@@ -23,6 +23,7 @@
     NSMutableArray *complainImageArray;
     NSMutableArray *imagesNameArray;
     NSMutableArray *commentsArray;
+    NSArray *userCategoriesArray;
     BOOL isJobStarted;
     NSMutableDictionary *detailDict;
     float commentsViewHeight;
@@ -30,8 +31,6 @@
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *mainContainerView;
-//@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-//@property (weak, nonatomic) IBOutlet UILabel *titleSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *detailsTextView;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *categoryLabel;
@@ -69,9 +68,9 @@
     complainImageArray = [[NSMutableArray alloc]init];
     imagesNameArray = [[NSMutableArray alloc]init];
     detailDict = [[NSMutableDictionary alloc]init];
-//    CGPoint offset = _detailsTextView.contentOffset;
-//    [_detailsTextView setContentOffset:offset];
-    _detailsTextView.textContainerInset = UIEdgeInsetsZero;
+    userCategoriesArray = [[NSArray alloc]init];
+//    _detailsTextView.textContainerInset = UIEdgeInsetsZero;
+    [_detailsTextView scrollRangeToVisible:NSMakeRange(0, 0)];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
 }
@@ -87,9 +86,8 @@
 
 #pragma mark - View customisation
 - (void)setViewFrames: (NSDictionary *)data {
+    _mainContainerView.hidden = NO;
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
-    //    _titleLabel.translatesAutoresizingMaskIntoConstraints=YES;
-    //    _titleSeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
     _detailsTextView.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _categoryLabel.translatesAutoresizingMaskIntoConstraints = YES;
@@ -108,19 +106,10 @@
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
     _reonpenJobButton.translatesAutoresizingMaskIntoConstraints = YES;
-    //    //Set title text frame
+    //Set title text frame
     size = CGSizeMake(self.view.frame.size.width-20,90);
-    //    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"Title"]];
-    //    _titleLabel.numberOfLines = 0;
-    //    if (textRect.size.height < 35) {
-    //        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, 40);
-    //    } else {
-    //        _titleLabel.frame =CGRectMake(10, 20, self.view.frame.size.width-20, textRect.size.height + 5);
-    //    }
-    //    _titleLabel.text=[data objectForKey:@"Title"];
-    //    _titleSeparatorLabel.frame = CGRectMake(_titleSeparatorLabel.frame.origin.x, _titleLabel.frame.origin.y+_titleLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
     //Detail text view frame
-    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"] textSize:16];
+    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"] textSize:18];
     if ((textRect.size.height < 90) && (textRect.size.height > 39)) {
         _detailsTextView.frame = CGRectMake(_detailsTextView.frame.origin.x - 5, 20, self.view.frame.size.width-15, textRect.size.height+5);
     }
@@ -144,11 +133,18 @@
     } else {
         _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 20, self.view.frame.size.width-20, _imageCollectionView.frame.size.height);
     }
-    _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
+    if (commentsArray.count < 1) {
+        _commentsCountLabel.hidden = YES;
+        _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20,0);
+    } else {
+        _commentsCountLabel.hidden = NO;
+        _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
+    }
     //Comments container view frame
     if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
         _scrollView.scrollEnabled= YES;
         _UserStatusView.hidden=NO;
+        _commentsContainerView.hidden = NO;
         _addCommentContainerView.hidden=YES;
         _startJobButton.hidden=YES;
         _completeJobAction.hidden=YES;
@@ -171,9 +167,15 @@
             //Start job button frame
             _startJobButton.frame = CGRectMake(30, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
             _commentsContainerView.hidden = YES;
-            _startJobButton.hidden = NO;
             _scrollView.scrollEnabled= NO;
+            if ([userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
+                _startJobButton.hidden = NO;
+            } else {
+                _UserStatusView.hidden = NO;
+            }
+            
         } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
+            //            if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) {
             _startJobButton.hidden = YES;
             _UserStatusView.hidden=YES;
             _commentsContainerView.hidden=NO;
@@ -184,11 +186,14 @@
             [_addCommentTextView setPlaceholder:@" Add Comment"];
             [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:15.0]];
             messageHeight = 40;
-            _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
-            _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
+            if (commentsArray.count < 1) {
+                _commentsCountLabel.frame = CGRectMake(10,-10, self.view.frame.size.width-20,0);
+            }
+            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width, messageHeight + 10);
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 48, messageHeight);
             [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
             [_addCommentTextView setCornerRadius:3];
-            _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 5, 25, 30);
+            _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+0.5, 0, 40, 40);
             if ([_addCommentTextView.text isEqualToString:@""] || _addCommentTextView.text.length == 0) {
                 _sendCommentButton.enabled = NO;
             }
@@ -216,6 +221,28 @@
                 commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_completeJobAction.frame.size.height+20;
             }
         }
+        else {
+            //                            _scrollView.scrollEnabled= YES;
+            //                            _UserStatusView.hidden=NO;
+            //                            _commentsContainerView.hidden = NO;
+            //                            _addCommentContainerView.hidden=YES;
+            //                            _startJobButton.hidden=YES;
+            //                            _completeJobAction.hidden=YES;
+            //                            _UserStatusView.frame = CGRectMake(10,0, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
+            //                            [_UserStatusView setBottomBorder:_UserStatusView];
+            //                            _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
+            //                            _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
+            //                            _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
+            //                            if (commentsArray.count < 1) {
+            //                                _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, 0);
+            //                            } else  if (commentsArray.count < 2) {
+            //                                _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, 60);
+            //                            } else {
+            //                                _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
+            //                            }
+            //                            commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
+            //                        }
+        }
     }
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width,commentsViewHeight + 20);
     if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
@@ -236,65 +263,46 @@
 
 #pragma mark - Textfield delegates
 - (void)textViewDidBeginEditing:(UITextView *)textView {
-    if (textView == _addCommentTextView) {
-        if([[UIScreen mainScreen] bounds].size.height==568) {
-            if (complainImageArray.count>1) {
-                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 280) animated:YES];
-            } else {
-                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 400) animated:YES];
-            }
-        }
-        if (complainImageArray.count>1) {
-            if([[UIScreen mainScreen] bounds].size.height==667) {
-                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 480) animated:YES];
-            } else if([[UIScreen mainScreen] bounds].size.height==736) {
-                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 600) animated:YES];
-            }
-        }
+    if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+        [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
+    else {
+        [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:NO];
+    }
+    //
+    //    if (textView == _addCommentTextView) {
+    //        if([[UIScreen mainScreen] bounds].size.height==568) {
+    //            if (complainImageArray.count>1) {
+    //                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 280) animated:YES];
+    //            } else {
+    //                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 400) animated:YES];
+    //            }
+    //        }
+    //        if (commentsArray.count>1) {
+    ////            if([[UIScreen mainScreen] bounds].size.height==667) {
+    ////                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 480) animated:YES];
+    ////            } else if([[UIScreen mainScreen] bounds].size.height==736) {
+    ////                [_scrollView setContentOffset:CGPointMake(0, self.view.frame.size.height - 600) animated:YES];
+    ////            }
+    //        }
+    //    }
 }
 
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     if (textView == _addCommentTextView) {
-        if ([text isEqualToString:[UIPasteboard generalPasteboard].string]) {
-            size = CGSizeMake(_addCommentTextView.frame.size.height,80);
-            NSString *string = textView.text;
-            NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-            text = [NSString stringWithFormat:@"%@%@",_addCommentTextView.text,text];
-            textRect=[self setDynamicHeight:size textString:text textSize:14];
-            if ((textRect.size.height < 80) && (textRect.size.height > 50)) {
-                _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, textRect.size.height+8);
-                messageHeight = textRect.size.height + 8;
-                _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight +10 );
-                _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
-                _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
-                _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-            }
-            else if(textRect.size.height <= 50) {
-                messageHeight = 40;
-                _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
-                _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
-                _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
-                _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
-                _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-            }
-            if (textView.text.length>=1) {
-                if (trimmedString.length>=1) {
-                    _sendCommentButton.enabled=YES;
-                }
-                else {
-                    _sendCommentButton.enabled=NO;
-                }
-            }
-            else if (textView.text.length==0) {
-                _sendCommentButton.enabled=NO;
-            }
-        }
         if([text isEqualToString:@"\n"]) {
             [textView resignFirstResponder];
             [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
             return NO;
         }
+    }
+    if (range.length > 0 && [text length] == 0)
+    {
+        return YES;
+    }
+    if (textView.text.length >= 400 && range.length == 0)
+    {
+        return NO;
     }
     return YES;
 }
@@ -302,20 +310,26 @@
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _addCommentTextView) {
         if (([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height < 80) && ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height > 50)) {
-            _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 48, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
             messageHeight = [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height + 8;
-            _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight +10 );
+            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width, messageHeight +10 );
             _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
             _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
             _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
         }
         else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
             messageHeight = 40;
-            _addCommentTextView.frame = CGRectMake(0, 2, _addCommentContainerView.frame.size.width - 30, messageHeight);
-            _addCommentContainerView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width-20, messageHeight + 10);
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 48, messageHeight);
+            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width, messageHeight + 10);
             _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-20, _commentsTableView.frame.size.height);
             _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
             _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
+        }
+        if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+            [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+        }
+        else {
+            [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+15) animated:NO];
         }
         NSString *string = textView.text;
         NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -488,8 +502,9 @@
 
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
-    [staffImageArray addObject:image];
-    [complainImageArray addObject:image];
+    UIImage *fixedImage = [image fixOrientation];
+    [staffImageArray addObject:fixedImage];
+    [complainImageArray addObject:fixedImage];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_imageCollectionView reloadData];
@@ -508,6 +523,7 @@
         detailDict = responseObject;
         commentsArray = [[NSMutableArray alloc]init];
         commentsArray = [responseObject objectForKey:@"comments"];
+        userCategoriesArray = [responseObject objectForKey:@"userCategoryArray"];
         [self setViewFrames:detailDict];
         [_commentsTableView reloadData];
     } failure:^(NSError *error) {
@@ -517,9 +533,10 @@
 
 //Change complain status
 - (void)changeComplainStatus:(NSString *)complainStatus {
+    [detailDict setObject:@"In process" forKey:@"ComplainStatus"];
     [[ComplainService sharedManager] changeJobStatus:complainId jobStatus:complainStatus imageNameArray:imagesNameArray success:^(id responseObject){
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert addButton:@"Ok" actionBlock:^(void) {
+        [alert addButton:@"OK" actionBlock:^(void) {
             if ([complainStatus isEqualToString:@"In process"]) {
                 [detailDict removeObjectForKey:@"ComplainStatus"];
                 [detailDict setObject:@"In process" forKey:@"ComplainStatus"];
@@ -567,5 +584,4 @@
     }] ;
 }
 #pragma mark - end
-
 @end

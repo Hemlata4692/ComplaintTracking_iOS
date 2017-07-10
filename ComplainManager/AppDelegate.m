@@ -84,7 +84,7 @@
 
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
     NSLog(@"User Info = %@",response.notification.request.content.userInfo);
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alert show];
 }
 #pragma mark - end
@@ -95,7 +95,7 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
-    //    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    //    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     //    [alert show];
     //        [self sendDeviceToken];
 }
@@ -115,7 +115,7 @@
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"Received notification: %@", userInfo);
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"Ok", nil];
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alert show];
 }
 #pragma mark - end

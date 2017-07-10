@@ -97,6 +97,21 @@
 #pragma mark - end
 
 #pragma mark - Textview delegates
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
+    if (textView == _detailTextView) {
+        if (range.length > 0 && [string length] == 0) {
+            return YES;
+        }
+        if (textView.text.length >= 500 && range.length == 0) {
+            return NO;
+        }
+        else {
+            return YES;
+        }
+    }
+    return YES;
+}
+
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
     [self hidePickerWithAnimation];
@@ -227,13 +242,13 @@
         [[UIApplication sharedApplication] openURL:url];
     }];
     [alert showWarning:nil title:@"Camera Access" subTitle:@"Without permission to use your camera, you won't be able to take photo.\nGo to your device settings and then Privacy to grant permission." closeButtonTitle:@"Cancel" duration:0.0f];
-    
 }
 #pragma mark - end
 
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
-    [imagesArray addObject:image];
+    UIImage *fixedImage = [image fixOrientation];
+    [imagesArray addObject:fixedImage];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_addComplainCollectionView reloadData];
@@ -304,7 +319,7 @@
 #pragma mark - end
 
 #pragma mark - Picker View methods
-- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
     UILabel* pickerLabel = (UILabel*)view;
     if (!pickerLabel) {
         pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
@@ -373,11 +388,20 @@
 
 #pragma mark - Register validation
 - (BOOL)performValidationsForAddComplain {
-    if ([_detailTextView.text isEqualToString:@""] || [_categoryTextField isEmpty] || [_locationTextField isEmpty]) {
+    if ([_categoryTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Ok" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select category of Feedback." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
-    } else {
+    } else  if ([_locationTextField isEmpty]) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select location of Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        return NO;
+    }else  if ([_detailTextView.text isEqualToString:@""]) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in the description of your Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        return NO;
+    }
+    else {
         return YES;
     }
 }
@@ -424,7 +448,7 @@
     [[ComplainService sharedManager] addComplait:_detailTextView.text categoryId:selectedCategoryId imageNameArray:imagesNameArray PropertyLocationId:selectedLocationId success:^(id responseObject) {
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert addButton:@"Ok" actionBlock:^(void) {
+        [alert addButton:@"OK" actionBlock:^(void) {
             if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
                 myDelegate.screenName = @"myFeedback";
                 myDelegate.selectedMenuIndex = 2;
@@ -434,7 +458,7 @@
             }
             [self.navigationController popViewControllerAnimated:YES];
         }];
-        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
+        [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
     }] ;

@@ -55,7 +55,7 @@
             [self isStatusOK:json];
         } else {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"Ok" duration:0.0f];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         }
     }];
 }
@@ -84,7 +84,7 @@
                                                              options:kNilOptions error:&error];
         NSLog(@"json %@",json);
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"Ok" duration:0.0f];
+        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"OK" duration:0.0f];
     }];
 }
 
@@ -116,7 +116,7 @@
                                                              options:kNilOptions error:&error];
         NSLog(@"json %@",json);
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"Ok" duration:0.0f];
+        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"OK" duration:0.0f];
     }];
 }
 
@@ -127,8 +127,25 @@
     switch (number.integerValue) {
         case 400: {
             msg = responseObject[@"message"];
+            if ([msg containsString:@"Your account has been deactivated."]) {
+                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+                [alert addButton:@"OK" actionBlock:^(void) {
+                    [self removeDefaultValues];
+                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+                    myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+                    myDelegate.window.rootViewController = myDelegate.navigationController;
+                }];
+                [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
+            } else {
+                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+                [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
+            }
+            return NO;
+        }
+        case 404: {
+            msg = responseObject[@"message"];
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"Ok" duration:0.0f];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
             return NO;
         }
         case 200:
@@ -137,7 +154,7 @@
         case 401: {
             msg = responseObject[@"message"];
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert addButton:@"Ok" actionBlock:^(void) {
+            [alert addButton:@"OK" actionBlock:^(void) {
                 [self removeDefaultValues];
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
@@ -148,8 +165,11 @@
             return NO;
             break;
         default: {
+            msg = responseObject[@"message"];
+            
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"Ok" duration:0.0f];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
+            
         }
             return NO;
             break;

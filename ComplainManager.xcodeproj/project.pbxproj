@@ -46,6 +46,7 @@
 		5DC0478D1EDC3FD400B31D51 /* CommentsModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DC0478C1EDC3FD400B31D51 /* CommentsModel.m */; };
 		5DCE18571ECC79E900F542BE /* UserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCE18561ECC79E900F542BE /* UserProfileViewController.m */; };
 		5DCE185B1ECC7A8F00F542BE /* AddComplainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */; };
+		5DCE88B81F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DCE88B71F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.m */; };
 		5DD316111EC5AC80008FF487 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316101EC5AC80008FF487 /* main.m */; };
 		5DD316141EC5AC80008FF487 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316131EC5AC80008FF487 /* AppDelegate.m */; };
 		5DD3161A1EC5AC80008FF487 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5DD316181EC5AC80008FF487 /* Main.storyboard */; };
@@ -139,6 +140,8 @@
 		5DCE18561ECC79E900F542BE /* UserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfileViewController.m; sourceTree = "<group>"; };
 		5DCE18591ECC7A8F00F542BE /* AddComplainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainViewController.h; sourceTree = "<group>"; };
 		5DCE185A1ECC7A8F00F542BE /* AddComplainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = AddComplainViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5DCE88B61F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+UIImage_fixOrientation.h"; sourceTree = "<group>"; };
+		5DCE88B71F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+UIImage_fixOrientation.m"; sourceTree = "<group>"; };
 		5DD3160C1EC5AC80008FF487 /* ComplainManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ComplainManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DD316101EC5AC80008FF487 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5DD316121EC5AC80008FF487 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -425,6 +428,7 @@
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 				5D984B391EF39D4E0074E29C /* TenantsListView */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
@@ -515,6 +519,15 @@
 			name = AddComplainView;
 			sourceTree = "<group>";
 		};
+		5DCE88B51F0E1DC8001DD526 /* ImageOrientationCategory */ = {
+			isa = PBXGroup;
+			children = (
+				5DCE88B61F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.h */,
+				5DCE88B71F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.m */,
+			);
+			name = ImageOrientationCategory;
+			sourceTree = "<group>";
+		};
 		5DD316031EC5AC80008FF487 = {
 			isa = PBXGroup;
 			children = (
@@ -583,7 +596,6 @@
 				5D864D0F1ECB0D08007FFC16 /* GlobalViewController */,
 				5DB168981ECE9DE900E0A8E2 /* SWRevealViewController */,
 				5DB168971ECE9DCF00E0A8E2 /* SideBar */,
-				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE04991ECC54AB005EC7A2 /* DashboardModule */,
 				5DD316561EC5AF48008FF487 /* LoginModule */,
 			);
@@ -617,6 +629,7 @@
 		5DD3162E1EC5AD8B008FF487 /* SupportingClasses */ = {
 			isa = PBXGroup;
 			children = (
+				5DCE88B51F0E1DC8001DD526 /* ImageOrientationCategory */,
 				5DD316311EC5ADD0008FF487 /* Crashlytics */,
 				5DD316301EC5ADCD008FF487 /* NullHandler */,
 				5DD3162F1EC5ADC9008FF487 /* DefaultManager */,
@@ -949,6 +962,7 @@
 				5D47F5E41EFBF30100E20697 /* SidebarCell.m in Sources */,
 				5D4E1C021ED2EE44008B68F4 /* UIView+Toast.m in Sources */,
 				5DD316141EC5AC80008FF487 /* AppDelegate.m in Sources */,
+				5DCE88B81F0E1DDE001DD526 /* UIImage+UIImage_fixOrientation.m in Sources */,
 				5D864D0A1ECADE97007FFC16 /* ComplainListDataModel.m in Sources */,
 				5D8F63AE1EC9B35B00111138 /* UIImage+ImageEffects.m in Sources */,
 				5DD316421EC5AECA008FF487 /* UIView+RoundedCorner.m in Sources */,

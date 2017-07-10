@@ -202,8 +202,11 @@
                 }
                 [detailDict setObject:dataArray forKey:@"comments"];
             }
+            id userCategoryArray =[[responseObject objectForKey:@"Details"] objectForKey:@"UserFeedbackCategory"];
+            if (([userCategoryArray isKindOfClass:[NSArray class]])) {
+                [detailDict setObject:userCategoryArray forKey:@"userCategoryArray"];
+            }
             success(detailDict);
-
         } else {
             [myDelegate stopIndicator];
             failure(nil);

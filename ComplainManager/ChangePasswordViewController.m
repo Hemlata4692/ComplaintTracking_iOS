@@ -28,6 +28,7 @@
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.navigationItem.title = @"Change Password";
     //Adding textfield to array
     textfieldArray = @[_oldPasswordText,_changePasswordText,_confirmPasswordText];
     //Keyboard toolbar action to display toolbar with keyboard to move next,previous
@@ -37,7 +38,6 @@
     [self addMenuButton];
     //UI customisation
     [self customiseView];
-    self.navigationItem.title = @"Change Password";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -90,23 +90,23 @@
 - (BOOL)performValidationsForChangePassword {
     if ([_oldPasswordText isEmpty] || [_changePasswordText isEmpty] || [_confirmPasswordText isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all fields." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else  if (_oldPasswordText.text.length<6 || _changePasswordText.text.length<6 || _confirmPasswordText.text.length<6) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Password with minimum 6 characters are required." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 6 characters." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     //Password confirmation for new password entered
     else if ([_oldPasswordText.text isEqualToString:_changePasswordText.text]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Your new password cannot be same as old password." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please type new password in order to change old password." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else if (![_changePasswordText.text isEqualToString:_confirmPasswordText.text]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Your passwords do not match. Kindly provide a correct password." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"New and Confirm Password doesn't match." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
@@ -130,7 +130,7 @@
     [[UserService sharedManager] changePassword:_oldPasswordText.text newPassword:_changePasswordText.text success:^(id responseObject){
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert addButton:@"Ok" actionBlock:^(void) {
+        [alert addButton:@"OK" actionBlock:^(void) {
             myDelegate.screenName = @"dashboard";
             myDelegate.selectedMenuIndex = 0;
             UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -153,7 +153,7 @@
                 [myDelegate.window makeKeyAndVisible];
             }
         }];
-        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
+        [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         
     }] ;
