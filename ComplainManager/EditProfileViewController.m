@@ -87,7 +87,7 @@
         [self displayUserImage:image];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
     }];
-   
+    
     _userProfileImage.layer.cornerRadius = _userProfileImage.frame.size.width / 2;
     _userProfileImage.layer.masksToBounds = YES;
     _nameTextField.text = [userData objectForKey:@"name"];
@@ -235,29 +235,23 @@
 -(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (textField == _phoneNumberTextField) {
-        if (range.length > 0 && [string length] == 0)
-        {
+        if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textField.text.length >= 16 && range.length == 0)
-        {
+        if (textField.text.length >= 16 && range.length == 0) {
             return NO;
         }
-        else
-        {
+        else {
             return YES;
         }
     } else if (textField == _nameTextField) {
-        if (range.length > 0 && [string length] == 0)
-        {
+        if (range.length > 0 && [string length] == 0){
             return YES;
         }
-        if (textField.text.length >= 60 && range.length == 0)
-        {
+        if (textField.text.length >= 60 && range.length == 0) {
             return NO;
         }
-        else
-        {
+        else {
             return YES;
         }
     }
@@ -348,12 +342,11 @@
 #pragma mark - Register validation
 
 - (BOOL)performValidationsForEditProfile {
-    //    if ([_nameTextField isEmpty]) {
-    //        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-    //        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Contact Name." closeButtonTitle:@@"OK" duration:0.0f];
-    //        return NO;
-    //    } else
-    if ([_phoneNumberTextField isEmpty]) {
+    if ([_nameTextField isEmpty]) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Contact Name." closeButtonTitle:@"OK" duration:0.0f];
+        return NO;
+    } else if ([_phoneNumberTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Phone Number." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
@@ -368,18 +361,11 @@
         }
     }
     else {
-        if ((_phoneNumberTextField.text.length<10)) {
+        if ((_phoneNumberTextField.text.length<8)) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showWarning:self title:@"Alert" subTitle:@"Phone Number should be between 8 to 16 digits." closeButtonTitle:@"OK" duration:0.0f];
             return NO;
-        }
-        //        else  if (_nameTextField.text.length > 60) {
-        //            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        //            [alert showWarning:self title:@"Alert" subTitle:@"Your contact name has exceeded 60 characters limit." closeButtonTitle:@@"OK" duration:0.0f];
-        //            return NO;
-        //        }
-        
-        else {
+        } else {
             return YES;
         }
     }

@@ -53,7 +53,6 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 #pragma mark - end
 
@@ -87,7 +86,6 @@
 #pragma mark - IBActions
 - (IBAction)editProfileAction:(id)sender {
     EditProfileViewController * editProfile = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"EditProfileViewController"];
-//    editProfile.userData = userData;
     [self.navigationController pushViewController:editProfile animated:YES];
 }
 #pragma mark - end
@@ -139,6 +137,7 @@
         [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
         [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
         [self setProfileData];
+        //Set profile detail data
         if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
             if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
                 infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];

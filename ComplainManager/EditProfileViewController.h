@@ -9,5 +9,4 @@
 #import <UIKit/UIKit.h>
 
 @interface EditProfileViewController : GlobalViewController
-//@property(nonatomic,strong) NSDictionary *userData;
 @end

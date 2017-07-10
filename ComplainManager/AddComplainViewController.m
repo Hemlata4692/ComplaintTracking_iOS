@@ -97,19 +97,15 @@
 #pragma mark - end
 
 #pragma mark - Textview delegates
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string
-{
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
     if (textView == _detailTextView) {
-        if (range.length > 0 && [string length] == 0)
-        {
+        if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textView.text.length >= 500 && range.length == 0)
-        {
+        if (textView.text.length >= 500 && range.length == 0) {
             return NO;
         }
-        else
-        {
+        else {
             return YES;
         }
     }
@@ -246,7 +242,6 @@
         [[UIApplication sharedApplication] openURL:url];
     }];
     [alert showWarning:nil title:@"Camera Access" subTitle:@"Without permission to use your camera, you won't be able to take photo.\nGo to your device settings and then Privacy to grant permission." closeButtonTitle:@"Cancel" duration:0.0f];
-    
 }
 #pragma mark - end
 
@@ -324,7 +319,7 @@
 #pragma mark - end
 
 #pragma mark - Picker View methods
-- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view{
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
     UILabel* pickerLabel = (UILabel*)view;
     if (!pickerLabel) {
         pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
@@ -399,7 +394,7 @@
         return NO;
     } else  if ([_locationTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please select the location for feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select location of Feedback." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }else  if ([_detailTextView.text isEqualToString:@""]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];

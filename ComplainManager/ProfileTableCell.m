@@ -49,7 +49,6 @@
         infoDetailLabel.text=infoString;
     }
     infoLabel.text = [infoArray objectAtIndex:index];
-    //    infoDetailLabel.text = infoString;
 }
 #pragma mark - end
 

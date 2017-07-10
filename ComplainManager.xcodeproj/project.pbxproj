@@ -428,6 +428,7 @@
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 				5D984B391EF39D4E0074E29C /* TenantsListView */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
@@ -595,7 +596,6 @@
 				5D864D0F1ECB0D08007FFC16 /* GlobalViewController */,
 				5DB168981ECE9DE900E0A8E2 /* SWRevealViewController */,
 				5DB168971ECE9DCF00E0A8E2 /* SideBar */,
-				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE04991ECC54AB005EC7A2 /* DashboardModule */,
 				5DD316561EC5AF48008FF487 /* LoginModule */,
 			);

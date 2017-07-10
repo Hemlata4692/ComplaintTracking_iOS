@@ -95,17 +95,9 @@
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
     [self.view makeToast:@"This feature will be available in Milestone 2."];
-    
     //    Milestone 2 features
-    //        UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
-    //        [self.navigationController pushViewController:complainDetail animated:YES];
-    
-    //    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-    //        UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
-    //        [self.navigationController pushViewController:complainDetail animated:YES];
-    //    } else {
-    //        [self.view makeToast:@"This feature will be available in Milestone 2."];
-    //    }
+    //            UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
+    //            [self.navigationController pushViewController:complainDetail animated:YES];
 }
 
 - (IBAction)statusChangeAction:(id)sender {
