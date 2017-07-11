@@ -17,6 +17,7 @@
     NSMutableArray *complainListArray, *filteredComplainListArray;
     NSArray *searchArray;
     BOOL isSearch;
+    int selectedButtonTag;
 }
 
 @property (weak, nonatomic) IBOutlet UITextField *searchTextField;
@@ -89,15 +90,17 @@
     }
     //Add button shadow
     [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
+    _assignedCounterLabel.text = @"0";
+    _progressCounterLabel.text = @"0";
+    _completeProgressLabel.text = @"0";
 }
 #pragma mark - end
 
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
-    [self.view makeToast:@"This feature will be available in Milestone 2."];
     //    Milestone 2 features
-    //            UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
-    //            [self.navigationController pushViewController:complainDetail animated:YES];
+    UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
+    [self.navigationController pushViewController:complainDetail animated:YES];
 }
 
 - (IBAction)statusChangeAction:(id)sender {
@@ -123,30 +126,39 @@
     for (int i = 0; i < complainListArray.count; i++) {
         ComplainListDataModel *data=[complainListArray objectAtIndex:i];
         if (buttonTag == 0) {
+            selectedButtonTag = 0;
             if ([data.complainStatus isEqualToString:@"Pending"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             } else {
-                _noComplaintsLabel.hidden = NO;
-                _noComplaintsLabel.text = @"No Records Found.";
+                if (filteredComplainListArray.count < 1) {
+                    _noComplaintsLabel.hidden = NO;
+                    _noComplaintsLabel.text = @"No Records Found.";
+                }
             }
         } else if (buttonTag == 2) {
+            selectedButtonTag = 2;
             if ([data.complainStatus isEqualToString:@"Complete"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }
             else {
-                _noComplaintsLabel.hidden = NO;
-                _noComplaintsLabel.text = @"No Records Found.";
+                if (filteredComplainListArray.count < 1) {
+                    _noComplaintsLabel.hidden = NO;
+                    _noComplaintsLabel.text = @"No Records Found.";
+                }
             }
             
         } else if (buttonTag == 1) {
+            selectedButtonTag = 1;
             if ([data.complainStatus isEqualToString:@"In process"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }  else {
-                _noComplaintsLabel.hidden = NO;
-                _noComplaintsLabel.text = @"No Records Found.";
+                if (filteredComplainListArray.count < 1) {
+                    _noComplaintsLabel.hidden = NO;
+                    _noComplaintsLabel.text = @"No Records Found.";
+                }
             }
         }
         [_complainListingTable reloadData];
@@ -236,19 +248,18 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.view makeToast:@"This feature will be available in Milestone 2."];
     //            Milestone 2 features
-    //    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
-    //    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
-    //    complainDetail.complainId = data.complainId;
-    //    [self.navigationController pushViewController:complainDetail animated:YES];
+    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
+    complainDetail.complainId = data.complainId;
+    [self.navigationController pushViewController:complainDetail animated:YES];
 }
 #pragma mark - end
 
 #pragma mark - Pull to refresh
 - (void)refershControlAction
 {
-    [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
+        [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
 }
 #pragma mark - end
 
@@ -270,6 +281,10 @@
         NSMutableArray *pendingArray = [[NSMutableArray alloc]init];
         NSMutableArray *progressArray = [[NSMutableArray alloc]init];
         NSMutableArray *completeArray = [[NSMutableArray alloc]init];
+        _assignedCounterLabel.text = @"0";
+        _progressCounterLabel.text = @"0";
+        _completeProgressLabel.text = @"0";
+
         for (int i = 0; i < complainListArray.count; i++) {
             ComplainListDataModel *data=[complainListArray objectAtIndex:i];
             if ([data.complainStatus isEqualToString:@"Pending"]) {
@@ -290,7 +305,7 @@
             _noComplaintsLabel.hidden = YES;
         }
         //Filter array
-        [self filterStatusArray:0];
+        [self filterStatusArray:selectedButtonTag];
         [_refreshControl endRefreshing];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {

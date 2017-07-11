@@ -16,7 +16,7 @@
 @property (nonatomic,strong)  NSString *screenName;
 @property (nonatomic)  long selectedMenuIndex;
 @property (nonatomic,strong) NSString *deviceToken;
-
+@property (nonatomic) BOOL isDetailJobStarted;
 //Show/Stop indicator
 - (void)showIndicator;
 - (void)stopIndicator;
