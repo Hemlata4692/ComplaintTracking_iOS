@@ -45,9 +45,10 @@
         self.navigationItem.title=@"My Profile";
         _editProfileButton.hidden = NO;
         [self addMenuButton];
-        [myDelegate showIndicator];
-        [self performSelector:@selector(getProfileDetail) withObject:nil afterDelay:.1];
     }
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getProfileDetail) withObject:nil afterDelay:.1];
+    
     [self viewCustomisation];
 }
 
@@ -60,14 +61,14 @@
 - (void)viewCustomisation {
     _profileImageView.layer.cornerRadius = _profileImageView.frame.size.width / 2;
     _profileImageView.layer.masksToBounds = YES;
-    [self setProfileData];
+//    [self setProfileData];
     [_editProfileButton addShadow:_editProfileButton color:[UIColor grayColor]];
 }
 #pragma mark - end
 
 #pragma mark - Set profile data
 - (void)setProfileData {
-    NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
+    NSString *tempImageString = [userData objectForKey:@"userimage"];
     NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     [_profileImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
@@ -79,7 +80,7 @@
     _profileImageView.layer.cornerRadius = _profileImageView.frame.size.width / 2;
     _profileImageView.layer.masksToBounds = YES;
     [_profileImageView setImageViewBorder:_profileImageView color:[UIColor whiteColor]];
-    _userName.text = [UserDefaultManager getValue:@"name"];
+    _userName.text = [userData objectForKey:@"name"];
 }
 #pragma mark - end
 
@@ -132,14 +133,22 @@
 
 #pragma mark - Web services
 - (void)getProfileDetail {
-    [[UserService sharedManager] getProfileDetail:^(id responseObject){
+    NSString *userId;
+    if (isTenantDetailScreen) {
+        userId = _tenantUserId;
+    } else {
+        userId = @"";
+    }
+    [[UserService sharedManager] getProfileDetail:isTenantDetailScreen userId:userId success:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
-        [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
-        [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
+        if (!isTenantDetailScreen) {
+            [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
+            [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
+        }
         [self setProfileData];
         //Set profile detail data
         if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
-            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"] && (!isTenantDetailScreen)) {
                 infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];
             } else {
                 infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];

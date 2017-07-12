@@ -395,7 +395,7 @@
 
 #pragma mark - Webservice
 - (void)getProfileDetail {
-    [[UserService sharedManager] getProfileDetail:^(id responseObject){
+    [[UserService sharedManager] getProfileDetail:NO userId:[UserDefaultManager getValue:@"userId"] success:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
         [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
         [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];

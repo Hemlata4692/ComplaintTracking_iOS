@@ -9,13 +9,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplaintDetailViewController.m"
-            timestampString = "521471968.556564"
+            filePath = "ComplainManager/UserProfileViewController.m"
+            timestampString = "521557736.175949"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
-            landmarkName = "-setViewFrames:"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
+            landmarkName = "-getProfileDetail"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

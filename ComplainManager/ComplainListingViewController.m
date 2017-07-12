@@ -55,7 +55,6 @@
     }
     //Set assigned view UI
     [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
-    
     // Pull To Refresh
     _refreshControl = [[UIRefreshControl alloc] initWithFrame:CGRectMake(160, 0, 20, 20)];
     [_complainListingTable addSubview:_refreshControl];
@@ -114,7 +113,6 @@
         //Set progress view UI
         [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] progressTextColor:[UIColor whiteColor] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
     }
-    
     [self filterStatusArray:(int)[sender tag]];
 }
 #pragma mark - end

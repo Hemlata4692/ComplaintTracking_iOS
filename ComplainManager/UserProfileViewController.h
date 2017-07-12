@@ -10,4 +10,5 @@
 
 @interface UserProfileViewController : GlobalViewController
 @property (nonatomic) BOOL isTenantDetailScreen;
+@property (nonatomic,strong) NSString * tenantUserId;
 @end

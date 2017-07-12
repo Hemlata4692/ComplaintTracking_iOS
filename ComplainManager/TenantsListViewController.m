@@ -37,12 +37,17 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (void) viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:YES];
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getTenantsListing) withObject:nil afterDelay:.1];
+}
 #pragma mark - end
 
 #pragma mark - Table view methods
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    return tenantsListingArray.count;
-    return 6;
+    return tenantsListingArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -51,15 +56,16 @@
     if (tenantsCell == nil) {
         tenantsCell = [[TenantsListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
-//    //Display data on cells
-//    TenantsListModel * data=[tenantsListingArray objectAtIndex:indexPath.row];
-//    [tenantsCell displayTenantsListData:data indexPath:(int)indexPath.row rectSize:_tenantsTableView.frame.size];
+    //Display data on cells
+    TenantsListModel * data=[tenantsListingArray objectAtIndex:indexPath.row];
+    [tenantsCell displayTenantsListData:data indexPath:(int)indexPath.row rectSize:_tenantsTableView.frame.size];
     return tenantsCell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"dis select");
     UserProfileViewController * detailView = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"UserProfileViewController"];
+    TenantsListModel *dataModel = [tenantsListingArray objectAtIndex:indexPath.row];
+    detailView.tenantUserId = dataModel.tenantId;
     detailView.isTenantDetailScreen = YES;
     [self.navigationController pushViewController:detailView animated:YES];
 }

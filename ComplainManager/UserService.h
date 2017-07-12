@@ -36,7 +36,7 @@
 //end
 
 //Profile details
-- (void)getProfileDetail:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+- (void)getProfileDetail:(BOOL)isTenantDetailScreen userId:(NSString *)userId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
 //end
 
 //Device token
