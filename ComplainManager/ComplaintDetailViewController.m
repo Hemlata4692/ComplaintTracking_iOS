@@ -12,6 +12,7 @@
 #import "ComplainService.h"
 #import <AVFoundation/AVFoundation.h>
 #import "CommentsModel.h"
+#import "UserService.h"
 
 @interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
@@ -56,7 +57,7 @@
 
 @implementation ComplaintDetailViewController
 
-@synthesize complainId;
+@synthesize complainId,complainVC;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
@@ -69,17 +70,35 @@
     detailDict = [[NSMutableDictionary alloc]init];
     userCategoriesArray = [[NSArray alloc]init];
     [_addCommentTextView scrollRangeToVisible:NSMakeRange(0, 0)];
+    if (myDelegate.detailNotification) {
+        myDelegate.detailNotification = false;
+        complainId = myDelegate.feedbackId;
+        NSLog(@"detail complainId %@",complainId);
+        NSLog(@"getComplaintDetails");
+    }
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedNotification) name:@"ReloadFeedbackDetails" object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
+-(void)receivedNotification {
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
+}
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
+    myDelegate.currentViewController=@"FeedbackDetail";
 }
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:YES];
+    myDelegate.currentViewController=@"other";
+}
+
 #pragma mark - end
 
 #pragma mark - View customisation
@@ -615,6 +634,7 @@
                 [detailDict setObject:[UserDefaultManager getValue:@"userId"] forKey:@"AssignTo"];
                 [self setViewFrames:detailDict];
             } else {
+                complainVC.refreshComplainScreen = true;
                 UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                 UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
                 myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -647,11 +667,8 @@
             if ([msg containsString:@"Your account has been deactivated."]) {
                 SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
                 [alert addButton:@"OK" actionBlock:^(void) {
-                    [self removeDefaultValues];
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                    myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-                    myDelegate.window.rootViewController = myDelegate.navigationController;
-                }];
+                    [myDelegate showIndicator];
+                    [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];                }];
                 [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
             } else  if ([msg containsString:@"assign"]) {
                 [myDelegate showIndicator];
@@ -676,10 +693,8 @@
             msg = responseObject[@"message"];
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert addButton:@"OK" actionBlock:^(void) {
-                [self removeDefaultValues];
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-                myDelegate.window.rootViewController = myDelegate.navigationController;
+                [myDelegate showIndicator];
+                [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];
             }];
             [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
         }
@@ -694,20 +709,28 @@
             break;
     }
 }
-
-//Remove default values
-- (void)removeDefaultValues {
-    [UserDefaultManager removeValue:@"name"];
-    [UserDefaultManager removeValue:@"userId"];
-    [UserDefaultManager removeValue:@"AuthenticationToken"];
-    [UserDefaultManager removeValue:@"contactNumber"];
-    [UserDefaultManager removeValue:@"isFirsttime"];
-    [UserDefaultManager removeValue:@"role"];
-    [UserDefaultManager removeValue:@"email"];
-    [UserDefaultManager removeValue:@"propertyId"];
-    myDelegate.screenName= @"dashboard";
-    myDelegate.selectedMenuIndex = 0;
-}
+//
+////Remove default values
+//- (void)removeDefaultValues {
+//    [[UserService sharedManager] logout:^(id responseObject){
+//        [myDelegate stopIndicator];
+//        [UserDefaultManager removeValue:@"name"];
+//        [UserDefaultManager removeValue:@"userId"];
+//        [UserDefaultManager removeValue:@"AuthenticationToken"];
+//        [UserDefaultManager removeValue:@"contactNumber"];
+//        [UserDefaultManager removeValue:@"isFirsttime"];
+//        [UserDefaultManager removeValue:@"role"];
+//        [UserDefaultManager removeValue:@"propertyId"];
+//        myDelegate.screenName= @"dashboard";
+//        myDelegate.selectedMenuIndex = 0;
+//        myDelegate.isDetailJobStarted = false;
+//        myDelegate.detailNotification = false;
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+//        myDelegate.window.rootViewController = myDelegate.navigationController;
+//    } failure:^(NSError *error) {
+//    }] ;
+//}
 
 //Upload image
 - (void)uploadImage:(NSMutableArray *)imagesArray {

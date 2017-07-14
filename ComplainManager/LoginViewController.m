@@ -34,6 +34,7 @@
     [self.keyboardControls setDelegate:self];
     // UI customisation
     [self customiseView];
+    _emailTextField.text = [UserDefaultManager getValue:@"email"];
 }
 
 - (void)didReceiveMemoryWarning {

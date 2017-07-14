@@ -44,6 +44,7 @@
 @end
 
 @implementation AddComplainViewController
+@synthesize complainVC;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
@@ -449,6 +450,7 @@
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"OK" actionBlock:^(void) {
+            complainVC.refreshComplainScreen = true;
             if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
                 myDelegate.screenName = @"myFeedback";
                 myDelegate.selectedMenuIndex = 2;

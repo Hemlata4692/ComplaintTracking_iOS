@@ -8,7 +8,6 @@
 
 
 #import "Webservice.h"
-
 @implementation Webservice
 @synthesize manager;
 
@@ -58,6 +57,7 @@
                 [self isStatusOK:json];
             }
         } else {
+            failure(error);
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         }
@@ -74,11 +74,8 @@
             if ([msg containsString:@"Your account has been deactivated."]) {
                 SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
                 [alert addButton:@"OK" actionBlock:^(void) {
-                    [self removeDefaultValues];
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                    myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-                    myDelegate.window.rootViewController = myDelegate.navigationController;
-                }];
+                    [myDelegate showIndicator];
+                    [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];                }];
                 [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
             } else {
                 SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -99,11 +96,8 @@
             msg = responseObject[@"message"];
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert addButton:@"OK" actionBlock:^(void) {
-                [self removeDefaultValues];
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-                myDelegate.window.rootViewController = myDelegate.navigationController;
-            }];
+                [myDelegate showIndicator];
+                [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];            }];
             [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
         }
             return NO;
@@ -119,19 +113,27 @@
 }
 #pragma mark - end
 
-#pragma mark - Remove default values
-- (void)removeDefaultValues {
-    [UserDefaultManager removeValue:@"name"];
-    [UserDefaultManager removeValue:@"userId"];
-    [UserDefaultManager removeValue:@"AuthenticationToken"];
-    [UserDefaultManager removeValue:@"contactNumber"];
-    [UserDefaultManager removeValue:@"isFirsttime"];
-    [UserDefaultManager removeValue:@"role"];
-    [UserDefaultManager removeValue:@"email"];
-    [UserDefaultManager removeValue:@"propertyId"];
-    myDelegate.screenName= @"dashboard";
-    myDelegate.selectedMenuIndex = 0;
-}
+//#pragma mark - Remove default values
+//- (void)removeDefaultValues {
+//    [[UserService sharedManager] logout:^(id responseObject){
+//        [myDelegate stopIndicator];
+//        [UserDefaultManager removeValue:@"name"];
+//        [UserDefaultManager removeValue:@"userId"];
+//        [UserDefaultManager removeValue:@"AuthenticationToken"];
+//        [UserDefaultManager removeValue:@"contactNumber"];
+//        [UserDefaultManager removeValue:@"isFirsttime"];
+//        [UserDefaultManager removeValue:@"role"];
+//        [UserDefaultManager removeValue:@"propertyId"];
+//        myDelegate.screenName= @"dashboard";
+//        myDelegate.selectedMenuIndex = 0;
+//        myDelegate.isDetailJobStarted = false;
+//        myDelegate.detailNotification = false;
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+//        myDelegate.window.rootViewController = myDelegate.navigationController;
+//    } failure:^(NSError *error) {
+//    }] ;
+//}
 #pragma mark - end
 
 @end

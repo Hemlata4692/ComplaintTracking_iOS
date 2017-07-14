@@ -11,6 +11,7 @@
 #import "ProfileDataModel.h"
 
 #define kUrlLogin                       @"Login"
+#define kUrlLogout                      @"Logout"
 #define kUrlForgotPassword              @"ForgotPassword"
 #define kUrlRegister                    @"register"
 #define kUrlChangePassword              @"ChangePassword"
@@ -180,11 +181,13 @@
 }
 #pragma mark- end
 
-#pragma mark- Device token
-- (void)setDeviceToken:(NSString *)deviceToken success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"deviceToken":deviceToken};
-    [[Webservice sharedManager] post:kUrlDeviceToken parameters:requestDict success:^(id responseObject) {
+#pragma mark- logout
+- (void)logout:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"deviceId":myDelegate.deviceToken};
+    NSLog(@"requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlLogout parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {

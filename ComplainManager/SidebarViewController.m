@@ -12,6 +12,7 @@
 #import "SWRevealViewController.h"
 #import "LoginViewController.h"
 #import "SidebarCell.h"
+#import "UserService.h"
 
 @interface SidebarViewController (){
     NSArray *menuItems;
@@ -221,27 +222,33 @@
 - (void)logoutUser {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
-        [self removeDefaultValues];
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-        myDelegate.window.rootViewController = myDelegate.navigationController;
+        [myDelegate showIndicator];
+        [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to logout?" closeButtonTitle:@"No" duration:0.0f];
 }
-
-//Remove default values
-- (void)removeDefaultValues {
-    [UserDefaultManager removeValue:@"name"];
-    [UserDefaultManager removeValue:@"userId"];
-    [UserDefaultManager removeValue:@"AuthenticationToken"];
-    [UserDefaultManager removeValue:@"contactNumber"];
-    [UserDefaultManager removeValue:@"isFirsttime"];
-    [UserDefaultManager removeValue:@"role"];
-    [UserDefaultManager removeValue:@"email"];
-    [UserDefaultManager removeValue:@"propertyId"];
-    myDelegate.screenName= @"dashboard";
-    myDelegate.selectedMenuIndex = 0;
-}
+//
+////Remove default values
+//- (void)removeDefaultValues {
+//    [[UserService sharedManager] logout:^(id responseObject){
+//        [myDelegate stopIndicator];
+//        [UserDefaultManager removeValue:@"name"];
+//        [UserDefaultManager removeValue:@"userId"];
+//        [UserDefaultManager removeValue:@"AuthenticationToken"];
+//        [UserDefaultManager removeValue:@"contactNumber"];
+//        [UserDefaultManager removeValue:@"isFirsttime"];
+//        [UserDefaultManager removeValue:@"role"];
+//        [UserDefaultManager removeValue:@"propertyId"];
+//        myDelegate.screenName= @"dashboard";
+//        myDelegate.selectedMenuIndex = 0;
+//        myDelegate.isDetailJobStarted = false;
+//        myDelegate.detailNotification = false;
+//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+//        myDelegate.window.rootViewController = myDelegate.navigationController;
+//    } failure:^(NSError *error) {
+//    }] ;
+//}
 
 #pragma mark - end
 

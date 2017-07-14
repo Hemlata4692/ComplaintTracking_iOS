@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface ComplainListingViewController : GlobalViewController
-
+@property(nonatomic) BOOL refreshComplainScreen;
 @end

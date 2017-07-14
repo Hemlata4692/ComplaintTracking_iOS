@@ -11,6 +11,7 @@
 #import "ComplainListDataModel.h"
 #import "ComplainService.h"
 #import "ComplaintDetailViewController.h"
+#import "AddComplainViewController.h"
 
 @interface ComplainListingViewController ()
 {
@@ -36,11 +37,12 @@
 @property (weak, nonatomic) IBOutlet UIImageView *searchImage;
 //Pull to refresh
 @property (nonatomic, strong)UIRefreshControl *refreshControl;
-@property (nonatomic, strong)UIRefreshControl *refreshControlIpad;
 
 @end
 
 @implementation ComplainListingViewController
+
+@synthesize refreshComplainScreen;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
@@ -53,13 +55,24 @@
         UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
         [self.navigationController pushViewController:complainDetail animated:YES];
     }
-    //Set assigned view UI
-    [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    refreshComplainScreen = true;
     // Pull To Refresh
     _refreshControl = [[UIRefreshControl alloc] initWithFrame:CGRectMake(160, 0, 20, 20)];
     [_complainListingTable addSubview:_refreshControl];
     [_refreshControl addTarget:self action:@selector(refershControlAction) forControlEvents:UIControlEventValueChanged];
     _complainListingTable.alwaysBounceVertical = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedNotification) name:@"ReloadComplainListing" object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:YES];
+    myDelegate.currentViewController=@"other";
+    refreshComplainScreen = false;
+}
+
+-(void)receivedNotification {
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -71,17 +84,26 @@
     [super viewWillAppear:YES];
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
+        myDelegate.currentViewController=@"other";
     } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
         self.navigationItem.title=@"Property Feedback";
+        myDelegate.currentViewController=@"propertyFeedback";
     } else {
         self.navigationItem.title=@"Dashboard";
+        myDelegate.currentViewController=@"Dashboard";
     }
     [[self navigationController] setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    if (refreshComplainScreen) {
+        [self changeButtonState:0];
+    }
     //call complain listing list data
-    if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 0) {
+    if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 0 && !myDelegate.detailNotification) {
         [myDelegate showIndicator];
         [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
+    } else if (myDelegate.detailNotification) {
+        ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
+        [self.navigationController pushViewController:complainDetail animated:YES];
     }
     //If user is long term contractor
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
@@ -98,26 +120,32 @@
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
     //    Milestone 2 features
-    UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
-    [self.navigationController pushViewController:complainDetail animated:YES];
+    AddComplainViewController * addComplain = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
+    addComplain.complainVC = self;
+    [self.navigationController pushViewController:addComplain animated:YES];
 }
 
 - (IBAction)statusChangeAction:(id)sender {
-    if ([sender tag] == 0) {
-        //Set assigned view UI
-        [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
-    } else if ([sender tag] == 2) {
-        //Set complete view UI
-        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0] completeTextColor:[UIColor whiteColor]];
-    } else if ([sender tag] == 1) {
-        //Set progress view UI
-        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] progressTextColor:[UIColor whiteColor] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
-    }
-    [self filterStatusArray:(int)[sender tag]];
+    [self changeButtonState:(int)[sender tag]];
 }
 #pragma mark - end
 
 #pragma mark - Filter status data
+-(void)changeButtonState:(int)buttonTag {
+    _searchTextField.text = @"";
+    if (buttonTag == 0) {
+        //Set assigned view UI
+        [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    } else if (buttonTag == 2) {
+        //Set complete view UI
+        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0] completeTextColor:[UIColor whiteColor]];
+    } else if (buttonTag == 1) {
+        //Set progress view UI
+        [self setStatusViewDesign:[UIColor whiteColor] assignedTextColor:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] progressBackgroundColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] progressTextColor:[UIColor whiteColor] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
+    }
+    [self filterStatusArray:buttonTag];
+}
+
 - (void)filterStatusArray:(int)buttonTag {
     //Show feedback listing with different status
     [filteredComplainListArray removeAllObjects];
@@ -246,10 +274,10 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    //            Milestone 2 features
     ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
     ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
     complainDetail.complainId = data.complainId;
+    complainDetail.complainVC = self;
     [self.navigationController pushViewController:complainDetail animated:YES];
 }
 #pragma mark - end
@@ -257,7 +285,7 @@
 #pragma mark - Pull to refresh
 - (void)refershControlAction
 {
-        [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
+    [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
 }
 #pragma mark - end
 
@@ -267,13 +295,14 @@
     NSString *previousScreen;
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         previousScreen = @"MYCOMPLAIN";
-    } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
+    } else if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
         previousScreen = @"PROPERTYFEEDBACK";
     }
     else {
         previousScreen = @"DASHBOARD";
     }
     [[ComplainService sharedManager] getComplainListing:previousScreen success:^(NSMutableArray *dataArray){
+        [complainListArray removeAllObjects];
         complainListArray = dataArray;
         //Show feedback status counts
         NSMutableArray *pendingArray = [[NSMutableArray alloc]init];
@@ -282,7 +311,6 @@
         _assignedCounterLabel.text = @"0";
         _progressCounterLabel.text = @"0";
         _completeProgressLabel.text = @"0";
-
         for (int i = 0; i < complainListArray.count; i++) {
             ComplainListDataModel *data=[complainListArray objectAtIndex:i];
             if ([data.complainStatus isEqualToString:@"Pending"]) {
@@ -308,6 +336,10 @@
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [_refreshControl endRefreshing];
+        _noComplaintsLabel.hidden = NO;
+        [complainListArray removeAllObjects];
+        [filteredComplainListArray removeAllObjects];
+        [_complainListingTable reloadData];
     }] ;
 }
 #pragma mark - end

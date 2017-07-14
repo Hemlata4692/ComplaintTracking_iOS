@@ -141,7 +141,6 @@
                 [UserDefaultManager removeValue:@"contactNumber"];
                 [UserDefaultManager removeValue:@"isFirsttime"];
                 [UserDefaultManager removeValue:@"role"];
-                [UserDefaultManager removeValue:@"email"];
                 [UserDefaultManager removeValue:@"propertyId"];
                 myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
                 myDelegate.window.rootViewController = myDelegate.navigationController;
