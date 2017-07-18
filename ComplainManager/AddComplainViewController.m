@@ -287,13 +287,22 @@
 
 - (IBAction)showPickerAction:(id)sender {
     [_keyboardControls.activeField resignFirstResponder];
-    [_pickerView reloadAllComponents];
     if ([sender tag] == 1) {
+        if (locationArray.count < 1 ) {
+            [self.view makeToast:@"No locations found."];
+        } else {
+            [self showPickerWithAnimation];
+        }
         isCategoryPicker = false;
     } else {
+        if (categoryArray.count < 1 ) {
+            [self.view makeToast:@"No categories found."];
+        } else {
+            [self showPickerWithAnimation];
+        }
         isCategoryPicker = true;
     }
-    [self showPickerWithAnimation];
+    [_pickerView reloadAllComponents];
 }
 
 - (IBAction)pickerCancelAction:(id)sender {
@@ -417,6 +426,11 @@
         //        [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"OK" actionBlock:^(void) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:nil duration:0.0f];
     }] ;
 }
 
@@ -440,6 +454,8 @@
             }
         } failure:^(NSError *error) {
             [myDelegate stopIndicator];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         }] ;
     }
 }
@@ -463,6 +479,8 @@
         [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

@@ -30,6 +30,7 @@
     float commentsCellHeight;
 }
 
+@property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *mainContainerView;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
@@ -147,11 +148,39 @@
     _descriptionLabel.text = [data objectForKey:@"FullDescription"];
     complainImageArray = [data objectForKey:@"ImageName"];
     [_imageCollectionView reloadData];
-    //Set image collection view frame
-    if (complainImageArray.count<1) {
-        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
-    } else {
-        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, _imageCollectionView.frame.size.height);
+    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if (complainImageArray.count<1) {
+            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
+        } else {
+            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+        }
+    }
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+        if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
+            //Start job button frame
+            //Set image collection view frame
+            if (complainImageArray.count<1) {
+                _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
+            } else {
+                _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+            }
+        } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
+            // Show In progress view if feedback assigned to user
+            if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+                if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) {
+                    _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+                }
+                else {
+                    if (complainImageArray.count<1) {
+                        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
+                    } else {
+                        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+                    }
+                }
+            } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
+                _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+            }
+        }
     }
     if (commentsArray.count < 1) {
         _commentsCountLabel.hidden = YES;
@@ -400,8 +429,8 @@
 
 #pragma mark - Collection view methds
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if ([[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
-        if (myDelegate.isDetailJobStarted) {
+    if ([[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]])) {
             return complainImageArray.count;
         } else {
             if  (staffImageArray.count < 3){
@@ -410,7 +439,14 @@
                 return complainImageArray.count;
             }
         }
-    } else {
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
+        if  (staffImageArray.count < 3){
+            return complainImageArray.count + 1;
+        } else {
+            return complainImageArray.count;
+        }
+    }
+    else {
         return complainImageArray.count;
     }
 }
@@ -520,7 +556,6 @@
         [myDelegate showIndicator];
         if (staffImageArray.count >= 1) {
             [self performSelector:@selector(uploadImage:) withObject:staffImageArray afterDelay:.1];
-            
         } else {
             [self performSelector:@selector(changeComplainStatus:) withObject:@"Reopen" afterDelay:.1];
         }
@@ -616,6 +651,13 @@
         [_commentsTableView reloadData];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        _mainContainerView.hidden = YES;
+        _noRecordLabel.hidden = NO;
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"OK" actionBlock:^(void) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:nil duration:0.0f];
     }] ;
 }
 
@@ -670,7 +712,7 @@
                     [myDelegate showIndicator];
                     [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];                }];
                 [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
-            } else  if ([msg containsString:@"assign"]) {
+            } else if ([msg containsString:@"assign"]) {
                 [myDelegate showIndicator];
                 [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
             }
@@ -709,28 +751,6 @@
             break;
     }
 }
-//
-////Remove default values
-//- (void)removeDefaultValues {
-//    [[UserService sharedManager] logout:^(id responseObject){
-//        [myDelegate stopIndicator];
-//        [UserDefaultManager removeValue:@"name"];
-//        [UserDefaultManager removeValue:@"userId"];
-//        [UserDefaultManager removeValue:@"AuthenticationToken"];
-//        [UserDefaultManager removeValue:@"contactNumber"];
-//        [UserDefaultManager removeValue:@"isFirsttime"];
-//        [UserDefaultManager removeValue:@"role"];
-//        [UserDefaultManager removeValue:@"propertyId"];
-//        myDelegate.screenName= @"dashboard";
-//        myDelegate.selectedMenuIndex = 0;
-//        myDelegate.isDetailJobStarted = false;
-//        myDelegate.detailNotification = false;
-//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-//        myDelegate.window.rootViewController = myDelegate.navigationController;
-//    } failure:^(NSError *error) {
-//    }] ;
-//}
 
 //Upload image
 - (void)uploadImage:(NSMutableArray *)imagesArray {
@@ -743,6 +763,8 @@
             }
         } failure:^(NSError *error) {
             [myDelegate stopIndicator];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         }] ;
     }
 }
@@ -762,6 +784,8 @@
         [self setViewFrames:detailDict];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

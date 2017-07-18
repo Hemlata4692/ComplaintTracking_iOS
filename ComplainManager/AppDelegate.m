@@ -135,7 +135,6 @@
 
 -(void)notificationRecivedDictionary:(NSDictionary *)userInfo {
     [UIApplication sharedApplication].applicationIconBadgeNumber=0;
-    
     NSDictionary *dict = [userInfo objectForKey:@"aps"] ;
     NSLog(@"dict === %@",dict);
     if ([[userInfo objectForKey:@"notifactionTag"] containsString:@"Detail"]) {
@@ -145,8 +144,10 @@
     } else {
         detailNotification = false;
     }
+    //If app is in active state
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
         if (detailNotification) {
+            detailNotification = false;
             if ([myDelegate.currentViewController isEqualToString:@"FeedbackDetail"]) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadFeedbackDetails" object:nil];
             }

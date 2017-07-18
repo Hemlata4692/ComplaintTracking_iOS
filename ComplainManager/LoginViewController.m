@@ -163,7 +163,8 @@
         [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
     } failure:^(NSError *error) {
-        
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

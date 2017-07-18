@@ -66,8 +66,10 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:YES];
+    [_refreshControl endRefreshing];
     myDelegate.currentViewController=@"other";
     refreshComplainScreen = false;
+    [_searchTextField resignFirstResponder];
 }
 
 -(void)receivedNotification {
@@ -99,6 +101,8 @@
     }
     //call complain listing list data
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 0 && !myDelegate.detailNotification) {
+        _searchTextField.text = @"";
+        isSearch = NO;
         [myDelegate showIndicator];
         [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
     } else if (myDelegate.detailNotification) {
@@ -111,9 +115,6 @@
     }
     //Add button shadow
     [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
-    _assignedCounterLabel.text = @"0";
-    _progressCounterLabel.text = @"0";
-    _completeProgressLabel.text = @"0";
 }
 #pragma mark - end
 
@@ -132,7 +133,6 @@
 
 #pragma mark - Filter status data
 -(void)changeButtonState:(int)buttonTag {
-    _searchTextField.text = @"";
     if (buttonTag == 0) {
         //Set assigned view UI
         [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];
@@ -147,6 +147,9 @@
 }
 
 - (void)filterStatusArray:(int)buttonTag {
+    _searchTextField.text = @"";
+    isSearch = NO;
+    [_searchTextField resignFirstResponder];
     //Show feedback listing with different status
     [filteredComplainListArray removeAllObjects];
     for (int i = 0; i < complainListArray.count; i++) {
@@ -274,7 +277,12 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    ComplainListDataModel *data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    ComplainListDataModel *data;
+    if (isSearch) {
+        data=[searchArray objectAtIndex:indexPath.row];
+    } else {
+        data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    }
     ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
     complainDetail.complainId = data.complainId;
     complainDetail.complainVC = self;
@@ -283,8 +291,9 @@
 #pragma mark - end
 
 #pragma mark - Pull to refresh
-- (void)refershControlAction
-{
+- (void)refershControlAction {
+    _searchTextField.text = @"";
+    isSearch = NO;
     [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
 }
 #pragma mark - end
@@ -335,11 +344,16 @@
         [_refreshControl endRefreshing];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
+            _noComplaintsLabel.text = @"No Internet Connection.";
+        }
         [_refreshControl endRefreshing];
-        _noComplaintsLabel.hidden = NO;
-        [complainListArray removeAllObjects];
-        [filteredComplainListArray removeAllObjects];
-        [_complainListingTable reloadData];
+        if (complainListArray.count < 1) {
+            _noComplaintsLabel.hidden = NO;
+        }
+        [self changeButtonState:selectedButtonTag];
     }] ;
 }
 #pragma mark - end

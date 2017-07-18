@@ -85,7 +85,14 @@
         [_tenantsTableView reloadData];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
-        
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
+            _noTenantsLabel.text = @"No Internet Connection.";
+        }
+        if (tenantsListingArray.count < 1) {
+            _noTenantsLabel.hidden = NO;
+        }
     }] ;
 }
 #pragma mark - end

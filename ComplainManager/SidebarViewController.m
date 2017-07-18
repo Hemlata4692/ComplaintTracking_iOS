@@ -227,28 +227,6 @@
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to logout?" closeButtonTitle:@"No" duration:0.0f];
 }
-//
-////Remove default values
-//- (void)removeDefaultValues {
-//    [[UserService sharedManager] logout:^(id responseObject){
-//        [myDelegate stopIndicator];
-//        [UserDefaultManager removeValue:@"name"];
-//        [UserDefaultManager removeValue:@"userId"];
-//        [UserDefaultManager removeValue:@"AuthenticationToken"];
-//        [UserDefaultManager removeValue:@"contactNumber"];
-//        [UserDefaultManager removeValue:@"isFirsttime"];
-//        [UserDefaultManager removeValue:@"role"];
-//        [UserDefaultManager removeValue:@"propertyId"];
-//        myDelegate.screenName= @"dashboard";
-//        myDelegate.selectedMenuIndex = 0;
-//        myDelegate.isDetailJobStarted = false;
-//        myDelegate.detailNotification = false;
-//        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-//        myDelegate.window.rootViewController = myDelegate.navigationController;
-//    } failure:^(NSError *error) {
-//    }] ;
-//}
 
 #pragma mark - end
 
