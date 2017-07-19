@@ -16,7 +16,6 @@
 #import "NullValueChecker.h"
 #import "BSKeyboardControls.h"
 #import "UITextField+Validations.h"
-#import "UITextField+Padding.h"
 #import "UIView+RoundedCorner.h"
 #import "SCLAlertView.h"
 #import "GlobalViewController.h"

@@ -110,7 +110,6 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    NSLog(@"table size %f",tableView.bounds.size.width);
     float aspectHeight, profileViewHeight, nameHeight;
     nameHeight = 18;
     aspectHeight = 186.0/480.0;
@@ -232,7 +231,6 @@
 
 #pragma mark - Segue method
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    NSLog(@"tag = %ld",(long)[sender tag]);
     //If first time user clicks other tabs
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {

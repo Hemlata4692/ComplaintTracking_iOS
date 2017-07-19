@@ -65,6 +65,16 @@
     [super viewDidLoad];
     [self addBackButton];
     self.navigationItem.title=@"Complaint Details";
+    [self loadInitialisations];
+    [myDelegate showIndicator];
+    [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedNotification) name:@"ReloadFeedbackDetails" object:nil];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+-(void)loadInitialisations {
     staffImageArray = [[NSMutableArray alloc]init];
     complainImageArray = [[NSMutableArray alloc]init];
     imagesNameArray = [[NSMutableArray alloc]init];
@@ -77,16 +87,9 @@
         NSLog(@"detail complainId %@",complainId);
         NSLog(@"getComplaintDetails");
     }
-    [myDelegate showIndicator];
-    [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedNotification) name:@"ReloadFeedbackDetails" object:nil];
 }
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
 -(void)receivedNotification {
+    [self loadInitialisations];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
 }
@@ -167,7 +170,7 @@
         } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
             // Show In progress view if feedback assigned to user
             if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
-                if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) {
+                if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]] && [userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
                     _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
                 }
                 else {
@@ -229,7 +232,7 @@
         } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
             // Show In progress view if feedback assigned to user
             if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
-                if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) {
+                if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]] && [userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
                     [self setCommonStatusFrames];
                     _reonpenJobButton.hidden = YES;
                     _completeJobAction.hidden = NO;
@@ -430,7 +433,7 @@
 #pragma mark - Collection view methds
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if ([[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
-        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]])) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
             return complainImageArray.count;
         } else {
             if  (staffImageArray.count < 3){

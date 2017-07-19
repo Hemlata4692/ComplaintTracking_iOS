@@ -171,6 +171,8 @@
             [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
             if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
                 _noRecordLabel.text = @"No Internet Connection.";
+            } else  {
+                _noRecordLabel.text = @"No Records Found.";
             }
             if (infoDetailArray.count < 1) {
                 _noRecordLabel.hidden = NO;

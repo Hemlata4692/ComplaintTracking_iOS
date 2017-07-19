@@ -54,6 +54,7 @@
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         UIViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ChangePasswordViewController"];
         [self.navigationController pushViewController:complainDetail animated:YES];
+        return;
     }
     refreshComplainScreen = true;
     // Pull To Refresh
@@ -70,9 +71,11 @@
     myDelegate.currentViewController=@"other";
     refreshComplainScreen = false;
     [_searchTextField resignFirstResponder];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ReloadComplainListing" object:nil];
 }
 
 -(void)receivedNotification {
+    [self loadAppearMethod];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
 }
@@ -84,30 +87,36 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
-    if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
-        self.navigationItem.title=@"My Feedback";
-        myDelegate.currentViewController=@"other";
-    } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
-        self.navigationItem.title=@"Property Feedback";
-        myDelegate.currentViewController=@"propertyFeedback";
-    } else {
-        self.navigationItem.title=@"Dashboard";
-        myDelegate.currentViewController=@"Dashboard";
-    }
-    [[self navigationController] setNavigationBarHidden:NO animated:YES];
-    [[UIApplication sharedApplication] setStatusBarHidden:NO];
-    if (refreshComplainScreen) {
-        [self changeButtonState:0];
-    }
+    self.navigationItem.title=@"";
+    [self loadAppearMethod];
     //call complain listing list data
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 0 && !myDelegate.detailNotification) {
         _searchTextField.text = @"";
         isSearch = NO;
         [myDelegate showIndicator];
         [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
-    } else if (myDelegate.detailNotification) {
+    }  if (myDelegate.detailNotification) {
         ComplaintDetailViewController * complainDetail = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"ComplaintDetailViewController"];
         [self.navigationController pushViewController:complainDetail animated:YES];
+        return;
+    }
+}
+
+-(void)loadAppearMethod {
+    if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
+        self.navigationItem.title=@"My Feedback";
+        myDelegate.currentViewController=@"other";
+    } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
+        self.navigationItem.title=@"Property Feedback";
+        myDelegate.currentViewController= @"propertyFeedback";
+    } else {
+        self.navigationItem.title=@"Dashboard";
+        myDelegate.currentViewController=@"dashboard";
+    }
+    [[self navigationController] setNavigationBarHidden:NO animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    if (refreshComplainScreen) {
+        [self changeButtonState:0];
     }
     //If user is long term contractor
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
@@ -115,6 +124,7 @@
     }
     //Add button shadow
     [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
+    
 }
 #pragma mark - end
 
@@ -348,6 +358,8 @@
         [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
             _noComplaintsLabel.text = @"No Internet Connection.";
+        } else  {
+            _noComplaintsLabel.text = @"No Records Found.";
         }
         [_refreshControl endRefreshing];
         if (complainListArray.count < 1) {

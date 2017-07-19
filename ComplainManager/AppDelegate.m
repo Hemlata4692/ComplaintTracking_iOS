@@ -102,11 +102,6 @@
 #pragma mark - end
 
 #pragma mark - UNUserNotificationCenter Delegate // >= iOS 10
-//- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-//    NSLog(@"User Info = %@",notification.request.content.userInfo);
-//    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
-//}
-
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
     NSLog(@"User Info = %@",response.notification.request.content.userInfo);
     [self notificationRecivedDictionary:response.notification.request.content.userInfo];
@@ -119,16 +114,14 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
-    //        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-    //        [alert show];
-    //        [self sendDeviceToken];
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
     NSLog(@"Failed to get token, error: %@", error);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult))completionHandler
+{
     NSLog(@"Received notification: %@", userInfo);
     [self notificationRecivedDictionary:userInfo];
 }
@@ -147,11 +140,11 @@
     //If app is in active state
     if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
         if (detailNotification) {
-            detailNotification = false;
             if ([myDelegate.currentViewController isEqualToString:@"FeedbackDetail"]) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadFeedbackDetails" object:nil];
             }
             else {
+                detailNotification = false;
                 [self showNotificationAlert:[dict objectForKey:@"alert"]];
             }
         } else {
@@ -178,14 +171,17 @@
             screenName = @"dashboard";
             selectedMenuIndex = 0;
         }
-        UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
-        myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        [myDelegate.window setRootViewController:objReveal];
-        [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
-        [myDelegate.window makeKeyAndVisible];
+        if (([[myDelegate.currentViewController lowercaseString] isEqualToString:[@"dashboard" lowercaseString]] || [[myDelegate.currentViewController lowercaseString] isEqualToString:[@"propertyFeedback" lowercaseString]]) &&(!detailNotification)) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadComplainListing" object:nil];
+        } else {
+            UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+            myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+            [myDelegate.window setRootViewController:objReveal];
+            [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+            [myDelegate.window makeKeyAndVisible];
+        }
     }
-    
 }
 -(void)showNotificationAlert:(NSString *)message {
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
@@ -212,6 +208,7 @@
     NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userId"]!=nil) {
+        myDelegate.currentViewController=@"dashboard";
         UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
         myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         [myDelegate.window setRootViewController:objReveal];

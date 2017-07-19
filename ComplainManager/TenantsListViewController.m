@@ -69,7 +69,6 @@
     detailView.isTenantDetailScreen = YES;
     [self.navigationController pushViewController:detailView animated:YES];
 }
-
 #pragma mark - end
 
 #pragma mark - Webservice
@@ -89,6 +88,8 @@
         [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
             _noTenantsLabel.text = @"No Internet Connection.";
+        } else  {
+            _noTenantsLabel.text = @"No Records Found.";
         }
         if (tenantsListingArray.count < 1) {
             _noTenantsLabel.hidden = NO;
