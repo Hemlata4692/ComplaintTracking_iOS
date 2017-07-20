@@ -74,6 +74,7 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
+
 -(void)loadInitialisations {
     staffImageArray = [[NSMutableArray alloc]init];
     complainImageArray = [[NSMutableArray alloc]init];
@@ -88,6 +89,7 @@
         NSLog(@"getComplaintDetails");
     }
 }
+
 -(void)receivedNotification {
     [self loadInitialisations];
     [myDelegate showIndicator];
@@ -151,40 +153,6 @@
     _descriptionLabel.text = [data objectForKey:@"FullDescription"];
     complainImageArray = [data objectForKey:@"ImageName"];
     [_imageCollectionView reloadData];
-    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        if (complainImageArray.count<1) {
-            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
-        } else {
-            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
-        }
-    }
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
-        if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
-            //Start job button frame
-            //Set image collection view frame
-            if (complainImageArray.count<1) {
-                _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
-            } else {
-                _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
-            }
-        } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
-            // Show In progress view if feedback assigned to user
-            if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
-                if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]] && [userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
-                    _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
-                }
-                else {
-                    if (complainImageArray.count<1) {
-                        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
-                    } else {
-                        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
-                    }
-                }
-            } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
-                _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
-            }
-        }
-    }
     if (commentsArray.count < 1) {
         _commentsCountLabel.hidden = YES;
         _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20,0);
@@ -208,6 +176,7 @@
     }
     //Comments container view frame
     if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        [self commonCollectionViewFrames:1];
         [self setCommonUserStatusViewFrames];
         _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
         if (commentsArray.count < 1) {
@@ -220,6 +189,7 @@
     } // Show start job view
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
         if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
+            [self commonCollectionViewFrames:1];
             //Start job button frame
             _startJobButton.frame = CGRectMake(30, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
             _commentsContainerView.hidden = YES;
@@ -233,6 +203,7 @@
             // Show In progress view if feedback assigned to user
             if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
                 if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]] && [userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
+                    [self commonCollectionViewFrames:2];
                     [self setCommonStatusFrames];
                     _reonpenJobButton.hidden = YES;
                     _completeJobAction.hidden = NO;
@@ -241,6 +212,7 @@
                     commentsViewHeight = 20+_addCommentContainerView.frame.size.height+20+_commentsTableView.frame.size.height+20+_completeJobAction.frame.size.height+20;
                 }
                 else {
+                    [self commonCollectionViewFrames:1];
                     if ([userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
                         if ([myDelegate.screenName isEqualToString:@"dashboard"]) {
                             //Show assigned alert if feedback asssigned to other.
@@ -261,6 +233,7 @@
                     commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
                 }
             } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
+                [self commonCollectionViewFrames:2];
                 // If feedback status is completed
                 [self setCommonStatusFrames];
                 _completeJobAction.hidden = YES;
@@ -276,6 +249,18 @@
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
+- (void)commonCollectionViewFrames:(int)displayCount {
+    if (displayCount == 1) {
+        if (complainImageArray.count<1) {
+            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
+        } else {
+            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+        }
+    } else {
+        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+    }
+}
+
 //Set common frames for informatory view
 -(void)setCommonUserStatusViewFrames {
     _UserStatusView.hidden=NO;
@@ -288,6 +273,7 @@
     _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
     _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
 }
+
 //Show informatory view
 - (void)setCommonStatusFrames {
     _startJobButton.hidden = YES;
