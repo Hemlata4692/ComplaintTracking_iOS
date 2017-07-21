@@ -517,7 +517,7 @@
         [myDelegate showIndicator];
         [self performSelector:@selector(changeComplainStatus:) withObject:@"In process" afterDelay:.1];
     }];
-    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to start the job?" closeButtonTitle:@"No" duration:0.0f];
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to start this job?" closeButtonTitle:@"No" duration:0.0f];
 }
 
 - (IBAction)completeJobAction:(id)sender {
@@ -531,7 +531,7 @@
             [self performSelector:@selector(changeComplainStatus:) withObject:@"Complete" afterDelay:.1];
         }
     }];
-    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you have completed the job?" closeButtonTitle:@"No" duration:0.0f];
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you have completed this job?" closeButtonTitle:@"No" duration:0.0f];
 }
 
 - (IBAction)sendCommentAction:(id)sender {
@@ -549,7 +549,7 @@
             [self performSelector:@selector(changeComplainStatus:) withObject:@"Reopen" afterDelay:.1];
         }
     }];
-    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to reopen the job?" closeButtonTitle:@"No" duration:0.0f];
+    [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to reopen this job?" closeButtonTitle:@"No" duration:0.0f];
 }
 #pragma mark - end
 

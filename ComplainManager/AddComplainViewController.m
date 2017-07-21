@@ -400,15 +400,15 @@
 - (BOOL)performValidationsForAddComplain {
     if ([_categoryTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please select category of Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select Category." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     } else  if ([_locationTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please select location of Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select Location." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }else  if ([_detailTextView.text isEqualToString:@""]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in the description of your Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Details." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
