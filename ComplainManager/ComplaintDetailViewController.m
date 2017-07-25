@@ -483,7 +483,7 @@
     CGSize commentsSize;
     commentsSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,500);
     textRectHeight=[self setDynamicHeight:commentsSize textString:titleTextStr];
-    return 30+textRectHeight.size.height;
+    return 35+textRectHeight.size.height;
 }
 #pragma mark - end
 
@@ -767,6 +767,7 @@
         NSDictionary * commentDict =[responseObject objectForKey:@"Comments"];
         commentModel.commnts = [commentDict objectForKey:@"comments"];
         commentModel.time =[commentDict objectForKey:@"SubmittedOn"];
+        commentModel.CommmentsBy =[commentDict objectForKey:@"CommmentsBy"];
         [commentsArray insertObject:commentModel atIndex:0];
         [self getCommentsTableHeight];
         [_commentsTableView reloadData];

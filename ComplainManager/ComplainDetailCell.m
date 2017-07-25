@@ -9,7 +9,7 @@
 #import "ComplainDetailCell.h"
 #
 @implementation ComplainDetailCell
-@synthesize commentsLabel,commentsTimeLabel;
+@synthesize commentsLabel,commentsTimeLabel,commentAddedByLabel;
 
 #pragma mark - Load nib
 - (void)awakeFromNib {
@@ -42,6 +42,9 @@
     [dateFormatter setDateFormat:@"dd-MM-yyyy"];
     NSString *newDateString = [dateFormatter stringFromDate:date];
     commentsTimeLabel.text = newDateString;
+    NSAttributedString * attrString = [[NSString stringWithFormat:@"Added By %@",commentList.CommmentsBy] setAttributrdString:@"Added By" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:1.0]];
+    commentAddedByLabel.attributedText = attrString;
+
 }
 #pragma mark - end
 

@@ -288,7 +288,7 @@
     UIAlertAction* galleryAction = [UIAlertAction actionWithTitle:@"Choose from Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
-        picker.allowsEditing = NO;
+        picker.allowsEditing = YES;
         picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         picker.navigationBar.tintColor = [UIColor whiteColor];
         [self presentViewController:picker animated:YES completion:NULL];
@@ -304,7 +304,7 @@
 - (void)openDefaultCamera {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-    picker.allowsEditing = NO;
+    picker.allowsEditing = YES;
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self presentViewController:picker animated:YES completion:NULL];
 }

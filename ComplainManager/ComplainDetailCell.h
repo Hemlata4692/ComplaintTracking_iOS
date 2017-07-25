@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *commentsTimeLabel;
 - (void)displayCommentsListData :(CommentsModel *)commentList indexPath:(long)indexPath;
 @property (weak, nonatomic) IBOutlet UILabel *commentsLabel;
+@property (weak, nonatomic) IBOutlet UILabel *commentAddedByLabel;
 
 @end
