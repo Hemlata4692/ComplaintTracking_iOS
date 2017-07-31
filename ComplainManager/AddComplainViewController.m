@@ -11,6 +11,7 @@
 #import "AddComplainCell.h"
 #import "ComplainService.h"
 #import "AddComplainModel.h"
+#import "ImagePreviewViewController.h"
 
 @interface AddComplainViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate,UITextFieldDelegate,UITextViewDelegate>
 {
@@ -86,7 +87,7 @@
     _addComplainCollectionView.translatesAutoresizingMaskIntoConstraints = YES;
     _registerButton.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
-    _detailNotesLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, _detailNotesLabel.frame.size.height);
+    _detailNotesLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+10, self.view.frame.size.width - 20, _detailNotesLabel.frame.size.height);
     _addComplainCollectionView.frame = CGRectMake(10, _detailNotesLabel.frame.origin.y +_detailNotesLabel.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
     _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+20, self.view.frame.size.width - 60, _registerButton.frame.size.height);
 }
@@ -123,12 +124,12 @@
     if (textView == _detailTextView) {
         _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
         if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 25)) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
             _detailTextView.textContainerInset = UIEdgeInsetsZero;
             [self setViewFrames];
         }
         else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 25) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, 25);
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 25);
             _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
         }
     }
@@ -189,6 +190,15 @@
     }
     return cell;
 }
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    UIStoryboard * storyboard=storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    ImagePreviewViewController *imagePreviewView =[storyboard instantiateViewControllerWithIdentifier:@"ImagePreviewViewController"];
+    imagePreviewView.selectedIndex=(int)indexPath.row;
+    imagePreviewView.attachmentArray=[imagesArray mutableCopy];
+    [self.navigationController pushViewController:imagePreviewView animated:YES];
+}
+
 #pragma mark - end
 
 #pragma mark - Show actionsheet method
@@ -333,8 +343,8 @@
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
     UILabel* pickerLabel = (UILabel*)view;
     if (!pickerLabel) {
-        pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
-        pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15];
+        pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,40)];
+        pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:20];
         pickerLabel.textColor = [UIColor colorWithRed:147/255.0 green:148/255.0 blue:153/255.0 alpha:1.0];
         pickerLabel.textAlignment=NSTextAlignmentCenter;
     }

@@ -34,15 +34,16 @@
     commentsLabel.numberOfLines = 0;
     commentsLabel.frame =CGRectMake(0, 5, [[UIScreen mainScreen] bounds].size.width - 20, textRect.size.height+2);
     commentsLabel.text = commentList.commnts;
-    NSString *dateString = commentList.time;
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
-    NSDate *date = [dateFormatter dateFromString:dateString];
-    // Convert date object into desired format
-    [dateFormatter setDateFormat:@"dd-MM-yyyy"];
-    NSString *newDateString = [dateFormatter stringFromDate:date];
-    commentsTimeLabel.text = newDateString;
-    NSAttributedString * attrString = [[NSString stringWithFormat:@"Added By %@",commentList.CommmentsBy] setAttributrdString:@"Added By" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:13.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:1.0]];
+//    NSString *dateString = commentList.time;
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
+//    NSDate *date = [dateFormatter dateFromString:dateString];
+//    // Convert date object into desired format
+//    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+//    [dateFormatter setDateFormat:@"dd-mm-yyyy HH:mm a"];
+//    NSString *newDateString = [dateFormatter stringFromDate:date];
+    commentsTimeLabel.text = commentList.time;
+    NSAttributedString * attrString = [[NSString stringWithFormat:@"Added By %@",commentList.CommmentsBy] setAttributrdString:@"Added By" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:14.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:1.0]];
     commentAddedByLabel.attributedText = attrString;
 
 }
@@ -53,7 +54,7 @@
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:15]}
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:16]}
                          context:nil];
     return textHeight;
 }

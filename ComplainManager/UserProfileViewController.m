@@ -116,7 +116,7 @@
     CGSize size;
     size = CGSizeMake(_profileTableView.frame.size.width-20,150);
     textRect=[self setDynamicHeight:size textString:titleTextStr];
-    return 35+textRect.size.height;
+    return 40+textRect.size.height;
 }
 #pragma mark - end
 

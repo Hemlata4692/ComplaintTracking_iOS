@@ -13,6 +13,7 @@
 
 #pragma mark - Load nib
 - (void)displayData:(long)index data:(NSMutableArray *)imageArray isAddComplainScreen:(bool)isAddComplainScreen {
+    [self setCornerRadius:3];
     if (isAddComplainScreen) {
         complainImageView.image = [imageArray objectAtIndex:index];
     } else {

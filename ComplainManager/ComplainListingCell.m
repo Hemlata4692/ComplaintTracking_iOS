@@ -29,14 +29,15 @@
     [userImageView setImageWithURL:[NSURL URLWithString:complainList.complainImageString] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
     userImageView.layer.cornerRadius = userImageView.frame.size.width / 2;
     userImageView.layer.masksToBounds = YES;
-    NSString *dateString = complainList.complainTime;
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
-    NSDate *date = [dateFormatter dateFromString:dateString];
-    // Convert date object into desired format
-    [dateFormatter setDateFormat:@"dd-MM-yyyy"];
-    NSString *newDateString = [dateFormatter stringFromDate:date];
-    _complainTimeLabel.text=newDateString;
+//    NSString *dateString = complainList.complainTime;
+//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//    [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
+//    NSDate *date = [dateFormatter dateFromString:dateString];
+//    // Convert date object into desired format
+//    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
+//    [dateFormatter setDateFormat:@"dd-mm-yyyy HH:mm a"];
+//    NSString *newDateString = [dateFormatter stringFromDate:date];
+    _complainTimeLabel.text=complainList.complainTime;
     complainDescriptionLabel.text = complainList.complainDescription;
 }
 #pragma mark - end
