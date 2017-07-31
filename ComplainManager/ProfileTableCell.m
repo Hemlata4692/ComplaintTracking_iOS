@@ -43,12 +43,12 @@
     textRect=[self setDynamicHeight:size textString:infoString];
     infoDetailLabel.numberOfLines = 0;
     infoDetailLabel.frame =CGRectMake(10, infoLabel.frame.origin.y + infoLabel.frame.size.height+2, [[UIScreen mainScreen] bounds].size.width - 20, textRect.size.height+5);
-    if ([infoString isEqualToString:@""]) {
+    infoLabel.text = [infoArray objectAtIndex:index];
+    if ([infoString isEqualToString:@""] && (![infoLabel.text isEqualToString:@"MCST Council Member"])) {
         infoDetailLabel.text = @"NA";
     } else {
         infoDetailLabel.text=infoString;
     }
-    infoLabel.text = [infoArray objectAtIndex:index];
 }
 #pragma mark - end
 

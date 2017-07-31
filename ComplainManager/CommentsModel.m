@@ -11,4 +11,6 @@
 @implementation CommentsModel
 @synthesize commnts;
 @synthesize time;
+@synthesize CommmentsBy;
+
 @end

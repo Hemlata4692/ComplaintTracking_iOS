@@ -14,5 +14,6 @@
 @property(nonatomic,retain)NSString * tenantsName;
 @property(nonatomic,retain)NSString * tenantsEmail;
 @property(nonatomic,retain)NSString * tenantsContact;
+@property(nonatomic,retain)NSString * tenantId;
 
 @end

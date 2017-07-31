@@ -55,7 +55,6 @@
 		5DD316371EC5AE04008FF487 /* UncaughtExceptionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316361EC5AE04008FF487 /* UncaughtExceptionHandler.m */; };
 		5DD3163A1EC5AE1E008FF487 /* NullValueChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316391EC5AE1E008FF487 /* NullValueChecker.m */; };
 		5DD316421EC5AECA008FF487 /* UIView+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316411EC5AECA008FF487 /* UIView+RoundedCorner.m */; };
-		5DD316481EC5AEE4008FF487 /* UITextField+Padding.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316451EC5AEE4008FF487 /* UITextField+Padding.m */; };
 		5DD316491EC5AEE4008FF487 /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316471EC5AEE4008FF487 /* UIPlaceHolderTextView.m */; };
 		5DD3164D1EC5AEF7008FF487 /* UITextField+Validations.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD3164C1EC5AEF7008FF487 /* UITextField+Validations.m */; };
 		5DD316511EC5AF10008FF487 /* MMMaterialDesignSpinner.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DD316501EC5AF10008FF487 /* MMMaterialDesignSpinner.m */; };
@@ -157,8 +156,6 @@
 		5DD316391EC5AE1E008FF487 /* NullValueChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NullValueChecker.m; sourceTree = "<group>"; };
 		5DD316401EC5AECA008FF487 /* UIView+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+RoundedCorner.h"; sourceTree = "<group>"; };
 		5DD316411EC5AECA008FF487 /* UIView+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+RoundedCorner.m"; sourceTree = "<group>"; };
-		5DD316441EC5AEE4008FF487 /* UITextField+Padding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+Padding.h"; sourceTree = "<group>"; };
-		5DD316451EC5AEE4008FF487 /* UITextField+Padding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+Padding.m"; sourceTree = "<group>"; };
 		5DD316461EC5AEE4008FF487 /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
 		5DD316471EC5AEE4008FF487 /* UIPlaceHolderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPlaceHolderTextView.m; sourceTree = "<group>"; };
 		5DD3164B1EC5AEF7008FF487 /* UITextField+Validations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+Validations.h"; sourceTree = "<group>"; };
@@ -428,12 +425,11 @@
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
-				5DCE18541ECC76E700F542BE /* UserProfileModule */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
-				5D984B391EF39D4E0074E29C /* TenantsListView */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
 				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
-				5DB1689C1ECEB44400E0A8E2 /* ChangePassword */,
+				5DCE18541ECC76E700F542BE /* UserProfileModule */,
+				5D984B391EF39D4E0074E29C /* TenantsListView */,
 			);
 			name = DashboardModule;
 			sourceTree = "<group>";
@@ -713,8 +709,6 @@
 		5DD316431EC5AED4008FF487 /* PaddingCategory */ = {
 			isa = PBXGroup;
 			children = (
-				5DD316441EC5AEE4008FF487 /* UITextField+Padding.h */,
-				5DD316451EC5AEE4008FF487 /* UITextField+Padding.m */,
 				5DD316461EC5AEE4008FF487 /* UIPlaceHolderTextView.h */,
 				5DD316471EC5AEE4008FF487 /* UIPlaceHolderTextView.m */,
 			);
@@ -751,6 +745,7 @@
 		5DD316561EC5AF48008FF487 /* LoginModule */ = {
 			isa = PBXGroup;
 			children = (
+				5DB1689C1ECEB44400E0A8E2 /* ChangePassword */,
 				5DD316571EC5AF55008FF487 /* LoginViewController */,
 				5DD3165B1EC5AF7D008FF487 /* ForgotPasswordViewController */,
 			);
@@ -830,6 +825,9 @@
 						DevelopmentTeam = M8A7BYS443;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -935,7 +933,6 @@
 				5D8F63AB1EC9B22A00111138 /* SCLSwitchView.m in Sources */,
 				5D984B3C1EF39DA70074E29C /* TenantsListViewController.m in Sources */,
 				5DD3165A1EC5AF6A008FF487 /* LoginViewController.m in Sources */,
-				5DD316481EC5AEE4008FF487 /* UITextField+Padding.m in Sources */,
 				5DB1689B1ECE9DF300E0A8E2 /* SWRevealViewController.m in Sources */,
 				5DB168961ECE9DCC00E0A8E2 /* SidebarViewController.m in Sources */,
 				5D8F63AA1EC9B22A00111138 /* SCLTextView.m in Sources */,
@@ -1012,7 +1009,8 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ranosys Technologies Pte Ltd";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ranosys Technologies Pte Ltd";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1059,7 +1057,8 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ranosys Technologies Pte Ltd";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ranosys Technologies Pte Ltd";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1086,7 +1085,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ComplainManager/ComplainManager.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ranosys Technologies Pte Ltd";
 				DEVELOPMENT_TEAM = M8A7BYS443;
 				GCC_PREFIX_HEADER = ComplainManager/ComplainManager.pch;
 				INFOPLIST_FILE = ComplainManager/Info.plist;
@@ -1106,7 +1105,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = ComplainManager/ComplainManager.entitlements;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ranosys Technologies Pte Ltd";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ranosys Technologies Pte Ltd";
 				DEVELOPMENT_TEAM = M8A7BYS443;
 				GCC_PREFIX_HEADER = ComplainManager/ComplainManager.pch;
 				INFOPLIST_FILE = ComplainManager/Info.plist;

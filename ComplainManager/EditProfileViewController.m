@@ -87,7 +87,6 @@
         [self displayUserImage:image];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
     }];
-    
     _userProfileImage.layer.cornerRadius = _userProfileImage.frame.size.width / 2;
     _userProfileImage.layer.masksToBounds = YES;
     _nameTextField.text = [userData objectForKey:@"name"];
@@ -105,7 +104,6 @@
         if (textRect.size.height <= 35) {
             _addressTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
-            
         } else if (textRect.size.height <= 90) {
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height +5);
         } else {
@@ -169,21 +167,19 @@
 #pragma mark - Textview delegates
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
     if (textView == _addressTextView) {
-        if (range.length > 0 && [string length] == 0)
-        {
+        if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textView.text.length >= 200 && range.length == 0)
-        {
+        if (textView.text.length >= 200 && range.length == 0) {
             return NO;
         }
-        else
-        {
+        else {
             return YES;
         }
     }
     return YES;
 }
+
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
     if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
@@ -288,7 +284,7 @@
     UIAlertAction* galleryAction = [UIAlertAction actionWithTitle:@"Choose from Gallery" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
         UIImagePickerController *picker = [[UIImagePickerController alloc] init];
         picker.delegate = self;
-        picker.allowsEditing = NO;
+        picker.allowsEditing = YES;
         picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         picker.navigationBar.tintColor = [UIColor whiteColor];
         [self presentViewController:picker animated:YES completion:NULL];
@@ -304,7 +300,7 @@
 - (void)openDefaultCamera {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-    picker.allowsEditing = NO;
+    picker.allowsEditing = YES;
     picker.sourceType = UIImagePickerControllerSourceTypeCamera;
     [self presentViewController:picker animated:YES completion:NULL];
 }
@@ -395,7 +391,7 @@
 
 #pragma mark - Webservice
 - (void)getProfileDetail {
-    [[UserService sharedManager] getProfileDetail:^(id responseObject){
+    [[UserService sharedManager] getProfileDetail:NO userId:[UserDefaultManager getValue:@"userId"] success:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
         [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
         [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
@@ -404,6 +400,11 @@
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"OK" actionBlock:^(void) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:nil duration:0.0f];
     }] ;
 }
 
@@ -414,6 +415,8 @@
         [self editUserProfile];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 
@@ -432,6 +435,8 @@
         [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

@@ -44,6 +44,7 @@
 @end
 
 @implementation AddComplainViewController
+@synthesize complainVC;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
@@ -165,8 +166,9 @@
     //Max image selection 5
     if (imagesArray.count < 5) {
         return imagesArray.count + 1;
+    } else {
+        return imagesArray.count;
     }
-    return imagesArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -286,13 +288,22 @@
 
 - (IBAction)showPickerAction:(id)sender {
     [_keyboardControls.activeField resignFirstResponder];
-    [_pickerView reloadAllComponents];
     if ([sender tag] == 1) {
+        if (locationArray.count < 1 ) {
+            [self.view makeToast:@"No locations found."];
+        } else {
+            [self showPickerWithAnimation];
+        }
         isCategoryPicker = false;
     } else {
+        if (categoryArray.count < 1 ) {
+            [self.view makeToast:@"No categories found."];
+        } else {
+            [self showPickerWithAnimation];
+        }
         isCategoryPicker = true;
     }
-    [self showPickerWithAnimation];
+    [_pickerView reloadAllComponents];
 }
 
 - (IBAction)pickerCancelAction:(id)sender {
@@ -364,7 +375,7 @@
     }
 }
 
--(void)showPickerWithAnimation {
+- (void)showPickerWithAnimation {
     [UIView animateWithDuration:0.5f animations:^{
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration:0.3];
@@ -375,7 +386,7 @@
     }];
 }
 
--(void)hidePickerWithAnimation {
+- (void)hidePickerWithAnimation {
     [UIView animateWithDuration:0.5f animations:^{
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration:0.3];
@@ -390,15 +401,15 @@
 - (BOOL)performValidationsForAddComplain {
     if ([_categoryTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please select category of Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select Category." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     } else  if ([_locationTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please select location of Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please select Location." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }else  if ([_detailTextView.text isEqualToString:@""]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in the description of your Feedback." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Details." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
@@ -416,6 +427,11 @@
         //        [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert addButton:@"OK" actionBlock:^(void) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:nil duration:0.0f];
     }] ;
 }
 
@@ -439,6 +455,8 @@
             }
         } failure:^(NSError *error) {
             [myDelegate stopIndicator];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         }] ;
     }
 }
@@ -449,6 +467,7 @@
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"OK" actionBlock:^(void) {
+            complainVC.refreshComplainScreen = true;
             if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
                 myDelegate.screenName = @"myFeedback";
                 myDelegate.selectedMenuIndex = 2;
@@ -461,6 +480,8 @@
         [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

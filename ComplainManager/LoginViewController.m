@@ -34,6 +34,7 @@
     [self.keyboardControls setDelegate:self];
     // UI customisation
     [self customiseView];
+    _emailTextField.text = [UserDefaultManager getValue:@"email"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -162,7 +163,8 @@
         [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
     } failure:^(NSError *error) {
-        
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

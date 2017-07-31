@@ -45,7 +45,7 @@
 }
 
 //Back button action
--(void)backButtonAction :(id)sender {
+- (void)backButtonAction :(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
 #pragma mark - end

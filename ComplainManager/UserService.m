@@ -11,10 +11,11 @@
 #import "ProfileDataModel.h"
 
 #define kUrlLogin                       @"Login"
+#define kUrlLogout                      @"Logout"
 #define kUrlForgotPassword              @"ForgotPassword"
 #define kUrlRegister                    @"register"
 #define kUrlChangePassword              @"ChangePassword"
-#define kUrlTenantsList                 @"GetTenantsDetails"
+#define kUrlTenantsList                 @"UserList"
 #define kUrlGetProfile                  @"ViewProfile"
 #define kUrlDeviceToken                 @"SendNotification"
 #define kUrlEditProfile                 @"UpdateProfile"
@@ -97,7 +98,7 @@
         [myDelegate stopIndicator];
         failure(error);
     }];
-
+    
 }
 #pragma mark- end
 
@@ -121,7 +122,7 @@
 
 #pragma mark- Tenants Listing
 - (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"PropertyId":[UserDefaultManager getValue:@"propertyId"]};
     NSLog(@"Tenants list requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlTenantsList parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
@@ -134,10 +135,11 @@
                 for (int i =0; i<tenantsListArray.count; i++) {
                     TenantsListModel *dataModel = [[TenantsListModel alloc]init];
                     NSDictionary * complainDict =[tenantsListArray objectAtIndex:i];
-                    dataModel.tenantsImageString =[complainDict objectForKey:@"image"];
+                    dataModel.tenantsImageString =[complainDict objectForKey:@"UserImage"];
                     dataModel.tenantsName =[complainDict objectForKey:@"Name"];
                     dataModel.tenantsEmail =[complainDict objectForKey:@"Email"];
-                    dataModel.tenantsContact =[complainDict objectForKey:@"Contact"];
+                    dataModel.tenantsContact =[complainDict objectForKey:@"Phone"];
+                    dataModel.tenantId =[complainDict objectForKey:@"Id"];
                     [dataArray addObject:dataModel];
                 }
                 success(dataArray);
@@ -155,16 +157,20 @@
 #pragma mark- end
 
 #pragma mark- Profile details
-- (void)getProfileDetail:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+- (void)getProfileDetail:(BOOL)isTenantDetailScreen userId:(NSString *)userId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict;
+    if (isTenantDetailScreen) {
+        requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"], @"userprofileid":userId,@"ProfileType":@"TProfile"};
+    } else {
+        requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"ProfileType":@"UProfile"};
+    }
     NSLog(@"Profile requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetProfile parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"Profile response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
-        }
-        else {
+        } else {
             [myDelegate stopIndicator];
             failure(nil);
         }
@@ -175,11 +181,13 @@
 }
 #pragma mark- end
 
-#pragma mark- Device token
-- (void)setDeviceToken:(NSString *)deviceToken success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"deviceToken":deviceToken};
-    [[Webservice sharedManager] post:kUrlDeviceToken parameters:requestDict success:^(id responseObject) {
+#pragma mark- logout
+- (void)logout:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"deviceId":myDelegate.deviceToken};
+    NSLog(@"requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlLogout parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {

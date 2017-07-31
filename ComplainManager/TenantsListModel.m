@@ -14,5 +14,5 @@
 @synthesize tenantsName;
 @synthesize tenantsEmail;
 @synthesize tenantsContact;
-
+@synthesize tenantId;
 @end

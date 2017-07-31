@@ -8,7 +8,6 @@
 
 
 #import "Webservice.h"
-
 @implementation Webservice
 @synthesize manager;
 
@@ -52,71 +51,14 @@
             NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
                                                                  options:kNilOptions error:&error];
             NSLog(@"json %@",json);
-            [self isStatusOK:json];
+            if (myDelegate.isDetailJobStarted) {
+                failure(error);
+            } else {
+                [self isStatusOK:json];
+            }
         } else {
-            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+            failure(error);
         }
-    }];
-}
-
-//Request with profile image
-- (void)postImage:(NSString *)path parameters:(NSDictionary *)parameters image:(UIImage *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
-    [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
-    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"AuthenticationToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"AuthenticationToken"] forHTTPHeaderField:@"AuthenticationToken"];
-    }
-    manager.securityPolicy.allowInvalidCertificates = YES;
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.3);
-    [manager POST:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        [formData appendPartWithFileData:imageData name:@"Images" fileName:@"files.jpg" mimeType:@"image/jpeg"];
-        //        [formData appendPartWithFormData:imageData name:@"Images"];
-    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        [myDelegate stopIndicator];
-        NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
-                                                             options:kNilOptions error:&error];
-        NSLog(@"json %@",json);
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"OK" duration:0.0f];
-    }];
-}
-
-//Request with image array (multiple images)
-- (void)postImage:(NSString *)path parameters:(NSDictionary *)parameters imageArray:(NSMutableArray *)imageArray success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
-    [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
-    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"AuthenticationToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"AuthenticationToken"] forHTTPHeaderField:@"AuthenticationToken"];
-    }
-    manager.securityPolicy.allowInvalidCertificates = YES;
-    [manager POST:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        int i=0;
-        for(UIImage *image in imageArray)
-        {
-            NSData *imageData = UIImageJPEGRepresentation(image, 0.3);
-            [formData appendPartWithFileData:imageData name:[NSString stringWithFormat:@"files%d",i] fileName:[NSString stringWithFormat:@"image%d.jpg",i] mimeType:@"image/jpeg"];
-            i++;
-        }
-    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        [myDelegate stopIndicator];
-        NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
-                                                             options:kNilOptions error:&error];
-        NSLog(@"json %@",json);
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:[json objectForKey:@"message"] closeButtonTitle:@"OK" duration:0.0f];
     }];
 }
 
@@ -130,11 +72,8 @@
             if ([msg containsString:@"Your account has been deactivated."]) {
                 SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
                 [alert addButton:@"OK" actionBlock:^(void) {
-                    [self removeDefaultValues];
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                    myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-                    myDelegate.window.rootViewController = myDelegate.navigationController;
-                }];
+                    [myDelegate showIndicator];
+                    [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];                }];
                 [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
             } else {
                 SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -155,41 +94,20 @@
             msg = responseObject[@"message"];
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert addButton:@"OK" actionBlock:^(void) {
-                [self removeDefaultValues];
-                UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-                myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-                myDelegate.window.rootViewController = myDelegate.navigationController;
-            }];
+                [myDelegate showIndicator];
+                [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];            }];
             [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
         }
             return NO;
             break;
         default: {
             msg = responseObject[@"message"];
-            
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
-            
         }
             return NO;
             break;
     }
 }
 #pragma mark - end
-
-#pragma mark - Remove default values
-- (void)removeDefaultValues {
-    [UserDefaultManager removeValue:@"name"];
-    [UserDefaultManager removeValue:@"userId"];
-    [UserDefaultManager removeValue:@"AuthenticationToken"];
-    [UserDefaultManager removeValue:@"contactNumber"];
-    [UserDefaultManager removeValue:@"isFirsttime"];
-    [UserDefaultManager removeValue:@"role"];
-    [UserDefaultManager removeValue:@"email"];
-    [UserDefaultManager removeValue:@"propertyId"];
-    myDelegate.screenName= @"dashboard";
-    myDelegate.selectedMenuIndex = 0;
-}
-#pragma mark - end
-
 @end

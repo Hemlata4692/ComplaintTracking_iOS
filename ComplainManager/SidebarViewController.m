@@ -12,6 +12,7 @@
 #import "SWRevealViewController.h"
 #import "LoginViewController.h"
 #import "SidebarCell.h"
+#import "UserService.h"
 
 @interface SidebarViewController (){
     NSArray *menuItems;
@@ -31,7 +32,7 @@
     [self.view addSubview:statusBarView];
 }
 
--(void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
@@ -65,7 +66,7 @@
     [super didReceiveMemoryWarning];
 }
 
--(void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.revealViewController.frontViewController.view setUserInteractionEnabled:YES];
 }
@@ -109,7 +110,6 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    NSLog(@"table size %f",tableView.bounds.size.width);
     float aspectHeight, profileViewHeight, nameHeight;
     nameHeight = 18;
     aspectHeight = 186.0/480.0;
@@ -173,104 +173,47 @@
     return textHeight;
 }
 
--(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    //    if (indexPath.row != (menuItems.count-1)) {
-    //        myDelegate.selectedMenuIndex = indexPath.row;
-    //    }
-    //    if (indexPath.row == 0) {
-    //        myDelegate.screenName = @"dashboard";
-    //    }
-    //    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
-    //        if (indexPath.row == 2) {
-    //            myDelegate.screenName = @"myFeedback";
-    //        }
-    //        else if (indexPath.row == 3) {
-    //            myDelegate.screenName = @"propertyFeedback";
-    //        }
-    //        else if (indexPath.row == 5) {
-    //            [self logoutUser];
-    //        }
-    //    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-    //        if (indexPath.row == 2) {
-    //            myDelegate.screenName = @"propertyFeedback";
-    //        }
-    //        else if (indexPath.row == 5) {
-    //            [self logoutUser];
-    //        }
-    //    }
-    //    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
-    //        if (indexPath.row == 2) {
-    //            myDelegate.screenName = @"myFeedback";
-    //        } else if (indexPath.row == 4) {
-    //            [self logoutUser];
-    //        }
-    //    }
-    //    else {
-    //        if (indexPath.row == 3) {
-    //            [self logoutUser];
-    //        }
-    //    }
-    
-    //    if (indexPath.row != (menuItems.count-1)) {
-    //        myDelegate.selectedMenuIndex = indexPath.row;
-    //    }
-    
-    //Comment Milestone 2features
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row != (menuItems.count-1)) {
+        myDelegate.selectedMenuIndex = indexPath.row;
+    }
+    if (indexPath.row == 0) {
+        myDelegate.screenName = @"dashboard";
+    }
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
         if (indexPath.row == 2) {
-            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
-            //            myDelegate.screenName = @"myFeedback";
+            myDelegate.screenName = @"myFeedback";
         }
         else if (indexPath.row == 3) {
-            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
-            //            myDelegate.screenName = @"propertyFeedback";
+            myDelegate.screenName = @"propertyFeedback";
         }
         else if (indexPath.row == 5) {
             [self logoutUser];
         }
-        else {
-            if (indexPath.row != (menuItems.count-1)) {
-                myDelegate.selectedMenuIndex = indexPath.row;
-            }
-        }
-        
     } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        NSLog(@"myDelegate.selectedMenuIndex %ld",myDelegate.selectedMenuIndex);
-        if (indexPath.row == 2 || indexPath.row == 3) {
-            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
-            //            myDelegate.screenName = @"propertyFeedback";
+        if (indexPath.row == 2) {
+            myDelegate.screenName = @"propertyFeedback";
         }
         else if (indexPath.row == 5) {
             [self logoutUser];
-        }
-        else {
-            if (indexPath.row != (menuItems.count-1)) {
-                myDelegate.selectedMenuIndex = indexPath.row;
-            }
         }
     }
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
         if (indexPath.row == 2) {
-            myDelegate.selectedMenuIndex = myDelegate.selectedMenuIndex;
-            //            myDelegate.screenName = @"myFeedback";
+            myDelegate.screenName = @"myFeedback";
         } else if (indexPath.row == 4) {
             [self logoutUser];
         }
-        else {
-            if (indexPath.row != (menuItems.count-1)) {
-                myDelegate.selectedMenuIndex = indexPath.row;
-            }
-        }
     }
     else {
-        if (indexPath.row != (menuItems.count-1)) {
-            myDelegate.selectedMenuIndex = indexPath.row;
-        }
         if (indexPath.row == 3) {
             [self logoutUser];
         }
     }
     
+    if (indexPath.row != (menuItems.count-1)) {
+        myDelegate.selectedMenuIndex = indexPath.row;
+    }
 }
 #pragma mark - end
 
@@ -278,54 +221,16 @@
 - (void)logoutUser {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
-        [self removeDefaultValues];
-        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        myDelegate.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
-        myDelegate.window.rootViewController = myDelegate.navigationController;
+        [myDelegate showIndicator];
+        [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to logout?" closeButtonTitle:@"No" duration:0.0f];
-}
-
-//Remove default values
-- (void)removeDefaultValues {
-    [UserDefaultManager removeValue:@"name"];
-    [UserDefaultManager removeValue:@"userId"];
-    [UserDefaultManager removeValue:@"AuthenticationToken"];
-    [UserDefaultManager removeValue:@"contactNumber"];
-    [UserDefaultManager removeValue:@"isFirsttime"];
-    [UserDefaultManager removeValue:@"role"];
-    [UserDefaultManager removeValue:@"email"];
-    [UserDefaultManager removeValue:@"propertyId"];
-    myDelegate.screenName= @"dashboard";
-    myDelegate.selectedMenuIndex = 0;
 }
 
 #pragma mark - end
 
 #pragma mark - Segue method
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
-    NSLog(@"tag = %ld",(long)[sender tag]);
-    //Milestone 2 features
-    //If user role is MCST building manager and MCST In charger
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
-        if ([sender tag] == 2 ||[sender tag] == 3 ){
-            [self.view makeToast:@"This feature will be available in Milestone 2."];
-            return NO;
-        }
-    }
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
-        if ([sender tag] == 2 ){
-            [self.view makeToast:@"This feature will be available in Milestone 2."];
-            return NO;
-        }
-    }
-    //If user role is council member
-    else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]){
-        if ([sender tag] == 3 ||[sender tag] == 4){
-            [self.view makeToast:@"This feature will be available in Milestone 2."];
-            return NO;
-        }
-    }
     //If first time user clicks other tabs
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {

@@ -198,6 +198,7 @@
                     NSDictionary * commentDict =[categoryArray objectAtIndex:i];
                     commentModel.commnts =[commentDict objectForKey:@"comments"];
                     commentModel.time =[commentDict objectForKey:@"SubmittedOn"];
+                    commentModel.CommmentsBy =[commentDict objectForKey:@"CommmentsBy"];
                     [dataArray addObject:commentModel];
                 }
                 [detailDict setObject:dataArray forKey:@"comments"];

@@ -10,7 +10,8 @@
 #import "MMMaterialDesignSpinner.h"
 #import "UncaughtExceptionHandler.h"
 #import "UserService.h"
-
+#import "ComplainListingViewController.h"
+#import "ComplaintDetailViewController.h"
 #define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 @interface AppDelegate () {
@@ -23,7 +24,7 @@
 @end
 
 @implementation AppDelegate
-@synthesize navigationController,screenName,deviceToken;
+@synthesize navigationController,screenName,selectedMenuIndex,deviceToken,isDetailJobStarted,feedbackId,detailNotification;
 
 #pragma mark - Global indicator view
 - (void)showIndicator {
@@ -51,9 +52,32 @@
 }
 #pragma mark - end
 
+#pragma mark - Logout
+- (void)logoutUser {
+    [[UserService sharedManager] logout:^(id responseObject){
+        [myDelegate stopIndicator];
+        [UserDefaultManager removeValue:@"name"];
+        [UserDefaultManager removeValue:@"userId"];
+        [UserDefaultManager removeValue:@"AuthenticationToken"];
+        [UserDefaultManager removeValue:@"contactNumber"];
+        [UserDefaultManager removeValue:@"isFirsttime"];
+        [UserDefaultManager removeValue:@"role"];
+        [UserDefaultManager removeValue:@"propertyId"];
+        screenName= @"dashboard";
+        selectedMenuIndex = 0;
+        isDetailJobStarted = false;
+        detailNotification = false;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        self.navigationController = [storyboard instantiateViewControllerWithIdentifier:@"mainNavController"];
+        self.window.rootViewController = self.navigationController;
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+    }] ;
+}
+#pragma mark - end
+
 #pragma mark - Crashlatycs
 - (void)installUncaughtExceptionHandler {
-    
     InstallUncaughtExceptionHandler();
 }
 #pragma mark - end
@@ -77,15 +101,9 @@
 #pragma mark - end
 
 #pragma mark - UNUserNotificationCenter Delegate // >= iOS 10
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
-    NSLog(@"User Info = %@",notification.request.content.userInfo);
-    completionHandler(UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound);
-}
-
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
     NSLog(@"User Info = %@",response.notification.request.content.userInfo);
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-    [alert show];
+    [self notificationRecivedDictionary:response.notification.request.content.userInfo];
 }
 #pragma mark - end
 
@@ -95,27 +113,77 @@
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
     NSLog(@"My device token is: %@", deviceToken);
-    //    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:deviceToken delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-    //    [alert show];
-    //        [self sendDeviceToken];
-}
-
-- (void)sendDeviceToken {
-    [[UserService sharedManager] setDeviceToken:deviceToken success:^(id responseObject){
-        [myDelegate stopIndicator];
-        
-    } failure:^(NSError *error) {
-        
-    }] ;
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
     NSLog(@"Failed to get token, error: %@", error);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult))completionHandler
+{
     NSLog(@"Received notification: %@", userInfo);
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:@"notification recived" delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+    [self notificationRecivedDictionary:userInfo];
+}
+
+- (void)notificationRecivedDictionary:(NSDictionary *)userInfo {
+    [UIApplication sharedApplication].applicationIconBadgeNumber=0;
+    NSDictionary *dict = [userInfo objectForKey:@"aps"] ;
+    NSLog(@"dict === %@",dict);
+    if ([[userInfo objectForKey:@"notifactionTag"] containsString:@"Detail"]) {
+        detailNotification = true;
+        feedbackId = [userInfo objectForKey:@"feedbackId"];
+        NSLog(@"feedbackId %@",feedbackId);
+    } else {
+        detailNotification = false;
+    }
+    //If app is in active state
+    if ([UIApplication sharedApplication].applicationState == UIApplicationStateActive) {
+        if (detailNotification) {
+            if ([myDelegate.currentViewController isEqualToString:@"FeedbackDetail"]) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadFeedbackDetails" object:nil];
+            }
+            else {
+                detailNotification = false;
+                [self showNotificationAlert:[dict objectForKey:@"alert"]];
+            }
+        } else {
+            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+                if ([myDelegate.currentViewController isEqualToString:@"propertyFeedback"]) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadComplainListing" object:nil];
+                } else {
+                    [self showNotificationAlert:[dict objectForKey:@"alert"]];
+                }
+            } else {
+                if ([myDelegate.currentViewController isEqualToString:@"dashboard"]) {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadComplainListing" object:nil];
+                } else {
+                    [self showNotificationAlert:[dict objectForKey:@"alert"]];
+                }
+            }
+        }
+    } else {
+        //If user is building manager -  Navigate to propert feedback screen
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+            screenName = @"propertyFeedback";
+            selectedMenuIndex = 3;
+        } else {
+            screenName = @"dashboard";
+            selectedMenuIndex = 0;
+        }
+        if (([[myDelegate.currentViewController lowercaseString] isEqualToString:[@"dashboard" lowercaseString]] || [[myDelegate.currentViewController lowercaseString] isEqualToString:[@"propertyFeedback" lowercaseString]]) &&(!detailNotification)) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadComplainListing" object:nil];
+        } else {
+            UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+            UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+            myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+            [myDelegate.window setRootViewController:objReveal];
+            [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
+            [myDelegate.window makeKeyAndVisible];
+        }
+    }
+}
+- (void)showNotificationAlert:(NSString *)message {
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alert show];
 }
 #pragma mark - end
@@ -133,10 +201,13 @@
     [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
     //Check internet connectivity
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
+    isDetailJobStarted = false;
+    detailNotification = false;
     //Navigation to view
     NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userId"]!=nil) {
+        myDelegate.currentViewController=@"dashboard";
         UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
         myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         [myDelegate.window setRootViewController:objReveal];
