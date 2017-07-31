@@ -12,7 +12,6 @@
 @interface LoginViewController ()<UITextFieldDelegate,BSKeyboardControlsDelegate>
 {
     NSArray *textFieldArray;
-    NSString *role;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *loginScrollView;
@@ -20,11 +19,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
-@property (weak, nonatomic) IBOutlet UIButton *userButton;
-@property (weak, nonatomic) IBOutlet UIButton *staffButton;
-@property (weak, nonatomic) IBOutlet UIButton *registerUserButton;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
-@property (weak, nonatomic) IBOutlet UIView *orView;
 
 @end
 
@@ -37,11 +32,9 @@
     textFieldArray = @[_emailTextField,_passwordTextField];
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
     [self.keyboardControls setDelegate:self];
-    //Add textfield padding
-    [self addPadding];
-    //Set user selected
-    [_userButton setSelected:YES];
-    role = @"user";
+    // UI customisation
+    [self customiseView];
+    _emailTextField.text = [UserDefaultManager getValue:@"email"];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -52,16 +45,11 @@
 - (void)viewWillAppear:(BOOL)animated {
     //Hide navigation bar
     [[self navigationController] setNavigationBarHidden:YES animated:YES];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 }
 #pragma mark - end
 
-#pragma mark - Add padding
-- (void)addPadding {
-    [_emailTextField addTextFieldPadding:_emailTextField];
-    [_passwordTextField addTextFieldPadding:_passwordTextField];
-    [_registerUserButton setCornerRadius:3];
-    [_registerUserButton setViewBorder:_registerUserButton color:[UIColor colorWithRed:237/255.0 green:236/255.0 blue:237/255.0 alpha:1.0]];
+#pragma mark - UI customisation
+- (void)customiseView {
     [_loginButton setCornerRadius:2];
 }
 #pragma mark - end
@@ -81,18 +69,11 @@
 #pragma mark - Textfield delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self.keyboardControls setActiveField:textField];
-    if (textField==_emailTextField) {
-        if([[UIScreen mainScreen] bounds].size.height<568) {
-            [_loginScrollView setContentOffset:CGPointMake(0, 45) animated:YES];
-        }
+    if (textField.frame.origin.y+textField.frame.size.height+15<([UIScreen mainScreen].bounds.size.height)-256) {
+        [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
-    else if (textField==_passwordTextField) {
-        if([[UIScreen mainScreen] bounds].size.height<568) {
-            [_loginScrollView setContentOffset:CGPointMake(0, 90) animated:YES];
-        }
-        else  if([[UIScreen mainScreen] bounds].size.height==568) {
-            [_loginScrollView setContentOffset:CGPointMake(0, 75) animated:YES];
-        }
+    else {
+        [_loginScrollView setContentOffset:CGPointMake(0, ((textField.frame.origin.y+textField.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-256))+5) animated:NO];
     }
 }
 
@@ -107,64 +88,25 @@
 - (BOOL)performValidationsForLogin{
     if ([_emailTextField isEmpty] || [_passwordTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] init];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email and password." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"OK" duration:0.0f];
+        return NO;
+    } else if (![_emailTextField isValidEmail]) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the valid email address." closeButtonTitle:@"OK" duration:0.0f];
+        return NO;
+    }
+    else  if (_passwordTextField.text.length < 6) {
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 6 characters." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
-        if ([_emailTextField isValidEmail]) {
-            if (_passwordTextField.text.length < 6) {
-                SCLAlertView *alert = [[SCLAlertView alloc] init];
-                [alert showWarning:self title:@"Alert" subTitle:@"Your password must be atleast 6 characters long." closeButtonTitle:@"Done" duration:0.0f];
-                return NO;
-            }
-            else {
-                return YES;
-            }
-        }
-        else {
-            SCLAlertView *alert = [[SCLAlertView alloc] init];
-            [alert showWarning:self title:@"Alert" subTitle:@"Please enter a valid email address." closeButtonTitle:@"Done" duration:0.0f];
-            return NO;
-        }
+        return YES;
     }
 }
 #pragma mark - end
 
 #pragma mark - IBActions
-
-- (IBAction)selectUserRoleAction:(id)sender {
-    switch ([sender tag ]) {
-        case 0:
-            //If user is selected
-            if (![_userButton isSelected]) {
-                [_userButton setSelected:YES];
-                [_staffButton setSelected:NO];
-                _registerUserButton.hidden = NO;
-                _orView.hidden = NO;
-                role = @"user";
-                NSLog(@"role = %@",role);
-            }
-            else {
-            }
-            break;
-        case 1:
-            //If staff is selected
-            if (![_staffButton isSelected]) {
-                [_staffButton setSelected:YES];
-                [_userButton setSelected:NO];
-                _registerUserButton.hidden = YES;
-                _orView.hidden = YES;
-                role = @"staff";
-                NSLog(@"role = %@",role);
-            }
-            else{
-            }
-            break;
-        default:
-            break;
-    }
-}
-
 - (IBAction)loginAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
     [_loginScrollView setContentOffset:CGPointMake(0, 0) animated:YES];
@@ -177,24 +119,53 @@
 - (IBAction)forgotPasswordAction:(id)sender {
     [self.keyboardControls.activeField resignFirstResponder];
 }
-
-- (IBAction)registerUserAction:(id)sender {
-}
 #pragma mark - end
 
 #pragma mark - Webservice
 - (void)loginUser {
-    [[UserService sharedManager] userLogin:_emailTextField.text password:_passwordTextField.text role:role success:^(id responseObject){
+    [[UserService sharedManager] userLogin:_emailTextField.text password:_passwordTextField.text success:^(id responseObject){
         [myDelegate stopIndicator];
-        [UserDefaultManager setValue:[responseObject objectForKey:@"user_id"] key:@"userId"];
+        //Set login info
+        NSDictionary *data = [responseObject objectForKey:@"data"];
+        [UserDefaultManager setValue:_emailTextField.text key:@"email"];
+        [UserDefaultManager setValue:[data objectForKey:@"userId"] key:@"userId"];
+        [UserDefaultManager setValue:[data objectForKey:@"name"] key:@"name"];
+        [UserDefaultManager setValue:[data objectForKey:@"contactNumber"] key:@"contactNumber"];
+        [UserDefaultManager setValue:[data objectForKey:@"isFirsttime"] key:@"isFirstTime"];
+        [UserDefaultManager setValue:[data objectForKey:@"AuthenticationToken"] key:@"AuthenticationToken"];
+        [UserDefaultManager setValue:[data objectForKey:@"propertyId"] key:@"propertyId"];
+        [UserDefaultManager setValue:[data objectForKey:@"RoleId"] key:@"RoleId"];
+        //Set user roles
+        if ([[data objectForKey:@"RoleId"] intValue] == 6 ) {
+            [UserDefaultManager setValue:@"t" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 5 ) {
+            [UserDefaultManager setValue:@"cm" key:@"role"];
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 4 ) {
+            if ([[NSString stringWithFormat:@"%@",[data objectForKey:@"IsBuildingManager"]] isEqualToString:@"1"]) {
+                [UserDefaultManager setValue:@"bm" key:@"role"];
+            } else {
+                [UserDefaultManager setValue:@"ic" key:@"role"];
+            }
+        } else  if ([[data objectForKey:@"RoleId"] intValue] == 3 ) {
+            [UserDefaultManager setValue:@"ltc" key:@"role"];
+        }
+        NSLog(@"AuthenticationToken %@",[UserDefaultManager getValue:@"AuthenticationToken"]);
+        NSLog(@"role %@",[UserDefaultManager getValue:@"role"]);
+        NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
+        NSLog(@"name %@",[UserDefaultManager getValue:@"name"]);
+        NSLog(@"contactNumber %@",[UserDefaultManager getValue:@"contactNumber"]);
+        NSLog(@"isFirstTime %@",[UserDefaultManager getValue:@"isFirstTime"]);
+        //Navigate to dashboard
         UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-        UIViewController * loginView = [storyboard instantiateViewControllerWithIdentifier:@"ComplainListing"];
-        [myDelegate.window setRootViewController:loginView];
+        UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];
+        myDelegate.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        [myDelegate.window setRootViewController:objReveal];
+        [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
     } failure:^(NSError *error) {
-        
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end
-
 @end

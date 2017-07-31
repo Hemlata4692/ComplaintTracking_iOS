@@ -10,7 +10,9 @@
 #import "UserService.h"
 
 @interface ForgotPasswordViewController ()<UITextFieldDelegate>
+@property (strong, nonatomic) IBOutlet UIView *mainView;
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
+@property (weak, nonatomic) IBOutlet UIButton *sendPasswordButton;
 
 @end
 
@@ -20,8 +22,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.navigationItem.title = @"Forgot Password";
-    //Add padding
-    [self addPadding];
+    //UI customisation
+    [self customiseView];
+    //AddBackButton
+    [self addBackButton];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -36,9 +40,9 @@
 }
 #pragma mark - end
 
-#pragma mark - Add padding
-- (void)addPadding {
-    [_emailTextField addTextFieldPadding:_emailTextField];
+#pragma mark - UI customisation
+- (void)customiseView {
+    [_sendPasswordButton setCornerRadius:3];
 }
 #pragma mark - end
 
@@ -53,6 +57,22 @@
 #pragma mark - end
 
 #pragma mark - Textfield delegates
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        [UIView animateWithDuration:0.5f animations:^{
+            _mainView.frame = CGRectOffset(_mainView.frame, 0, -30);
+        }];
+    }
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        [UIView animateWithDuration:0.5f animations:^{
+            _mainView.frame = CGRectOffset(_mainView.frame, 0, 30);
+        }];
+    }
+}
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
@@ -63,13 +83,13 @@
 - (BOOL)performValidationsForForgotPassword {
     if ([_emailTextField isEmpty]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"Please enter your email address." closeButtonTitle:@"Done" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"Please fill the email address." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
         if (![_emailTextField isValidEmail]) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:self title:@"Alert" subTitle:@"Please enter a valid email address." closeButtonTitle:@"Done" duration:0.0f];
+            [alert showWarning:self title:@"Alert" subTitle:@"Please fill the valid email address." closeButtonTitle:@"OK" duration:0.0f];
             return NO;
         }
         else {
@@ -84,9 +104,13 @@
     [[UserService sharedManager] forgotPassword:_emailTextField.text success:^(id responseObject) {
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showSuccess:@"Success" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:@"OK" duration:0.0f];
+        [alert addButton:@"OK" actionBlock:^(void) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }];
+        [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
-        
+        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
     }] ;
 }
 #pragma mark - end

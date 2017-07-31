@@ -11,8 +11,11 @@
 @implementation ComplainListDataModel
 
 @synthesize complainImageString;
-@synthesize complainTitle;
+@synthesize userName;
 @synthesize complainDescription;
 @synthesize complainStatus;
+@synthesize complainTime;
+@synthesize categoryName;
+@synthesize complainId;
 
 @end

@@ -16,15 +16,30 @@
 //end
 
 //Login screen method
-- (void)userLogin:(NSString *)email password:(NSString *)password role:(NSString *)role success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+- (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
 //Forgot password method
 - (void)forgotPassword:(NSString *)email success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
-//User registeration
-- (void)userRegisteration:(NSString *)name email:(NSString *)email password:(NSString *)password mobileNumber:(NSString *)mobileNumber success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+//Edit user profile
+- (void)editProfile:(NSString *)name address:(NSString *)address mobileNumber:(NSString *)mobileNumber image:(NSString *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 //end
 
+//Change password
+- (void)changePassword:(NSString *)oldPassword newPassword:(NSString *)newPassword success:(void (^)(id))success failure:(void (^)(NSError *))failure;
+//end
+
+//Tenants Listing
+- (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
+//Profile details
+- (void)getProfileDetail:(BOOL)isTenantDetailScreen userId:(NSString *)userId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
+//logout
+- (void)logout:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
 @end

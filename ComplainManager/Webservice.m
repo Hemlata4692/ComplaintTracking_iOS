@@ -6,8 +6,8 @@
 //  Copyright © 2016 Ranosys. All rights reserved.
 //
 
-#import "Webservice.h"
 
+#import "Webservice.h"
 @implementation Webservice
 @synthesize manager;
 
@@ -38,97 +38,76 @@
     [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
     [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
     [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"accessToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"accessToken"] forHTTPHeaderField:@"access-token-key"];
+    if ([UserDefaultManager getValue:@"AuthenticationToken"] != NULL) {
+        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"AuthenticationToken"] forHTTPHeaderField:@"AuthenticationToken"];
     }
     manager.securityPolicy.allowInvalidCertificates = YES;
     [manager POST:path parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         success(responseObject);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        NSLog(@"error: %@", error);
+    } failure:^(NSURLSessionDataTask * task, NSError * _Nonnull error) {
+        NSLog(@"error.localizedDescription %@",error.localizedDescription);
         [myDelegate stopIndicator];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alert show];
-        
-    }];
-}
-
-//Request with profile image
-- (void)postImage:(NSString *)path parameters:(NSDictionary *)parameters image:(UIImage *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
-    [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
-    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"accessToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"accessToken"] forHTTPHeaderField:@"access-token-key"];
-    }
-    manager.securityPolicy.allowInvalidCertificates = YES;
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.3);
-    [manager POST:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        [formData appendPartWithFileData:imageData name:@"profile_img" fileName:@"files.jpg" mimeType:@"image/jpeg"];
-    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        [myDelegate stopIndicator];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alert show];
-    }];
-}
-
-//Request with image array (multiple images)
-- (void)postImage:(NSString *)path parameters:(NSDictionary *)parameters imageArray:(NSMutableArray *)imageArray success:(void (^)(id))success failure:(void (^)(NSError *))failure {
-    path = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    manager.responseSerializer = [AFJSONResponseSerializer serializer];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
-    [manager.requestSerializer setValue:@"parse-application-id-removed" forHTTPHeaderField:@"X-Parse-Application-Id"];
-    [manager.requestSerializer setValue:@"parse-rest-api-key-removed" forHTTPHeaderField:@"X-Parse-REST-API-Key"];
-    [manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    if ([UserDefaultManager getValue:@"accessToken"] != NULL) {
-        [manager.requestSerializer setValue:[UserDefaultManager getValue:@"accessToken"] forHTTPHeaderField:@"access-token-key"];
-    }
-    manager.securityPolicy.allowInvalidCertificates = YES;
-    [manager POST:path parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
-        int i=0;
-        for(UIImage *image in imageArray)
-        {
-            NSData *imageData = UIImageJPEGRepresentation(image, 0.3);
-            [formData appendPartWithFileData:imageData name:[NSString stringWithFormat:@"files%d",i] fileName:[NSString stringWithFormat:@"image%d.jpg",i] mimeType:@"image/jpeg"];
-            i++;
+        if (error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] != nil) {
+            NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
+                                                                 options:kNilOptions error:&error];
+            NSLog(@"json %@",json);
+            if (myDelegate.isDetailJobStarted) {
+                failure(error);
+            } else {
+                [self isStatusOK:json];
+            }
+        } else {
+            failure(error);
         }
-    } progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
-        success(responseObject);
-    } failure:^(NSURLSessionDataTask *task, NSError *error) {
-        [myDelegate stopIndicator];
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:error.localizedDescription delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-        [alert show];
     }];
 }
 
 //Check response success
 - (BOOL)isStatusOK:(id)responseObject {
-    NSNumber *number = responseObject[@"is_success"];
+    NSNumber *number = responseObject[@"status"];
     NSString *msg;
     switch (number.integerValue) {
-        case 0: {
-            msg = responseObject[@"msg"];
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:msg delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-            [alert show];
+        case 400: {
+            msg = responseObject[@"message"];
+            if ([msg containsString:@"Your account has been deactivated."]) {
+                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+                [alert addButton:@"OK" actionBlock:^(void) {
+                    [myDelegate showIndicator];
+                    [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];                }];
+                [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
+            } else {
+                SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+                [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
+            }
             return NO;
         }
-        case 1:
+        case 404: {
+            msg = responseObject[@"message"];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
+            return NO;
+        }
+        case 200:
             return YES;
             break;
-            
+        case 401: {
+            msg = responseObject[@"message"];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert addButton:@"OK" actionBlock:^(void) {
+                [myDelegate showIndicator];
+                [myDelegate performSelector:@selector(logoutUser) withObject:nil afterDelay:.1];            }];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:nil duration:0.0f];
+        }
+            return NO;
+            break;
         default: {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:msg delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-            [alert show];
+            msg = responseObject[@"message"];
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:msg closeButtonTitle:@"OK" duration:0.0f];
         }
             return NO;
             break;
     }
 }
 #pragma mark - end
-
 @end
