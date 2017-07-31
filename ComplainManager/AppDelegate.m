@@ -53,7 +53,7 @@
 #pragma mark - end
 
 #pragma mark - Logout
--(void)logoutUser {
+- (void)logoutUser {
     [[UserService sharedManager] logout:^(id responseObject){
         [myDelegate stopIndicator];
         [UserDefaultManager removeValue:@"name"];
@@ -78,7 +78,6 @@
 
 #pragma mark - Crashlatycs
 - (void)installUncaughtExceptionHandler {
-    
     InstallUncaughtExceptionHandler();
 }
 #pragma mark - end
@@ -120,13 +119,13 @@
     NSLog(@"Failed to get token, error: %@", error);
 }
 
--(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult))completionHandler
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult))completionHandler
 {
     NSLog(@"Received notification: %@", userInfo);
     [self notificationRecivedDictionary:userInfo];
 }
 
--(void)notificationRecivedDictionary:(NSDictionary *)userInfo {
+- (void)notificationRecivedDictionary:(NSDictionary *)userInfo {
     [UIApplication sharedApplication].applicationIconBadgeNumber=0;
     NSDictionary *dict = [userInfo objectForKey:@"aps"] ;
     NSLog(@"dict === %@",dict);
@@ -183,7 +182,7 @@
         }
     }
 }
--(void)showNotificationAlert:(NSString *)message {
+- (void)showNotificationAlert:(NSString *)message {
     UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert" message:message delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
     [alert show];
 }

@@ -32,7 +32,7 @@
     [self.view addSubview:statusBarView];
 }
 
--(void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
@@ -66,7 +66,7 @@
     [super didReceiveMemoryWarning];
 }
 
--(void)viewWillDisappear:(BOOL)animated {
+- (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.revealViewController.frontViewController.view setUserInteractionEnabled:YES];
 }
@@ -173,7 +173,7 @@
     return textHeight;
 }
 
--(void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void) tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row != (menuItems.count-1)) {
         myDelegate.selectedMenuIndex = indexPath.row;
     }

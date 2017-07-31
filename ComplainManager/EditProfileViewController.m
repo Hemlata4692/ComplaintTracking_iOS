@@ -87,7 +87,6 @@
         [self displayUserImage:image];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
     }];
-    
     _userProfileImage.layer.cornerRadius = _userProfileImage.frame.size.width / 2;
     _userProfileImage.layer.masksToBounds = YES;
     _nameTextField.text = [userData objectForKey:@"name"];
@@ -105,7 +104,6 @@
         if (textRect.size.height <= 35) {
             _addressTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
-            
         } else if (textRect.size.height <= 90) {
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height +5);
         } else {
@@ -169,21 +167,19 @@
 #pragma mark - Textview delegates
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
     if (textView == _addressTextView) {
-        if (range.length > 0 && [string length] == 0)
-        {
+        if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textView.text.length >= 200 && range.length == 0)
-        {
+        if (textView.text.length >= 200 && range.length == 0) {
             return NO;
         }
-        else
-        {
+        else {
             return YES;
         }
     }
     return YES;
 }
+
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
     if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {

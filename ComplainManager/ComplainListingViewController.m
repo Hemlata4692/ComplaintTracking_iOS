@@ -74,7 +74,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"ReloadComplainListing" object:nil];
 }
 
--(void)receivedNotification {
+- (void)receivedNotification {
     [self loadAppearMethod];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplainListing) withObject:nil afterDelay:.1];
@@ -102,7 +102,7 @@
     }
 }
 
--(void)loadAppearMethod {
+- (void)loadAppearMethod {
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
         myDelegate.currentViewController=@"other";
@@ -142,7 +142,7 @@
 #pragma mark - end
 
 #pragma mark - Filter status data
--(void)changeButtonState:(int)buttonTag {
+- (void)changeButtonState:(int)buttonTag {
     if (buttonTag == 0) {
         //Set assigned view UI
         [self setStatusViewDesign:[UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0] assignedTextColor:[UIColor whiteColor] progressBackgroundColor:[UIColor whiteColor] progressTextColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0] complteBackgroundColor:[UIColor whiteColor] completeTextColor:[UIColor colorWithRed:8/255.0 green:207/255.0 blue:8/255.0 alpha:1.0]];

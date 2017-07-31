@@ -69,12 +69,12 @@
 #pragma mark - end
 
 #pragma mark - Textfield delegates
--(void)textFieldDidBeginEditing:(UITextField *)textField {
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
     _scrollView.scrollEnabled = NO;
     [self.keyboardControls setActiveField:textField];
 }
 
--(void)textFieldDidEndEditing:(UITextField *)textField {
+- (void)textFieldDidEndEditing:(UITextField *)textField {
     _scrollView.scrollEnabled = YES;
     [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
 }
@@ -126,7 +126,7 @@
 #pragma mark - end
 
 #pragma mark - Web services
--(void)changePassword {
+- (void)changePassword {
     [[UserService sharedManager] changePassword:_oldPasswordText.text newPassword:_changePasswordText.text success:^(id responseObject){
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];

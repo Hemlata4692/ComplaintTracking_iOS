@@ -166,8 +166,9 @@
     //Max image selection 5
     if (imagesArray.count < 5) {
         return imagesArray.count + 1;
+    } else {
+        return imagesArray.count;
     }
-    return imagesArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -374,7 +375,7 @@
     }
 }
 
--(void)showPickerWithAnimation {
+- (void)showPickerWithAnimation {
     [UIView animateWithDuration:0.5f animations:^{
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration:0.3];
@@ -385,7 +386,7 @@
     }];
 }
 
--(void)hidePickerWithAnimation {
+- (void)hidePickerWithAnimation {
     [UIView animateWithDuration:0.5f animations:^{
         [UIView beginAnimations:nil context:NULL];
         [UIView setAnimationDuration:0.3];

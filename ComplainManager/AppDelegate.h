@@ -24,6 +24,6 @@
 - (void)showIndicator;
 - (void)stopIndicator;
 //end
--(void)logoutUser;
+- (void)logoutUser;
 @end
 

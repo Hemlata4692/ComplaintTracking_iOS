@@ -75,7 +75,7 @@
     [super didReceiveMemoryWarning];
 }
 
--(void)loadInitialisations {
+- (void)loadInitialisations {
     staffImageArray = [[NSMutableArray alloc]init];
     complainImageArray = [[NSMutableArray alloc]init];
     imagesNameArray = [[NSMutableArray alloc]init];
@@ -90,7 +90,7 @@
     }
 }
 
--(void)receivedNotification {
+- (void)receivedNotification {
     [self loadInitialisations];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
@@ -108,7 +108,7 @@
 #pragma mark - end
 
 #pragma mark - View customisation
-- (void)setViewFrames: (NSDictionary *)data {
+- (void)removeAutolayouts {
     _mainContainerView.hidden = NO;
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
     _categoryLabel.translatesAutoresizingMaskIntoConstraints = YES;
@@ -129,64 +129,9 @@
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
     _UserStatusView.translatesAutoresizingMaskIntoConstraints = YES;
     _reonpenJobButton.translatesAutoresizingMaskIntoConstraints = YES;
-    //Set category label frame
-    NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category - %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category -" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
-    _categoryLabel.attributedText = categoryString;
-    _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, 20, self.view.frame.size.width-20, _categoryLabel.frame.size.height);
-    _categorySeparatorLabel.frame = CGRectMake(_categorySeparatorLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
-    //Set location label frame
-    NSAttributedString * locationString = [[NSString stringWithFormat:@"Location - %@",[data objectForKey:@"PropertyLocationName"]] setAttributrdString:@"Location -" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
-    _locationLabel.attributedText = locationString;
-    _locationLabel.frame = CGRectMake(_locationLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 15, self.view.frame.size.width-20, _locationLabel.frame.size.height);
-    _locationSeparatorLabel.frame = CGRectMake(_locationSeparatorLabel.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
-    size = CGSizeMake(self.view.frame.size.width-20,500);
-    //Detail text view frame
-    _descriptionLabel.numberOfLines = 0;
-    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"] textSize:18];
-    if(textRect.size.height < 40) {
-        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 15, self.view.frame.size.width-20, 40);
-        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
-    } else {
-        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 15, self.view.frame.size.width-20, textRect.size.height+5);
-        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 5, self.view.frame.size.width-20, 1);
-    }
-    _descriptionLabel.text = [data objectForKey:@"FullDescription"];
-    complainImageArray = [data objectForKey:@"ImageName"];
-    [_imageCollectionView reloadData];
-    if (commentsArray.count < 1) {
-        _commentsCountLabel.hidden = YES;
-        _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20,0);
-    } else {
-        _commentsCountLabel.hidden = NO;
-        if (commentsArray.count == 1) {
-            _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comment",(unsigned long)commentsArray.count];
-        } else {
-            _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
-        }
-    }
-    if ([[data objectForKey:@"ComplainStatus"] containsString:@"process"]) {
-        _complaintStatusLabel.text = @"In Progress";
-        _complaintStatusLabel.textColor = [UIColor colorWithRed:0/255.0 green:152/255.0 blue:206/255.0 alpha:1.0];
-    } else if ([[data objectForKey:@"ComplainStatus"] containsString:@"Complete"]){
-        _complaintStatusLabel.text = [data objectForKey:@"ComplainStatus"];
-        _complaintStatusLabel.textColor = [UIColor colorWithRed:3/255.0 green:207/255.0 blue:4/255.0 alpha:1.0];
-    } else {
-        _complaintStatusLabel.text = [data objectForKey:@"ComplainStatus"];
-        _complaintStatusLabel.textColor = [UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0];
-    }
-    //Comments container view frame
-    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        [self commonCollectionViewFrames:1];
-        [self setCommonUserStatusViewFrames];
-        _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
-        if (commentsArray.count < 1) {
-            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, 0);
-        }
-        else {
-            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, commentsCellHeight + 20);
-        }
-        commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
-    } // Show start job view
+}
+
+- (void)setStartJobFraming : (NSDictionary *)data {
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
         if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
             [self commonCollectionViewFrames:1];
@@ -244,11 +189,75 @@
             }
         }
     }
+}
+
+- (void)setViewFrames: (NSDictionary *)data {
+    [self removeAutolayouts];
+      //Set category label frame
+    NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category - %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category -" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
+    _categoryLabel.attributedText = categoryString;
+    _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, 20, self.view.frame.size.width-20, _categoryLabel.frame.size.height);
+    _categorySeparatorLabel.frame = CGRectMake(_categorySeparatorLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+    //Set location label frame
+    NSAttributedString * locationString = [[NSString stringWithFormat:@"Location - %@",[data objectForKey:@"PropertyLocationName"]] setAttributrdString:@"Location -" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
+    _locationLabel.attributedText = locationString;
+    _locationLabel.frame = CGRectMake(_locationLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 15, self.view.frame.size.width-20, _locationLabel.frame.size.height);
+    _locationSeparatorLabel.frame = CGRectMake(_locationSeparatorLabel.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+    size = CGSizeMake(self.view.frame.size.width-20,500);
+    //Detail text view frame
+    _descriptionLabel.numberOfLines = 0;
+    textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"] textSize:18];
+    if(textRect.size.height < 40) {
+        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 15, self.view.frame.size.width-20, 40);
+        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+    } else {
+        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 15, self.view.frame.size.width-20, textRect.size.height+5);
+        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 5, self.view.frame.size.width-20, 1);
+    }
+    _descriptionLabel.text = [data objectForKey:@"FullDescription"];
+    complainImageArray = [data objectForKey:@"ImageName"];
+    [_imageCollectionView reloadData];
+    if (commentsArray.count < 1) {
+        _commentsCountLabel.hidden = YES;
+        _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20,0);
+    } else {
+        _commentsCountLabel.hidden = NO;
+        if (commentsArray.count == 1) {
+            _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comment",(unsigned long)commentsArray.count];
+        } else {
+            _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
+        }
+    }
+    if ([[data objectForKey:@"ComplainStatus"] containsString:@"process"]) {
+        _complaintStatusLabel.text = @"In Progress";
+        _complaintStatusLabel.textColor = [UIColor colorWithRed:0/255.0 green:152/255.0 blue:206/255.0 alpha:1.0];
+    } else if ([[data objectForKey:@"ComplainStatus"] containsString:@"Complete"]){
+        _complaintStatusLabel.text = [data objectForKey:@"ComplainStatus"];
+        _complaintStatusLabel.textColor = [UIColor colorWithRed:3/255.0 green:207/255.0 blue:4/255.0 alpha:1.0];
+    } else {
+        _complaintStatusLabel.text = [data objectForKey:@"ComplainStatus"];
+        _complaintStatusLabel.textColor = [UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0];
+    }
+    //Comments container view frame
+    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        [self commonCollectionViewFrames:1];
+        [self setCommonUserStatusViewFrames];
+        _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
+        if (commentsArray.count < 1) {
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, 0);
+        }
+        else {
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, commentsCellHeight + 20);
+        }
+        commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
+    } // Show start job view
+    [self setStartJobFraming:data];
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 10, self.view.frame.size.width,commentsViewHeight + 20);
     mainContainerHeight = 20 + _descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
+
 - (void)commonCollectionViewFrames:(int)displayCount {
     if (displayCount == 1) {
         if (complainImageArray.count<1) {
@@ -262,7 +271,7 @@
 }
 
 //Set common frames for informatory view
--(void)setCommonUserStatusViewFrames {
+- (void)setCommonUserStatusViewFrames {
     _UserStatusView.hidden=NO;
     _commentsContainerView.hidden = NO;
     _addCommentContainerView.hidden=YES;

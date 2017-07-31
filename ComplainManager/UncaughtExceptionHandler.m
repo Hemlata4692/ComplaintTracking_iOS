@@ -162,7 +162,7 @@ const NSInteger UncaughtExceptionHandlerReportAddressCount = 5;
     return networkType;
 }
 
--(void)callCrashWebservice :(NSString *)crashString {
+- (void)callCrashWebservice :(NSString *)crashString {
     
     NSDictionary *requestDict = @{@"content":crashString,@"to":@"monika@ranosys.com",@"subject":@"Property Complain Tracking System crash report"};
     NSError *error;
