@@ -232,7 +232,12 @@
     else if(string.length) {
         isSearch = YES;
         searchKey = [textField.text stringByAppendingString:string];
-        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterName;
+        if ([self checkIfTenant]) {
+            filterName = [NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", searchKey];
+        } else {
+            filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        }
         NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
         NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
         NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
@@ -240,7 +245,12 @@
     }
     else if((textField.text.length-1)!=0) {
         searchKey = [textField.text substringWithRange:NSMakeRange(0, textField.text.length-1)];
-        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterName;
+        if ([self checkIfTenant]) {
+            filterName = [NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", searchKey];
+        } else {
+            filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        }
         NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
         NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
         NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
@@ -269,8 +279,24 @@
     }
 }
 
+- (BOOL)checkIfTenant {
+    if (([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) && ![myDelegate.currentViewController isEqualToString:@"propertyFeedback"]) {
+        return YES;
+    } else if (([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) && [myDelegate.screenName isEqualToString:@"myFeedback"]) {
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *simpleTableIdentifier = @"ComplainCell";
+    NSString *simpleTableIdentifier;
+    if ([self checkIfTenant]) {
+        simpleTableIdentifier = @"TenantCell";
+    } else {
+        simpleTableIdentifier = @"ComplainCell";
+    }
     ComplainListingCell *complainCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
     if (complainCell == nil) {
         complainCell = [[ComplainListingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
@@ -297,6 +323,81 @@
     complainDetail.complainId = data.complainId;
     complainDetail.complainVC = self;
     [self.navigationController pushViewController:complainDetail animated:YES];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSString *simpleTableIdentifier;
+    if ([self checkIfTenant]) {
+        simpleTableIdentifier = @"TenantCell";
+    } else {
+        simpleTableIdentifier = @"ComplainCell";
+    }
+    ComplainListingCell *complainCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+    if (complainCell == nil) {
+        complainCell = [[ComplainListingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
+    }
+    
+    
+    ComplainListDataModel *data;
+    if (isSearch) {
+        data=[searchArray objectAtIndex:indexPath.row];
+    } else {
+        data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    }
+    float cellHeight;
+    float totalCellHeight;
+    CGRect textRectName;
+    CGRect textRectDesc;
+    CGSize size;
+    size = CGSizeMake(_complainListingTable.frame.size.width-90,150);
+    if ([self checkIfTenant]) {
+        cellHeight = 25;
+        textRectName=[self setDynamicHeight:size textString:[NSString stringWithFormat:@"Category - %@",data.category] textSize:18];
+        textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
+        if (textRectDesc.size.height < 45) {
+            totalCellHeight = cellHeight+textRectName.size.height+textRectDesc.size.height+20;
+        } else {
+            totalCellHeight = cellHeight+textRectName.size.height+65;
+        }
+        if (totalCellHeight <= 110) {
+            return 110;
+        } else {
+            return totalCellHeight;
+        }
+    }
+    
+    else {
+        //        cellHeight = 30;
+//        complainCell.userNameLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        //        complainCell.complainDescriptionLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        //        complainCell.complainTimeLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        
+        NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",data.userName] setAttributrdString:data.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
+        complainCell.userNameLabel .attributedText = nameStr;
+        [complainCell.userNameLabel sizeToFit];
+        
+        //        complainCell.complainDescriptionLabel.text = data.complainDescription;
+        //        [complainCell.complainDescriptionLabel sizeToFit];
+        
+        //        textRectName=[self setDynamicHeight:size textString:[NSString stringWithFormat:@"%@ filed a feedback",data.userName] textSize:18];
+        textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
+        //        complainCell.dateLabel.frame =CGRectMake(90, complainCell.complainDescriptionLabel.frame.origin.y + complainCell.complainDescriptionLabel.frame.size.height + 5,[[UIScreen mainScreen] bounds].size.width - 100, 20);
+        
+        //        if (textRectDesc.size.height < 45) {
+        totalCellHeight = complainCell.contentView.frame.origin.y+8 +complainCell.userNameLabel.frame.origin.y +complainCell.userNameLabel.frame.size.height+10+complainCell.complainDescriptionLabel.frame.origin.y+25+10 +complainCell.complainTimeLabel.frame.origin.y +complainCell.complainTimeLabel.frame.size.height;
+        //        } else {
+        //            totalCellHeight = complainCell.contentView.frame.origin.y+8 +complainCell.userNameLabel.frame.origin.y +complainCell.userNameLabel.frame.size.height+10+complainCell.complainDescriptionLabel.frame.origin.y +45+10 +complainCell.complainTimeLabel.frame.origin.y +complainCell.complainTimeLabel.frame.size.height;
+        //        NSLog(@" return %f",totalCellHeight);
+        //        }
+        return 8+complainCell.userNameLabel.frame.origin.y+complainCell.userNameLabel.frame.size.height+10 + complainCell.complainDescriptionLabel.frame.origin.y + 20 + complainCell.complainTimeLabel.frame.origin.y + complainCell.frame.size.height;
+    }
+}
+#pragma mark - end
+
+#pragma mark - Set dynamic height
+-(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
+    CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:textSize]} context:nil];
+    return textHeight;
 }
 #pragma mark - end
 

@@ -70,6 +70,7 @@
                     complainDataModel.categoryName =[complainDict objectForKey:@"CategoryName"];
                     complainDataModel.complainTime =[complainDict objectForKey:@"SubmittedOn"];
                     complainDataModel.userName =[complainDict objectForKey:@"UserName"];
+                    complainDataModel.category =[complainDict objectForKey:@"CategoryName"];
                     [dataArray addObject:complainDataModel];
                 }
                 success(dataArray);

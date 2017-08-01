@@ -195,6 +195,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D34CCE41F302C1700D0A765 /* ImagePreview */ = {
+			isa = PBXGroup;
+			children = (
+				5D61ADC71F2F3FA600AC1DF2 /* ImagePreviewViewController.h */,
+				5D61ADC81F2F3FA600AC1DF2 /* ImagePreviewViewController.m */,
+			);
+			name = ImagePreview;
+			sourceTree = "<group>";
+		};
 		5D3DA81F1ED7F11600AD0435 /* AddComplainModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -428,6 +437,7 @@
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5D34CCE41F302C1700D0A765 /* ImagePreview */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
 				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
@@ -592,8 +602,6 @@
 		5DD3162B1EC5AD83008FF487 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				5D61ADC71F2F3FA600AC1DF2 /* ImagePreviewViewController.h */,
-				5D61ADC81F2F3FA600AC1DF2 /* ImagePreviewViewController.m */,
 				5D864D0F1ECB0D08007FFC16 /* GlobalViewController */,
 				5DB168981ECE9DE900E0A8E2 /* SWRevealViewController */,
 				5DB168971ECE9DCF00E0A8E2 /* SideBar */,

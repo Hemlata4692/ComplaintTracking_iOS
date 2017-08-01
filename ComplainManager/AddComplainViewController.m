@@ -70,7 +70,9 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
-    _detailTextView.textContainerInset = UIEdgeInsetsZero;
+//    _detailTextView.textContainerInset = UIEdgeInsetsZero;
+//    _detailTextView.textContainer.lineFragmentPadding = 0;
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -123,13 +125,13 @@
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _detailTextView) {
         _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 25)) {
+        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 40)) {
+            NSLog(@"%f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
             _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
-            _detailTextView.textContainerInset = UIEdgeInsetsZero;
             [self setViewFrames];
         }
-        else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 25) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 25);
+        else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 40) {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 40);
             _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
         }
     }
