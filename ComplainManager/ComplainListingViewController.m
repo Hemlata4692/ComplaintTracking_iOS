@@ -368,7 +368,7 @@
     
     else {
         //        cellHeight = 30;
-//        complainCell.userNameLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        //        complainCell.userNameLabel.translatesAutoresizingMaskIntoConstraints = YES;
         //        complainCell.complainDescriptionLabel.translatesAutoresizingMaskIntoConstraints = YES;
         //        complainCell.complainTimeLabel.translatesAutoresizingMaskIntoConstraints = YES;
         
@@ -384,12 +384,12 @@
         //        complainCell.dateLabel.frame =CGRectMake(90, complainCell.complainDescriptionLabel.frame.origin.y + complainCell.complainDescriptionLabel.frame.size.height + 5,[[UIScreen mainScreen] bounds].size.width - 100, 20);
         
         //        if (textRectDesc.size.height < 45) {
-        totalCellHeight = complainCell.contentView.frame.origin.y+8 +complainCell.userNameLabel.frame.origin.y +complainCell.userNameLabel.frame.size.height+10+complainCell.complainDescriptionLabel.frame.origin.y+25+10 +complainCell.complainTimeLabel.frame.origin.y +complainCell.complainTimeLabel.frame.size.height;
+        totalCellHeight = 10 +complainCell.userNameLabel.frame.size.height+10+25+10 +complainCell.complainTimeLabel.frame.size.height+10;
         //        } else {
-        //            totalCellHeight = complainCell.contentView.frame.origin.y+8 +complainCell.userNameLabel.frame.origin.y +complainCell.userNameLabel.frame.size.height+10+complainCell.complainDescriptionLabel.frame.origin.y +45+10 +complainCell.complainTimeLabel.frame.origin.y +complainCell.complainTimeLabel.frame.size.height;
+//        totalCellHeight = 8+complainCell.userNameLabel.frame.size.height+10 + 20 + +10+complainCell.frame.size.height;
         //        NSLog(@" return %f",totalCellHeight);
         //        }
-        return 8+complainCell.userNameLabel.frame.origin.y+complainCell.userNameLabel.frame.size.height+10 + complainCell.complainDescriptionLabel.frame.origin.y + 20 + complainCell.complainTimeLabel.frame.origin.y + complainCell.frame.size.height;
+        return totalCellHeight;
     }
 }
 #pragma mark - end
