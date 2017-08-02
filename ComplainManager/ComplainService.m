@@ -70,7 +70,7 @@
                     complainDataModel.categoryName =[complainDict objectForKey:@"CategoryName"];
                     complainDataModel.complainTime =[complainDict objectForKey:@"SubmittedOn"];
                     complainDataModel.userName =[complainDict objectForKey:@"UserName"];
-                    complainDataModel.category =[complainDict objectForKey:@"CategoryName"];
+                    complainDataModel.feedbackCategory =[complainDict objectForKey:@"CategoryName"];
                     [dataArray addObject:complainDataModel];
                 }
                 success(dataArray);
@@ -176,14 +176,17 @@
 
 #pragma mark - Complaint detail
 - (void)getComplaitDetail:(NSString *)complainId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSString *isBuildingManager;
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
-        isBuildingManager = @"true";
-    } else {
-        isBuildingManager = @"false";
-    }
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"propertyId":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
+//    NSString *isBuildingManager;
+//    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+//        isBuildingManager = @"true";
+//    } else {
+//        isBuildingManager = @"false";
+//    }
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId};
     NSLog(@"complain requestDict %@",requestDict);
+
+//    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"propertyId":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
+//    NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetComplainDetail parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);

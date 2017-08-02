@@ -29,7 +29,7 @@
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(40, 0, size.width, size.height)];
     label.text = [menuItems objectAtIndex:index];
     [self.contentView addSubview:label];
-    label.font = [UIFont fontWithName:@"Roboto-Regular" size:15.0];
+    label.font = [UIFont fontWithName:@"Roboto-Regular" size:16.0];
     if (index == myDelegate.selectedMenuIndex) {
         self.backgroundColor= [UIColor colorWithRed:29/255.0 green:141/255.0 blue:179/255.0 alpha:1.0];
         label.textColor = [UIColor whiteColor];

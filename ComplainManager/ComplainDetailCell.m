@@ -25,23 +25,15 @@
 #pragma mark - end
 
 #pragma mark - Display data in cell
-- (void)displayCommentsListData :(CommentsModel *)commentList indexPath:(long)indexPath {
+- (void)displayCommentsListData :(CommentsModel *)commentList indexPath:(long)indexPath rectSize:(CGSize)rectSize {
     CGRect textRect;
     CGSize size;
     commentsLabel.translatesAutoresizingMaskIntoConstraints = YES;
-    size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,500);
+    size = CGSizeMake(rectSize.width,1000);
     textRect=[self setDynamicHeight:size textString:commentList.commnts];
     commentsLabel.numberOfLines = 0;
-    commentsLabel.frame =CGRectMake(0, 5, [[UIScreen mainScreen] bounds].size.width - 20, textRect.size.height+2);
+    commentsLabel.frame =CGRectMake(0, 5, rectSize.width, textRect.size.height+2);
     commentsLabel.text = commentList.commnts;
-//    NSString *dateString = commentList.time;
-//    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//    [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
-//    NSDate *date = [dateFormatter dateFromString:dateString];
-//    // Convert date object into desired format
-//    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-//    [dateFormatter setDateFormat:@"dd-mm-yyyy HH:mm a"];
-//    NSString *newDateString = [dateFormatter stringFromDate:date];
     commentsTimeLabel.text = commentList.time;
     NSAttributedString * attrString = [[NSString stringWithFormat:@"Added By %@",commentList.CommmentsBy] setAttributrdString:@"Added By" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:14.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:1.0]];
     commentAddedByLabel.attributedText = attrString;

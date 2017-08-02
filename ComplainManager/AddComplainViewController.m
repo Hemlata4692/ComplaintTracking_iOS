@@ -70,8 +70,8 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
-//    _detailTextView.textContainerInset = UIEdgeInsetsZero;
-//    _detailTextView.textContainer.lineFragmentPadding = 0;
+    //    _detailTextView.textContainerInset = UIEdgeInsetsZero;
+    //    _detailTextView.textContainer.lineFragmentPadding = 0;
     
 }
 
@@ -316,6 +316,7 @@
         isCategoryPicker = true;
     }
     [_pickerView reloadAllComponents];
+    [_pickerView selectRow:0 inComponent:0 animated:YES];
 }
 
 - (IBAction)pickerCancelAction:(id)sender {
@@ -492,8 +493,10 @@
         [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
     }] ;
 }
 #pragma mark - end

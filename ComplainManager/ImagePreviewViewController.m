@@ -136,13 +136,6 @@
                                               timeoutInterval:60];
     
     [imageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:placeholderImage] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        if ([isVideo isEqualToString:@"1"]) {
-            weakRef.contentMode = UIViewContentModeScaleAspectFit;
-        }
-        else {
-            weakRef.contentMode = UIViewContentModeScaleAspectFill;
-        }
-        weakRef.clipsToBounds = YES;
         weakRef.image = image;
         weakRef.backgroundColor = [UIColor clearColor];
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {

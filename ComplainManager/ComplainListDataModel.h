@@ -17,6 +17,6 @@
 @property(nonatomic,retain)NSString * complainId;
 @property(nonatomic,retain)NSString * categoryName;
 @property(nonatomic,retain)NSString * complainTime;
-@property(nonatomic,retain)NSString * category;
+@property(nonatomic,retain)NSString * feedbackCategory;
 
 @end

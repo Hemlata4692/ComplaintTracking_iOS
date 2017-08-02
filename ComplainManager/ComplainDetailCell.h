@@ -11,7 +11,7 @@
 
 @interface ComplainDetailCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *commentsTimeLabel;
-- (void)displayCommentsListData :(CommentsModel *)commentList indexPath:(long)indexPath;
+- (void)displayCommentsListData :(CommentsModel *)commentList indexPath:(long)indexPath rectSize:(CGSize)rectSize;
 @property (weak, nonatomic) IBOutlet UILabel *commentsLabel;
 @property (weak, nonatomic) IBOutlet UILabel *commentAddedByLabel;
 

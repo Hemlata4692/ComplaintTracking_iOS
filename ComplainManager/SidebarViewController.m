@@ -36,8 +36,10 @@
     [super viewWillAppear:YES];
     //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             myDelegate.selectedMenuIndex = 4;
+        } else   if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+            myDelegate.selectedMenuIndex = 3;
         } else {
             myDelegate.selectedMenuIndex = 2;
         }

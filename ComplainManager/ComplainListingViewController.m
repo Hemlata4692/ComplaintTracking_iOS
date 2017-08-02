@@ -112,6 +112,7 @@
     } else {
         self.navigationItem.title=@"Dashboard";
         myDelegate.currentViewController=@"dashboard";
+        myDelegate.screenName = @"dashboard";
     }
     [[self navigationController] setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
@@ -177,7 +178,7 @@
             }
         } else if (buttonTag == 2) {
             selectedButtonTag = 2;
-            if ([data.complainStatus isEqualToString:@"Complete"]) {
+            if ([data.complainStatus isEqualToString:@"Completed"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }
@@ -190,7 +191,7 @@
             
         } else if (buttonTag == 1) {
             selectedButtonTag = 1;
-            if ([data.complainStatus isEqualToString:@"In process"]) {
+            if ([data.complainStatus containsString:@"Progress"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }  else {
@@ -326,18 +327,6 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *simpleTableIdentifier;
-    if ([self checkIfTenant]) {
-        simpleTableIdentifier = @"TenantCell";
-    } else {
-        simpleTableIdentifier = @"ComplainCell";
-    }
-    ComplainListingCell *complainCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
-    if (complainCell == nil) {
-        complainCell = [[ComplainListingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
-    }
-    
-    
     ComplainListDataModel *data;
     if (isSearch) {
         data=[searchArray objectAtIndex:indexPath.row];
@@ -346,18 +335,19 @@
     }
     float cellHeight;
     float totalCellHeight;
-    CGRect textRectName;
-    CGRect textRectDesc;
-    CGSize size;
-    size = CGSizeMake(_complainListingTable.frame.size.width-90,150);
+    CGSize size = CGSizeMake(_complainListingTable.frame.size.width-100,150);
     if ([self checkIfTenant]) {
         cellHeight = 25;
-        textRectName=[self setDynamicHeight:size textString:[NSString stringWithFormat:@"Category - %@",data.category] textSize:18];
-        textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
+        CGSize constrainedSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width - 100  , 150);
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",data.feedbackCategory] attributes:attributesDictionary];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+        CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
         if (textRectDesc.size.height < 45) {
-            totalCellHeight = cellHeight+textRectName.size.height+textRectDesc.size.height+20;
+            totalCellHeight = cellHeight+requiredHeight.size.height+textRectDesc.size.height+20;
         } else {
-            totalCellHeight = cellHeight+textRectName.size.height+65;
+            totalCellHeight = cellHeight+requiredHeight.size.height+65;
         }
         if (totalCellHeight <= 110) {
             return 110;
@@ -365,33 +355,22 @@
             return totalCellHeight;
         }
     }
-    
     else {
-        //        cellHeight = 30;
-        //        complainCell.userNameLabel.translatesAutoresizingMaskIntoConstraints = YES;
-        //        complainCell.complainDescriptionLabel.translatesAutoresizingMaskIntoConstraints = YES;
-        //        complainCell.complainTimeLabel.translatesAutoresizingMaskIntoConstraints = YES;
-        
-        NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",data.userName] setAttributrdString:data.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
-        complainCell.userNameLabel .attributedText = nameStr;
-        [complainCell.userNameLabel sizeToFit];
-        
-        //        complainCell.complainDescriptionLabel.text = data.complainDescription;
-        //        [complainCell.complainDescriptionLabel sizeToFit];
-        
-        //        textRectName=[self setDynamicHeight:size textString:[NSString stringWithFormat:@"%@ filed a feedback",data.userName] textSize:18];
-        textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
-        //        complainCell.dateLabel.frame =CGRectMake(90, complainCell.complainDescriptionLabel.frame.origin.y + complainCell.complainDescriptionLabel.frame.size.height + 5,[[UIScreen mainScreen] bounds].size.width - 100, 20);
-        
-        //        if (textRectDesc.size.height < 45) {
-        totalCellHeight = 10 +complainCell.userNameLabel.frame.size.height+10+25+10 +complainCell.complainTimeLabel.frame.size.height+10;
-        //        } else {
-//        totalCellHeight = 8+complainCell.userNameLabel.frame.size.height+10 + 20 + +10+complainCell.frame.size.height;
-        //        NSLog(@" return %f",totalCellHeight);
-        //        }
+        CGSize constrainedSize = CGSizeMake(_complainListingTable.frame.size.width-100  , 150);
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",data.userName] attributes:attributesDictionary];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+        CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
+        if (textRectDesc.size.height < 40) {
+            totalCellHeight = 10 +requiredHeight.size.height+10+20+10+textRectDesc.size.height+15;
+        } else {
+            totalCellHeight = 10+requiredHeight.size.height+10+20+10 +55;
+        }
         return totalCellHeight;
     }
 }
+
 #pragma mark - end
 
 #pragma mark - Set dynamic height
@@ -436,12 +415,12 @@
             if ([data.complainStatus isEqualToString:@"Pending"]) {
                 [pendingArray addObject:data];
                 _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)pendingArray.count] ;
-            } else if ([data.complainStatus isEqualToString:@"Complete"]) {
-                [progressArray addObject:data];
-                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
-            } else if ([data.complainStatus isEqualToString:@"In process"]) {
+            } else if ([data.complainStatus isEqualToString:@"Completed"]) {
                 [completeArray addObject:data];
-                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
+                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
+            } else if ([data.complainStatus containsString:@"Progress"]) {
+                [progressArray addObject:data];
+                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
             }
         }
         //If no feedbacks
@@ -455,8 +434,10 @@
         [_refreshControl endRefreshing];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
         if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
             _noComplaintsLabel.text = @"No Internet Connection.";
         } else  {
