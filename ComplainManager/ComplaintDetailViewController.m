@@ -30,6 +30,9 @@
     NSMutableDictionary *detailDict;
     float commentsViewHeight;
     float commentsCellHeight;
+    int indexPathRow;
+    BOOL isAddMore;
+    NSString *identifier;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
@@ -377,12 +380,11 @@
             return NO;
         }
     }
-    if (range.length > 0 && [text length] == 0)
-    {
+    if (range.length > 0 && [text length] == 0) {
         return YES;
     }
-    if (textView.text.length >= 500 && range.length == 0)
-    {
+    if (textView.text.length >= 500 && range.length == 0) {
+        [self.view makeToast:@"You have reached maximum character limit."];
         return NO;
     }
     return YES;
@@ -450,30 +452,113 @@
         return complainImageArray.count;
     }
 }
+- (void)addImageStaticValues:(BOOL)isAddImage indexPath:(NSIndexPath *)indexPath {
+    if (isAddImage) {
+        if (indexPath.row == 0 && staffImageArray.count < 3) {
+            identifier = @"addMoreImages";
+            indexPathRow = (int)indexPath.row;
+            isAddMore = true;
+        } else if (indexPath.row > 0 && staffImageArray.count < 3){
+            identifier = @"complainImage";
+            indexPathRow = (int)indexPath.row - 1;
+            isAddMore = false;
+        }
+        else {
+            identifier = @"complainImage";
+            indexPathRow = (int)indexPath.row;
+            isAddMore = false;
+        }
+    } else {
+        identifier = @"complainImage";
+        indexPathRow = (int)indexPath.row;
+        isAddMore = false;
+    }
+}
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *identifier;
     AddComplainCell *cell;
-    if (indexPath.row != complainImageArray.count) {
-        identifier = @"complainImage";
-        cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.deleteImageButton.tag = indexPath.item;
-        [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
-        [cell displayData:(int)indexPath.row data:complainImageArray isAddComplainScreen:false];
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
+            [self addImageStaticValues:false indexPath:indexPath];
+        } else {
+            if  (staffImageArray.count < 3){
+                if (indexPath.row == 0 && staffImageArray.count < 3) {
+                    [self addImageStaticValues:true indexPath:indexPath];
+                } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                    [self addImageStaticValues:true indexPath:indexPath];
+                }
+                else {
+                    [self addImageStaticValues:false indexPath:indexPath];
+                }
+            } else {
+                [self addImageStaticValues:false indexPath:indexPath];
+            }
+        }
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+        if  (staffImageArray.count < 3){
+            if (indexPath.row == 0 && staffImageArray.count < 3) {
+                [self addImageStaticValues:true indexPath:indexPath];
+            } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                [self addImageStaticValues:true indexPath:indexPath];
+            }
+            else {
+                [self addImageStaticValues:false indexPath:indexPath];
+            }
+        } else {
+            [self addImageStaticValues:false indexPath:indexPath];
+        }
     }
     else {
-        identifier = @"addMoreImages";
-        cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.selectImageButton.tag = indexPath.item;
-        [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self addImageStaticValues:false indexPath:indexPath];
     }
+    
+    cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+    cell.selectImageButton.tag = indexPath.item;
+    [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    cell.deleteImageButton.tag = indexPath.item;
+    [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    [cell displayData:indexPathRow data:complainImageArray isAddComplainScreen:false isAddMoreCell:isAddMore];
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UIStoryboard * storyboard=storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ImagePreviewViewController *imagePreviewView =[storyboard instantiateViewControllerWithIdentifier:@"ImagePreviewViewController"];
-    imagePreviewView.selectedIndex=(int)indexPath.row;
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
+            imagePreviewView.selectedIndex=(int)indexPath.row;
+        } else {
+            if  (staffImageArray.count < 3){
+                if (indexPath.row == 0 && staffImageArray.count < 3) {
+                    imagePreviewView.selectedIndex=(int)indexPath.row-1;
+                } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                    imagePreviewView.selectedIndex=(int)indexPath.row-1;
+                }
+                else {
+                    imagePreviewView.selectedIndex=(int)indexPath.row;
+                }
+            } else {
+                imagePreviewView.selectedIndex=(int)indexPath.row;
+            }
+        }
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+        if  (staffImageArray.count < 3){
+            if (indexPath.row == 0 && staffImageArray.count < 3) {
+                imagePreviewView.selectedIndex=(int)indexPath.row-1;
+            } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                imagePreviewView.selectedIndex=(int)indexPath.row-1;
+            }
+            else {
+                imagePreviewView.selectedIndex=(int)indexPath.row;
+            }
+        } else {
+            imagePreviewView.selectedIndex=(int)indexPath.row;
+        }
+    }
+    else {
+        imagePreviewView.selectedIndex=(int)indexPath.row;
+    }
+    
     imagePreviewView.attachmentArray=[complainImageArray mutableCopy];
     [self.navigationController pushViewController:imagePreviewView animated:YES];
 }
@@ -517,13 +602,49 @@
 
 #pragma mark - IBActions
 - (IBAction)deleteImageAction:(id)sender {
-    if ([staffImageArray containsObject:[complainImageArray objectAtIndex:[sender tag]]]) {
-        [staffImageArray removeObject:[complainImageArray objectAtIndex:[sender tag]]];
+    
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
+            [self removeImage:(int)[sender tag]];
+        } else {
+            if  (staffImageArray.count < 3){
+                if ([sender tag] == 0 && staffImageArray.count < 3) {
+                    [self removeImage:(int)[sender tag]-1];
+                } else if ([sender tag] > 0 && staffImageArray.count < 3){
+                    [self removeImage:(int)[sender tag]-1];
+                }
+                else {
+                    [self removeImage:(int)[sender tag]];
+                }
+            } else {
+                [self removeImage:(int)[sender tag]];
+            }
+        }
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+        if  (staffImageArray.count < 3){
+            if ([sender tag] && staffImageArray.count < 3) {
+                [self removeImage:(int)[sender tag]-1];
+            } else if ([sender tag] > 0 && staffImageArray.count < 3){
+                [self removeImage:(int)[sender tag]-1];
+            }
+            else {
+                [self removeImage:(int)[sender tag]];
+            }
+        } else {
+            [self removeImage:(int)[sender tag]];
+        }
     }
-    [complainImageArray removeObjectAtIndex:[sender tag]];
+    else {
+        [self removeImage:(int)[sender tag]];
+    }
     [_imageCollectionView reloadData];
 }
-
+- (void) removeImage:(int)buttonTag {
+    if ([staffImageArray containsObject:[complainImageArray objectAtIndex:buttonTag]]) {
+        [staffImageArray removeObject:[complainImageArray objectAtIndex:buttonTag]];
+    }
+    [complainImageArray removeObjectAtIndex:buttonTag];
+}
 - (IBAction)selectImageAction:(id)sender {
     [self showActionSheet];
 }
@@ -630,8 +751,8 @@
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
     UIImage *fixedImage = [image fixOrientation];
-    [staffImageArray addObject:fixedImage];
-    [complainImageArray addObject:fixedImage];
+    [staffImageArray insertObject:fixedImage atIndex:0];
+    [complainImageArray insertObject:fixedImage atIndex:0];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_imageCollectionView reloadData];

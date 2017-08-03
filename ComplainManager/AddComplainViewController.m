@@ -70,9 +70,6 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
-    //    _detailTextView.textContainerInset = UIEdgeInsetsZero;
-    //    _detailTextView.textContainer.lineFragmentPadding = 0;
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -107,6 +104,7 @@
             return YES;
         }
         if (textView.text.length >= 500 && range.length == 0) {
+            [self.view makeToast:@"You have reached maximum character limit."];
             return NO;
         }
         else {
@@ -177,26 +175,42 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier;
     AddComplainCell *cell;
-    if (indexPath.row != imagesArray.count) {
+    int indexPathRow;
+    BOOL isAddMore;
+    if (indexPath.row == 0 && imagesArray.count < 5) {
+        identifier = @"addMoreImages";
+        indexPathRow = (int)indexPath.row;
+        isAddMore = true;
+    } else if (indexPath.row > 0 && imagesArray.count < 5){
         identifier = @"complainImage";
-        cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.deleteImageButton.tag = indexPath.item;
-        [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
-        [cell displayData:(int)indexPath.row data:imagesArray isAddComplainScreen:true];
+        indexPathRow = (int)indexPath.row - 1;
+        isAddMore = false;
     }
     else {
-        identifier = @"addMoreImages";
-        cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.selectImageButton.tag = indexPath.item;
-        [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+        identifier = @"complainImage";
+        indexPathRow = (int)indexPath.row;
+        isAddMore = false;
+        
     }
+    cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+    cell.selectImageButton.tag = indexPath.item;
+    [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    cell.deleteImageButton.tag = indexPath.item;
+    [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    [cell displayData:indexPathRow data:imagesArray isAddComplainScreen:true isAddMoreCell:isAddMore];
+    
     return cell;
 }
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     UIStoryboard * storyboard=storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     ImagePreviewViewController *imagePreviewView =[storyboard instantiateViewControllerWithIdentifier:@"ImagePreviewViewController"];
-    imagePreviewView.selectedIndex=(int)indexPath.row;
+    if (indexPath.row > 0 && imagesArray.count < 5){
+        imagePreviewView.selectedIndex=(int)indexPath.row-1;
+    }
+    else {
+        imagePreviewView.selectedIndex=(int)indexPath.row;
+    }
     imagePreviewView.attachmentArray=[imagesArray mutableCopy];
     [self.navigationController pushViewController:imagePreviewView animated:YES];
 }
@@ -262,7 +276,8 @@
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
     UIImage *fixedImage = [image fixOrientation];
-    [imagesArray addObject:fixedImage];
+    //    [imagesArray addObject:fixedImage];
+    [imagesArray insertObject:fixedImage atIndex:0];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_addComplainCollectionView reloadData];
@@ -275,7 +290,14 @@
 
 #pragma mark - IBActions
 - (IBAction)deleteImageAction:(id)sender {
-    [imagesArray removeObjectAtIndex:[sender tag]];
+    
+    if ([sender tag] > 0 && imagesArray.count < 5){
+        [imagesArray removeObjectAtIndex:[sender tag]-1];
+    }
+    else {
+        [imagesArray removeObjectAtIndex:[sender tag]];
+    }
+    
     [_addComplainCollectionView reloadData];
 }
 

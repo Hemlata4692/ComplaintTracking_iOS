@@ -226,7 +226,7 @@
 #pragma mark - Job status
 - (void)changeJobStatus:(NSString *)complainId jobStatus:(NSString *)jobStatus imageNameArray:(NSMutableArray *)imageNameArray success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict;
-    if ([jobStatus isEqualToString:@"Complete"]) {
+    if ([jobStatus isEqualToString:@"Completed"]) {
         requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"complainStatus":jobStatus, @"ImageName":imageNameArray};
         
     } else {

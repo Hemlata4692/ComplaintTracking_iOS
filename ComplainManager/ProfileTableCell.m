@@ -28,11 +28,7 @@
 - (void)displayProfileData:(long)index userData:(NSDictionary *)userData infoString:(NSString *)infoString {
     NSArray *infoArray;
     if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-            infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number",@"MCST Council Member", nil];
-        } else {
-            infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company",@"Property",@"MCST Number", nil];
-        }
+                  infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company Name",@"Property",@"MCST Number", nil];
     } else {
         infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Property",@"MCST Number", nil];
     }

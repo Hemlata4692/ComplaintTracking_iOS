@@ -158,7 +158,17 @@
     emailLabel.numberOfLines = 1;
     emailLabel.textColor=[UIColor whiteColor];
     emailLabel.font = [UIFont fontWithName:@"Roboto-Light" size:15];
-    emailLabel.text = [UserDefaultManager getValue:@"email"];
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
+        emailLabel.text = @"Tenant";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        emailLabel.text = @"Council Member";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        emailLabel.text = @"Incharge";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        emailLabel.text = @"Building Manager";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+        emailLabel.text = @"Long Term Contractor";
+    }
     [headerView addSubview:nameLabel];
     [headerView addSubview:emailLabel];
     [headerView addSubview:ProfileImgView];

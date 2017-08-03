@@ -237,7 +237,7 @@
         searchKey = [textField.text stringByAppendingString:string];
         NSPredicate *filterName;
         if ([self checkIfTenant]) {
-            filterName = [NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", searchKey];
+            filterName = [NSPredicate predicateWithFormat:@"feedbackCategory CONTAINS[cd] %@", searchKey];
         } else {
             filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
         }
@@ -250,7 +250,7 @@
         searchKey = [textField.text substringWithRange:NSMakeRange(0, textField.text.length-1)];
         NSPredicate *filterName;
         if ([self checkIfTenant]) {
-            filterName = [NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", searchKey];
+            filterName = [NSPredicate predicateWithFormat:@"feedbackCategory CONTAINS[cd] %@", searchKey];
         } else {
             filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
         }
