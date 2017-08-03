@@ -50,7 +50,7 @@
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title=@"Add Complaint";
+    self.navigationItem.title=@"Add Feedback";
     //Array initialisation
     imagesArray = [NSMutableArray new];
     categoryArray = [NSMutableArray new];

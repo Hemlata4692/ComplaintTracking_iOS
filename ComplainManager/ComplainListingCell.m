@@ -22,84 +22,77 @@
 #pragma mark - end
 
 #pragma mark - Display data in cell
-- (void)displayComplainListData :(ComplainListDataModel *)complainList indexPath:(int)indexPath rectSize:(CGSize)rectSize {
-    [self viewCustomisation];
-    //UI customisation
-    
+- (void)removeAutolayouts {
     userNameLabel.translatesAutoresizingMaskIntoConstraints = YES;
     complainDescriptionLabel.translatesAutoresizingMaskIntoConstraints = YES;
     complainTimeLabel.translatesAutoresizingMaskIntoConstraints = YES;
+}
 
-    CGSize size = CGSizeMake(rectSize.width-100,150);
-    
+- (void)displayComplainListData :(ComplainListDataModel *)complainList indexPath:(int)indexPath rectSize:(CGSize)rectSize {
+    [self viewCustomisation];
+    //UI customisation
+    [self removeAutolayouts];
     if ([self checkIfTenant]) {
-        NSAttributedString * categoryStr = [[NSString stringWithFormat:@"Category - %@",complainList.feedbackCategory] setAttributrdString:@"Category - " stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
-        userNameLabel.attributedText = categoryStr;
-        CGSize constrainedSize = CGSizeMake(rectSize.width - 100  , 150);
-        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
-        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",complainList.feedbackCategory] attributes:attributesDictionary];
-        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
-        CGRect newFrame = self.userNameLabel.frame;
-        newFrame.size.height = requiredHeight.size.height;
-        self.userNameLabel.frame = CGRectMake(90,15, rectSize.width - 100, requiredHeight.size.height);
-        CGRect textRectDesc=[self setDynamicHeight:size textString:complainList.complainDescription textSize:17];
-        complainDescriptionLabel.numberOfLines = 2;
-        if (textRectDesc.size.height < 40) {
-            complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 6,rectSize.width - 100, textRectDesc.size.height+5);
-        } else {
-            complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 5,rectSize.width - 100, 45);
-        }
-        complainDescriptionLabel.text=complainList.complainDescription;
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        [dateFormatter setDateFormat:@"dd-MM-yyyy HH:mm"];
-        NSDate *date = [dateFormatter dateFromString:complainList.complainTime];
-        [dateFormatter setDateFormat:@"MMM"];
-        monthLabel.text=[[dateFormatter stringFromDate:date] capitalizedString];
-        [dateFormatter setDateFormat:@"dd"];
-        dateLabel.text=[dateFormatter stringFromDate:date];
-        [dateFormatter setDateFormat:@"yyyy"];
-        yearLabel.text=[dateFormatter stringFromDate:date];
-        
+        [self tenantListingFrames:complainList rectSize:rectSize];
     } else {
-        
-        NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] setAttributrdString:complainList.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
-        userNameLabel.attributedText = nameStr;
-        
-        CGSize constrainedSize = CGSizeMake(rectSize.width - 100  , 150);
-        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,
-                                              nil];
-        
-        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] attributes:attributesDictionary];
-        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
-        CGRect newFrame = self.userNameLabel.frame;
-        newFrame.size.height = requiredHeight.size.height;
-        self.userNameLabel.frame = CGRectMake(90,8, rectSize.width - 100, requiredHeight.size.height);
-        
-        CGRect textRectDesc=[self setDynamicHeight:size textString:complainList.complainDescription textSize:17.0];
-        complainDescriptionLabel.text = complainList.complainDescription;
-        if (textRectDesc.size.height < 40) {
-            complainDescriptionLabel.frame = CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 10,rectSize.width - 100, textRectDesc.size.height);
-        } else {
-            complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 10,rectSize.width - 100, 45);
-        }
+        [self staffMemberFrames:complainList rectSize:rectSize];
     }
-    
     complainTimeLabel.frame =CGRectMake(90, complainDescriptionLabel.frame.origin.y + complainDescriptionLabel.frame.size.height + 10,rectSize.width - 100, 20);
-    
     [userImageView setImageWithURL:[NSURL URLWithString:complainList.complainImageString] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
-    userImageView.layer.cornerRadius = userImageView.frame.size.width / 2;
-    userImageView.layer.masksToBounds = YES;
-    //    NSString *dateString = complainList.complainTime;
-    //    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    //    [dateFormatter setDateFormat:@"dd/MM/yyyy HH:mm:ss"];
-    //    NSDate *date = [dateFormatter dateFromString:dateString];
-    //    // Convert date object into desired format
-    //    [dateFormatter setTimeStyle:NSDateFormatterShortStyle];
-    //    [dateFormatter setDateFormat:@"dd-mm-yyyy HH:mm a"];
-    //    NSString *newDateString = [dateFormatter stringFromDate:date];
     complainTimeLabel.text=complainList.complainTime;
+}
+
+- (void)tenantListingFrames:(ComplainListDataModel *)complainList rectSize:(CGSize)rectSize {
+    CGSize size = CGSizeMake(rectSize.width-100,150);
+    NSAttributedString * categoryStr = [[NSString stringWithFormat:@"Category - %@",complainList.feedbackCategory] setAttributrdString:@"Category - " stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
+    userNameLabel.attributedText = categoryStr;
+    CGSize constrainedSize = CGSizeMake(rectSize.width - 100  , 150);
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",complainList.feedbackCategory] attributes:attributesDictionary];
+    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+    CGRect newFrame = self.userNameLabel.frame;
+    newFrame.size.height = requiredHeight.size.height;
+    self.userNameLabel.frame = CGRectMake(90,15, rectSize.width - 100, requiredHeight.size.height);
+    CGRect textRectDesc=[self setDynamicHeight:size textString:complainList.complainDescription textSize:17];
+    complainDescriptionLabel.numberOfLines = 2;
+    if (textRectDesc.size.height < 40) {
+        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 6,rectSize.width - 100, textRectDesc.size.height+5);
+    } else {
+        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 5,rectSize.width - 100, 45);
+    }
+    complainDescriptionLabel.text=complainList.complainDescription;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd-MM-yyyy HH:mm"];
+    NSDate *date = [dateFormatter dateFromString:complainList.complainTime];
+    [dateFormatter setDateFormat:@"MMM"];
+    monthLabel.text=[[dateFormatter stringFromDate:date] capitalizedString];
+    [dateFormatter setDateFormat:@"dd"];
+    dateLabel.text=[dateFormatter stringFromDate:date];
+    [dateFormatter setDateFormat:@"yyyy"];
+    yearLabel.text=[dateFormatter stringFromDate:date];
+}
+
+- (void)staffMemberFrames:(ComplainListDataModel *)complainList rectSize:(CGSize)rectSize {
+    CGSize size = CGSizeMake(rectSize.width-100,150);
+    NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] setAttributrdString:complainList.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
+    userNameLabel.attributedText = nameStr;
+    CGSize constrainedSize = CGSizeMake(rectSize.width - 100  , 150);
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,
+                                          nil];
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] attributes:attributesDictionary];
+    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+    CGRect newFrame = self.userNameLabel.frame;
+    newFrame.size.height = requiredHeight.size.height;
+    self.userNameLabel.frame = CGRectMake(90,8, rectSize.width - 100, requiredHeight.size.height);
+    CGRect textRectDesc=[self setDynamicHeight:size textString:complainList.complainDescription textSize:17.0];
+    complainDescriptionLabel.text = complainList.complainDescription;
+    if (textRectDesc.size.height < 40) {
+        complainDescriptionLabel.frame = CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 10,rectSize.width - 100, textRectDesc.size.height);
+    } else {
+        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 10,rectSize.width - 100, 45);
+    }
 }
 #pragma mark - end
 
@@ -107,7 +100,8 @@
 - (void)viewCustomisation {
     dateContainerView.layer.cornerRadius = dateContainerView.frame.size.width / 2;
     dateContainerView.layer.masksToBounds = YES;
-    
+    userImageView.layer.cornerRadius = userImageView.frame.size.width / 2;
+    userImageView.layer.masksToBounds = YES;
 }
 #pragma mark - end
 

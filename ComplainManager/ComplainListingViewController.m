@@ -125,7 +125,6 @@
     }
     //Add button shadow
     [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
-    
 }
 #pragma mark - end
 
@@ -188,7 +187,6 @@
                     _noComplaintsLabel.text = @"No Records Found.";
                 }
             }
-            
         } else if (buttonTag == 1) {
             selectedButtonTag = 1;
             if ([data.complainStatus containsString:@"Progress"]) {
@@ -204,6 +202,7 @@
         [_complainListingTable reloadData];
     }
 }
+
 - (void)setStatusViewDesign:(UIColor *)assignedBackgroundColor assignedTextColor:(UIColor *)assignedTextColor  progressBackgroundColor:(UIColor *)progressBackgroundColor progressTextColor:(UIColor *)progressTextColor complteBackgroundColor:(UIColor *)complteBackgroundColor completeTextColor:(UIColor *)completeTextColor {
     //Assigned UI
     _assignedView.backgroundColor = assignedBackgroundColor;
@@ -271,15 +270,7 @@
 }
 #pragma mark - end
 
-#pragma mark - Table view delegate and datasource methods
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (isSearch) {
-        return searchArray.count;
-    } else {
-        return filteredComplainListArray.count;
-    }
-}
-
+#pragma mark - Check if feedback added by self
 - (BOOL)checkIfTenant {
     if (([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) && ![myDelegate.currentViewController isEqualToString:@"propertyFeedback"]) {
         return YES;
@@ -288,6 +279,16 @@
     }
     else {
         return NO;
+    }
+}
+#pragma mark - end
+
+#pragma mark - Table view delegate and datasource methods
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (isSearch) {
+        return searchArray.count;
+    } else {
+        return filteredComplainListArray.count;
     }
 }
 
@@ -336,11 +337,11 @@
     float cellHeight;
     float totalCellHeight;
     CGSize size = CGSizeMake(_complainListingTable.frame.size.width-100,150);
+    CGSize constrainedSize = CGSizeMake(_complainListingTable.frame.size.width-100  , 150);
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
     if ([self checkIfTenant]) {
         cellHeight = 25;
-        CGSize constrainedSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width - 100  , 150);
-        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",data.feedbackCategory] attributes:attributesDictionary];
         CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
         CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
@@ -356,9 +357,6 @@
         }
     }
     else {
-        CGSize constrainedSize = CGSizeMake(_complainListingTable.frame.size.width-100  , 150);
-        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",data.userName] attributes:attributesDictionary];
         CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
         CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
