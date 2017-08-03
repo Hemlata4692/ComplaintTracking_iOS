@@ -165,7 +165,7 @@
 #pragma mark - end
 
 #pragma mark - Collection view methods
--(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     //Max image selection 5
     if (imagesArray.count < 5) {
         return imagesArray.count + 1;
@@ -274,12 +274,12 @@
 #pragma mark - end
 
 #pragma mark - IBActions
--(IBAction)deleteImageAction:(id)sender {
+- (IBAction)deleteImageAction:(id)sender {
     [imagesArray removeObjectAtIndex:[sender tag]];
     [_addComplainCollectionView reloadData];
 }
 
--(IBAction)selectImageAction:(id)sender {
+- (IBAction)selectImageAction:(id)sender {
     [self showActionSheet];
     [_addComplainCollectionView reloadData];
 }
@@ -365,11 +365,11 @@
     return pickerLabel;
 }
 
--(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
 }
 
--(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     if (isCategoryPicker) {
         return categoryArray.count;
     } else {
@@ -377,7 +377,7 @@
     }
 }
 
--(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     [_keyboardControls.activeField resignFirstResponder];
     if (isCategoryPicker) {
         complainModel=[categoryArray objectAtIndex:row];

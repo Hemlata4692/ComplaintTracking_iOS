@@ -142,7 +142,7 @@
 #pragma mark - end
 
 #pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
@@ -165,7 +165,7 @@
 #pragma mark - end
 
 #pragma mark - Textview delegates
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
     if (textView == _addressTextView) {
         if (range.length > 0 && [string length] == 0) {
             return YES;
@@ -228,7 +228,7 @@
     }
 }
 
--(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (textField == _phoneNumberTextField) {
         if (range.length > 0 && [string length] == 0) {

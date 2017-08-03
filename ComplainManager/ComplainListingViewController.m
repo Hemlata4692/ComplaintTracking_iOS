@@ -102,6 +102,7 @@
     }
 }
 
+//Screen functionality for different feedback screens
 - (void)loadAppearMethod {
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
@@ -130,7 +131,6 @@
 
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
-    //    Milestone 2 features
     AddComplainViewController * addComplain = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
     addComplain.complainVC = self;
     [self.navigationController pushViewController:addComplain animated:YES];
@@ -142,6 +142,7 @@
 #pragma mark - end
 
 #pragma mark - Filter status data
+//Set status button UI
 - (void)changeButtonState:(int)buttonTag {
     if (buttonTag == 0) {
         //Set assigned view UI
@@ -156,6 +157,7 @@
     [self filterStatusArray:buttonTag];
 }
 
+//Filter data for diffrent status
 - (void)filterStatusArray:(int)buttonTag {
     _searchTextField.text = @"";
     isSearch = NO;
@@ -203,6 +205,7 @@
     }
 }
 
+//SEt background UI of status view
 - (void)setStatusViewDesign:(UIColor *)assignedBackgroundColor assignedTextColor:(UIColor *)assignedTextColor  progressBackgroundColor:(UIColor *)progressBackgroundColor progressTextColor:(UIColor *)progressTextColor complteBackgroundColor:(UIColor *)complteBackgroundColor completeTextColor:(UIColor *)completeTextColor {
     //Assigned UI
     _assignedView.backgroundColor = assignedBackgroundColor;
@@ -264,7 +267,7 @@
     return YES;
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
 }
@@ -372,7 +375,7 @@
 #pragma mark - end
 
 #pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
     CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:textSize]} context:nil];
     return textHeight;
 }

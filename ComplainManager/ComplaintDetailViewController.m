@@ -338,7 +338,7 @@
 }
 
 //Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
     CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:textSize]} context:nil];
     return textHeight;
 }
@@ -369,7 +369,7 @@
     }
 }
 
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     if (textView == _addCommentTextView) {
         if([text isEqualToString:@"\n"]) {
             [textView resignFirstResponder];
@@ -428,7 +428,7 @@
 #pragma mark - end
 
 #pragma mark - Collection view methds
--(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
         if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
             return complainImageArray.count;
@@ -505,7 +505,7 @@
 #pragma mark - end
 
 #pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
@@ -516,7 +516,7 @@
 #pragma mark - end
 
 #pragma mark - IBActions
--(IBAction)deleteImageAction:(id)sender {
+- (IBAction)deleteImageAction:(id)sender {
     if ([staffImageArray containsObject:[complainImageArray objectAtIndex:[sender tag]]]) {
         [staffImageArray removeObject:[complainImageArray objectAtIndex:[sender tag]]];
     }
@@ -524,7 +524,7 @@
     [_imageCollectionView reloadData];
 }
 
--(IBAction)selectImageAction:(id)sender {
+- (IBAction)selectImageAction:(id)sender {
     [self showActionSheet];
 }
 

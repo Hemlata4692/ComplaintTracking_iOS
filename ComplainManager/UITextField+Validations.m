@@ -32,7 +32,7 @@
 #pragma mark - end
 
 #pragma mark - Check valid url
--(BOOL)isValidURL {
+- (BOOL)isValidURL {
     NSString *urlRegEx =
     @"((?:http|https)://)?(?:www\\.)?[\\w\\d\\-_]+\\.\\w{2,3}(\\.\\w{2})?(/(?<=/)(?:[\\w\\d\\-./_]+)?)?";
     NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
