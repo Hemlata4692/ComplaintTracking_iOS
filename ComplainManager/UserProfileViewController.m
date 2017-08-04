@@ -69,7 +69,7 @@
 #pragma mark - Set profile data
 - (void)setProfileData {
     NSString *tempImageString = [userData objectForKey:@"userimage"];
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[tempImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     [_profileImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         _profileImageView.contentMode = UIViewContentModeScaleAspectFill;

@@ -104,8 +104,7 @@
             return YES;
         }
         if (textView.text.length >= 500 && range.length == 0) {
-            [self.view makeToast:@"You have reached maximum character limit."];
-            return NO;
+              return NO;
         }
         else {
             return YES;
@@ -135,7 +134,7 @@
     }
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView{
+- (void)textViewDidEndEditing:(UITextView *)textView {
     [textView layoutIfNeeded];
 }
 #pragma mark - end
@@ -442,7 +441,7 @@
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please select Location." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
-    }else  if ([_detailTextView.text isEqualToString:@""]) {
+    }else  if ([_detailTextView.text isEqualToString:@""] || [[_detailTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqualToString:@""]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Details." closeButtonTitle:@"OK" duration:0.0f];
         return NO;

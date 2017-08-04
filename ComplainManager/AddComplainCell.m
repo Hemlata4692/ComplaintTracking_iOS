@@ -21,8 +21,7 @@
             if ([[imageArray objectAtIndex:index] isKindOfClass:[NSString class]]) {
                 deleteImageButton.hidden = YES;
                 NSString *tempImageString = [imageArray objectAtIndex:index];
-                NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
-                                                              cachePolicy:NSURLRequestReturnCacheDataElseLoad
+                NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[tempImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                                           timeoutInterval:60];
                 [complainImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"placeholderListing"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
                     complainImageView.contentMode = UIViewContentModeScaleAspectFill;

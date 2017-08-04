@@ -303,10 +303,10 @@
         _commentsCountLabel.frame = CGRectMake(10,-10, viewWidth-20,0);
     }
     _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
-    _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 55, messageHeight);
+    _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
     [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
     [_addCommentTextView setCornerRadius:3];
-    _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+0.5, 0, 40, 40);
+    _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 2 , 40, 40);
     if ([_addCommentTextView.text isEqualToString:@""] || _addCommentTextView.text.length == 0) {
         _sendCommentButton.enabled = NO;
     }
@@ -384,7 +384,6 @@
         return YES;
     }
     if (textView.text.length >= 500 && range.length == 0) {
-        [self.view makeToast:@"You have reached maximum character limit."];
         return NO;
     }
     return YES;
@@ -393,7 +392,7 @@
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _addCommentTextView) {
         if (([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height < 80) && ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height > 50)) {
-            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 55, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
             messageHeight = [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height + 8;
             _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight +10 );
             [self commonAddCommentsTextViewFrames ];
@@ -401,7 +400,7 @@
         }
         else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
             messageHeight = 40;
-            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 55, messageHeight);
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
             _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
             [self commonAddCommentsTextViewFrames ];
             _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);

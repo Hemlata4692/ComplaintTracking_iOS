@@ -37,8 +37,8 @@
     } else {
         [self staffMemberFrames:complainList rectSize:rectSize];
     }
-    complainTimeLabel.frame =CGRectMake(90, complainDescriptionLabel.frame.origin.y + complainDescriptionLabel.frame.size.height + 10,rectSize.width - 100, 20);
-    [userImageView setImageWithURL:[NSURL URLWithString:complainList.complainImageString] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
+    complainTimeLabel.frame =CGRectMake(90, complainDescriptionLabel.frame.origin.y + complainDescriptionLabel.frame.size.height + 3,rectSize.width - 100, 20);
+    [userImageView setImageWithURL:[NSURL URLWithString:[complainList.complainImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] placeholderImage:[UIImage imageNamed:@"placeHolderImage"]];
     complainTimeLabel.text=complainList.complainTime;
 }
 
@@ -50,16 +50,16 @@
     NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
                                           [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",complainList.feedbackCategory] attributes:attributesDictionary];
-    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
     CGRect newFrame = self.userNameLabel.frame;
     newFrame.size.height = requiredHeight.size.height;
     self.userNameLabel.frame = CGRectMake(90,15, rectSize.width - 100, requiredHeight.size.height);
     CGRect textRectDesc=[self setDynamicHeight:size textString:complainList.complainDescription textSize:17];
     complainDescriptionLabel.numberOfLines = 2;
     if (textRectDesc.size.height < 40) {
-        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 6,rectSize.width - 100, textRectDesc.size.height+5);
+        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 3,rectSize.width - 100, textRectDesc.size.height+5);
     } else {
-        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 5,rectSize.width - 100, 45);
+        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 3,rectSize.width - 100, 45);
     }
     complainDescriptionLabel.text=complainList.complainDescription;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -77,21 +77,22 @@
     CGSize size = CGSizeMake(rectSize.width-100,150);
     NSAttributedString * nameStr = [[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] setAttributrdString:complainList.userName stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1.0]];
     userNameLabel.attributedText = nameStr;
+    userNameLabel.numberOfLines = 0;
     CGSize constrainedSize = CGSizeMake(rectSize.width - 100  , 150);
     NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,
+                                          [UIFont fontWithName:@"Roboto-Regular" size:18.0], NSFontAttributeName,
                                           nil];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",complainList.userName] attributes:attributesDictionary];
-    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
     CGRect newFrame = self.userNameLabel.frame;
     newFrame.size.height = requiredHeight.size.height;
     self.userNameLabel.frame = CGRectMake(90,8, rectSize.width - 100, requiredHeight.size.height);
     CGRect textRectDesc=[self setDynamicHeight:size textString:complainList.complainDescription textSize:17.0];
     complainDescriptionLabel.text = complainList.complainDescription;
     if (textRectDesc.size.height < 40) {
-        complainDescriptionLabel.frame = CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 10,rectSize.width - 100, textRectDesc.size.height);
+        complainDescriptionLabel.frame = CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 3,rectSize.width - 100, textRectDesc.size.height);
     } else {
-        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 10,rectSize.width - 100, 45);
+        complainDescriptionLabel.frame =CGRectMake(90, userNameLabel.frame.origin.y + userNameLabel.frame.size.height + 3,rectSize.width - 100, 45);
     }
 }
 #pragma mark - end

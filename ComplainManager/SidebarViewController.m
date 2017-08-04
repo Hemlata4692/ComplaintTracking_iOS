@@ -125,7 +125,7 @@
     ProfileImgView.contentMode = UIViewContentModeScaleAspectFill;
     ProfileImgView.clipsToBounds = YES;
     ProfileImgView.backgroundColor=[UIColor whiteColor];
-    [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"userPlaceholder"]];
+    [ProfileImgView setImageWithURL:[NSURL URLWithString:[[UserDefaultManager getValue:@"userImage"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] placeholderImage:[UIImage imageNamed:@"userPlaceholder"]];
     ProfileImgView.layer.cornerRadius = ProfileImgView.frame.size.width / 2;
     ProfileImgView.layer.masksToBounds = YES;
     //Name labeluserPlaceholder

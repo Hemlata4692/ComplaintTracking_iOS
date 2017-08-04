@@ -76,7 +76,7 @@
     userImageName = @"";
     // profile image url
     NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[tempImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                               timeoutInterval:60];
     [_userProfileImage setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
@@ -198,7 +198,6 @@
             return YES;
         }
         if (textField.text.length >= 60 && range.length == 0) {
-            [self.view makeToast:@"You have reached maximum character limit."];
             return NO;
         }
         else {

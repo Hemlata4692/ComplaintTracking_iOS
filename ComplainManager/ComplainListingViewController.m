@@ -341,12 +341,13 @@
     float totalCellHeight;
     CGSize size = CGSizeMake(_complainListingTable.frame.size.width-100,150);
     CGSize constrainedSize = CGSizeMake(_complainListingTable.frame.size.width-100  , 150);
-    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
+  
     if ([self checkIfTenant]) {
         cellHeight = 25;
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",data.feedbackCategory] attributes:attributesDictionary];
-        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading context:nil];
         CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
         if (textRectDesc.size.height < 45) {
             totalCellHeight = cellHeight+requiredHeight.size.height+textRectDesc.size.height+20;
@@ -360,13 +361,15 @@
         }
     }
     else {
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Regular" size:18.0], NSFontAttributeName,nil];
         NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",data.userName] attributes:attributesDictionary];
-        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin context:nil];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
         CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
         if (textRectDesc.size.height < 40) {
-            totalCellHeight = 10 +requiredHeight.size.height+10+20+10+textRectDesc.size.height+15;
+            totalCellHeight = 10 +requiredHeight.size.height+3+20+3+textRectDesc.size.height+10;
         } else {
-            totalCellHeight = 10+requiredHeight.size.height+10+20+10 +55;
+            totalCellHeight = 10+requiredHeight.size.height+3+20+3 +50;
         }
         return totalCellHeight;
     }
