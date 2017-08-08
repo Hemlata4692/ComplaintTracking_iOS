@@ -121,7 +121,7 @@
         [self changeButtonState:0];
     }
     //If user is long term contractor
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"] || [myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
         _addComplaintButton.hidden= YES;
     }
     //Add button shadow

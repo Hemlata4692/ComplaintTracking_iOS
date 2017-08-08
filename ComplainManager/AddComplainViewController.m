@@ -99,12 +99,18 @@
 
 #pragma mark - Textview delegates
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
+    
     if (textView == _detailTextView) {
+        if([string isEqualToString:@"\n"]) {
+            [textView resignFirstResponder];
+            return NO;
+        }
+        
         if (range.length > 0 && [string length] == 0) {
             return YES;
         }
         if (textView.text.length >= 500 && range.length == 0) {
-              return NO;
+            return NO;
         }
         else {
             return YES;

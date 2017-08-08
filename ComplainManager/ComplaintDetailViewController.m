@@ -33,6 +33,7 @@
     int indexPathRow;
     BOOL isAddMore;
     NSString *identifier;
+    NSString *jobComplainStatus;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
@@ -70,6 +71,7 @@
     [super viewDidLoad];
     [self addBackButton];
     self.navigationItem.title=@"Feedback Details";
+    jobComplainStatus = @"";
     [self loadInitialisations];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
@@ -167,7 +169,7 @@
                         if ([myDelegate.screenName isEqualToString:@"dashboard"]) {
                             //Show assigned alert if feedback asssigned to other.
                             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-                            [alert showWarning:nil title:@"Alert" subTitle:@"Feedback already assigned to other staff member." closeButtonTitle:@"OK" duration:0.0f];
+                            [alert showWarning:nil title:@"Alert" subTitle:@"Job already assigned to other staff member." closeButtonTitle:@"OK" duration:0.0f];
                         }
                     }
                     //Show informatory view
@@ -258,7 +260,7 @@
     } // Show start job view
     [self setStartJobFraming:data];
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth,commentsViewHeight + 20);
-    mainContainerHeight = 20 + _descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
+    mainContainerHeight = 20 + _descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 40;
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, viewWidth, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
@@ -651,8 +653,9 @@
 - (IBAction)startJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
+        jobComplainStatus = @"In Progress";
         [myDelegate showIndicator];
-        [self performSelector:@selector(changeComplainStatus:) withObject:@"In Progress" afterDelay:.1];
+        [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to start this job?" closeButtonTitle:@"No" duration:0.0f];
 }
@@ -660,12 +663,13 @@
 - (IBAction)completeJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
+        jobComplainStatus = @"Completed";
         [myDelegate showIndicator];
         if (staffImageArray.count >= 1) {
             [self performSelector:@selector(uploadImage:) withObject:staffImageArray afterDelay:.1];
             
         } else {
-            [self performSelector:@selector(changeComplainStatus:) withObject:@"Completed" afterDelay:.1];
+            [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
         }
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you have completed this job?" closeButtonTitle:@"No" duration:0.0f];
@@ -679,11 +683,12 @@
 - (IBAction)reopenJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
+        jobComplainStatus = @"REOPEN";
         [myDelegate showIndicator];
         if (staffImageArray.count >= 1) {
             [self performSelector:@selector(uploadImage:) withObject:staffImageArray afterDelay:.1];
         } else {
-            [self performSelector:@selector(changeComplainStatus:) withObject:@"Reopen" afterDelay:.1];
+            [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
         }
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to reopen this job?" closeButtonTitle:@"No" duration:0.0f];
@@ -811,7 +816,7 @@
                 [myDelegate.window makeKeyAndVisible];
             }
         }];
-        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
+        [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
@@ -884,7 +889,7 @@
         [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
             [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
             if (imagesArray.count == imagesNameArray.count) {
-                [self performSelector:@selector(changeComplainStatus:) withObject:@"Completed" afterDelay:.1];
+                [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
             }
         } failure:^(NSError *error) {
             [myDelegate stopIndicator];
@@ -906,9 +911,7 @@
         commentModel.CommmentsBy =[commentDict objectForKey:@"CommmentsBy"];
         [commentsArray insertObject:commentModel atIndex:0];
         [self getCommentsTableHeight];
-        //        [self setViewFrames:detailDict];
-        //        [_commentsTableView reloadData];
-    } failure:^(NSError *error) {
+       } failure:^(NSError *error) {
         [myDelegate stopIndicator];
         if (error.localizedDescription !=  nil) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
