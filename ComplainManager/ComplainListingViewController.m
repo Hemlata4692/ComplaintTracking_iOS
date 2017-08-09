@@ -104,6 +104,11 @@
 
 //Screen functionality for different feedback screens
 - (void)loadAppearMethod {
+    if ([self checkIfTenant]) {
+        _searchTextField.placeholder = @"Search by Category/Description";
+    } else {
+        _searchTextField.placeholder = @"Search by Username/Description";
+    }
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
         myDelegate.currentViewController=@"other";
