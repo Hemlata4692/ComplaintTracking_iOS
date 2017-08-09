@@ -70,6 +70,9 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
+    
+    NSAttributedString * attributedString = [[NSString stringWithFormat:@"To help us attend to your feedback promptly, please add details here. (Max 500 characters)"] setAttributrdString:@"(Max 500 characters)" stringFont:[UIFont fontWithName:@"Roboto-Italic" size:14.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.5]];
+    _detailNotesLabel.attributedText = attributedString;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -78,6 +81,24 @@
 #pragma mark - end
 
 #pragma mark - UI customisation
+- (void)setDetailTextFrames {
+    _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
+    NSLog(@"mmm = %f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+    if  ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 40) {
+        NSLog(@"%f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90)) {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+        } else {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 90);
+        }
+        [self setViewFrames];
+    }
+    else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 40) {
+        _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 30);
+        [self setViewFrames];
+    }
+}
+
 - (void)setViewFrames {
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _pickerView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -87,8 +108,8 @@
     _registerButton.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
     _detailNotesLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+10, self.view.frame.size.width - 20, _detailNotesLabel.frame.size.height);
-    _addComplainCollectionView.frame = CGRectMake(10, _detailNotesLabel.frame.origin.y +_detailNotesLabel.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
-    _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+20, self.view.frame.size.width - 60, _registerButton.frame.size.height);
+    _addComplainCollectionView.frame = CGRectMake(10, _detailNotesLabel.frame.origin.y +_detailNotesLabel.frame.size.height+10, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
+    _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+10, self.view.frame.size.width - 60, _registerButton.frame.size.height);
 }
 
 - (void)customiseView {
@@ -99,21 +120,24 @@
 
 #pragma mark - Textview delegates
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
-    
     if (textView == _detailTextView) {
-        if([string isEqualToString:@"\n"]) {
-            [textView resignFirstResponder];
-            return NO;
-        }
-        
         if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textView.text.length >= 500 && range.length == 0) {
-            return NO;
-        }
-        else {
-            return YES;
+        if (string.length > 1) {
+            if (textView.text.length + string.length >= 500) {
+                //Remove string greater then 500 characters
+                _detailTextView.text = [string substringToIndex:500];
+                [self setDetailTextFrames];
+                return NO;
+            }
+        } else {
+            if (textView.text.length >= 500 && range.length == 0) {
+                return NO;
+            }
+            else {
+                return YES;
+            }
         }
     }
     return YES;
@@ -127,16 +151,7 @@
 
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _detailTextView) {
-        _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 40)) {
-            NSLog(@"%f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
-            [self setViewFrames];
-        }
-        else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 40) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 40);
-            _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
-        }
+        [self setDetailTextFrames];
     }
 }
 
@@ -163,7 +178,13 @@
 }
 
 - (void)keyboardControlsDonePressed:(BSKeyboardControls *)keyboardControls {
-    [keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
+}
+
+- (void)resignKeyboard {
+    _detailTextView.text = [_detailTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self setDetailTextFrames];
+    [_keyboardControls.activeField resignFirstResponder];
 }
 #pragma mark - end
 
@@ -312,7 +333,7 @@
 }
 
 - (IBAction)registerButtonAction:(id)sender {
-    [self.keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
     imagesNameArray = [NSMutableArray new];
     if([self performValidationsForAddComplain]) {
         if (imagesArray.count < 1) {
@@ -326,7 +347,7 @@
 }
 
 - (IBAction)showPickerAction:(id)sender {
-    [_keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
     if ([sender tag] == 1) {
         if (locationArray.count < 1 ) {
             [self.view makeToast:@"No locations found."];
@@ -405,7 +426,7 @@
 }
 
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    [_keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
     if (isCategoryPicker) {
         complainModel=[categoryArray objectAtIndex:row];
         return complainModel.categoryName;

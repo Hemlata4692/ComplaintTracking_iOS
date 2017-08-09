@@ -16,7 +16,7 @@
 #import "ImagePreviewViewController.h"
 #define viewWidth self.view.frame.size.width
 
-@interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+@interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate>
 {
     CGRect textRect;
     CGSize size;
@@ -59,6 +59,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complaintStatusLabel;
 @property (weak, nonatomic) IBOutlet UIButton *reonpenJobButton;
+@property (weak, nonatomic) IBOutlet UILabel *textLimitLabel;
+@property (nonatomic, strong) BSKeyboardControls *keyboardControls;
 
 @end
 
@@ -83,6 +85,10 @@
 }
 
 - (void)loadInitialisations {
+    NSArray *textArray = @[_addCommentTextView];
+    //Add BSKeyboard
+    [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textArray]];
+    [self.keyboardControls setDelegate:self];
     staffImageArray = [[NSMutableArray alloc]init];
     complainImageArray = [[NSMutableArray alloc]init];
     imagesNameArray = [[NSMutableArray alloc]init];
@@ -113,6 +119,49 @@
 #pragma mark - end
 
 #pragma mark - View customisation
+- (void) setCommentTextFraming {
+    if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height > 50) {
+        if (([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height < 80)) {
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
+            messageHeight = [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height + 8;
+        } else {
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, 80);
+            messageHeight = 80;
+        }
+        _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
+        _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight +10 );
+        [self commonAddCommentsTextViewFrames ];
+        _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
+    }
+    else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
+        messageHeight = 40;
+        _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
+        _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
+        _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
+        [self commonAddCommentsTextViewFrames ];
+        _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
+    }
+    if ((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+        [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else {
+        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+50) animated:NO];
+    }
+    NSString *string = _addCommentTextView.text;
+    NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (_addCommentTextView.text.length>=1) {
+        if (trimmedString.length>=1) {
+            _sendCommentButton.enabled=YES;
+        }
+        else if (trimmedString.length==0) {
+            _sendCommentButton.enabled=NO;
+        }
+    }
+    else if (_addCommentTextView.text.length==0) {
+        _sendCommentButton.enabled=NO;
+    }
+}
+
 - (void)removeAutolayouts {
     _mainContainerView.hidden = NO;
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
@@ -129,6 +178,7 @@
     _commentsCountLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _addCommentContainerView.translatesAutoresizingMaskIntoConstraints = YES;
     _addCommentTextView.translatesAutoresizingMaskIntoConstraints = YES;
+    _textLimitLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _sendCommentButton.translatesAutoresizingMaskIntoConstraints = YES;
     _commentsTableView.translatesAutoresizingMaskIntoConstraints = YES;
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
@@ -306,6 +356,7 @@
     }
     _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
     _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
+    _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
     [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
     [_addCommentTextView setCornerRadius:3];
     _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 2 , 40, 40);
@@ -316,9 +367,9 @@
         _sendCommentButton.enabled = YES;
     }
     if (commentsArray.count < 1) {
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 5,viewWidth-20, 0);
+        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, 0);
     } else {
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
+        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, commentsCellHeight + 5);
     }
 }
 
@@ -333,7 +384,7 @@
         }
     }
     else {
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
+        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, commentsCellHeight + 5);
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]  && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
             _reonpenJobButton.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 25,viewWidth-60, _completeJobAction.frame.size.height);
         } else {
@@ -366,67 +417,66 @@
 
 #pragma mark - Textfield delegates
 - (void)textViewDidBeginEditing:(UITextView *)textView {
+    [self.keyboardControls setActiveField:textView];
     if ((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
         [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
     else {
-        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:YES];
+        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+50)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:YES];
     }
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    if (textView == _addCommentTextView) {
-        if([text isEqualToString:@"\n"]) {
-            [textView resignFirstResponder];
-            [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-            return NO;
-        }
-    }
     if (range.length > 0 && [text length] == 0) {
         return YES;
     }
-    if (textView.text.length >= 500 && range.length == 0) {
-        return NO;
+    if (text.length > 1) {
+        if (textView.text.length + text.length >= 500) {
+            _addCommentTextView.text = [text substringToIndex:500];
+            [self setCommentTextFraming];
+            return NO;
+        }
+    } else {
+        if (textView.text.length >= 500 && range.length == 0) {
+            return NO;
+        }
+        else {
+            return YES;
+        }
     }
     return YES;
 }
 
+
+//    if (range.length > 0 && [text length] == 0) {
+//        return YES;
+//    }
+//    if (textView.text.length >= 500 && range.length == 0) {
+//        return NO;
+//    }
+//    return YES;
+//}
+
 - (void)textViewDidChange:(UITextView *)textView {
-    if (textView == _addCommentTextView) {
-        if (([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height < 80) && ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height > 50)) {
-            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
-            messageHeight = [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height + 8;
-            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight +10 );
-            [self commonAddCommentsTextViewFrames ];
-            _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-        }
-        else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
-            messageHeight = 40;
-            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
-            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
-            [self commonAddCommentsTextViewFrames ];
-            _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-        }
-        if ((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
-            [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-        }
-        else {
-            [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+15) animated:NO];
-        }
-        NSString *string = textView.text;
-        NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        if (textView.text.length>=1) {
-            if (trimmedString.length>=1) {
-                _sendCommentButton.enabled=YES;
-            }
-            else if (trimmedString.length==0) {
-                _sendCommentButton.enabled=NO;
-            }
-        }
-        else if (textView.text.length==0) {
-            _sendCommentButton.enabled=NO;
-        }
-    }
+    [self setCommentTextFraming];
+}
+#pragma mark - end
+
+#pragma mark - Keyboard controls delegate
+- (void)keyboardControls:(BSKeyboardControls *)keyboardControls selectedField:(UIView *)field inDirection:(BSKeyboardControlsDirection)direction {
+    UIView *view;
+    view = field.superview.superview.superview;
+}
+
+- (void)keyboardControlsDonePressed:(BSKeyboardControls *)keyboardControls {
+    [self resignKeyboard];
+}
+
+- (void)resignKeyboard {
+    _addCommentTextView.text = [_addCommentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self setCommentTextFraming];
+    [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    [_keyboardControls.activeField resignFirstResponder];
 }
 #pragma mark - end
 
@@ -676,6 +726,7 @@
 }
 
 - (IBAction)sendCommentAction:(id)sender {
+    [self resignKeyboard];
     [myDelegate showIndicator];
     [self performSelector:@selector(addComments) withObject:nil afterDelay:.1];
 }
@@ -901,7 +952,6 @@
 
 //Add comments
 - (void)addComments {
-    [_addCommentTextView resignFirstResponder];
     [[ComplainService sharedManager] addComment:complainId comments:_addCommentTextView.text success:^(id responseObject){
         [myDelegate stopIndicator];
         CommentsModel *commentModel = [[CommentsModel alloc]init];
@@ -911,7 +961,7 @@
         commentModel.CommmentsBy =[commentDict objectForKey:@"CommmentsBy"];
         [commentsArray insertObject:commentModel atIndex:0];
         [self getCommentsTableHeight];
-       } failure:^(NSError *error) {
+    } failure:^(NSError *error) {
         [myDelegate stopIndicator];
         if (error.localizedDescription !=  nil) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
