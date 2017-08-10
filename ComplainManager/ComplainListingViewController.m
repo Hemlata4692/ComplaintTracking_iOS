@@ -111,7 +111,7 @@
     }
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
-        myDelegate.currentViewController=@"other";
+        myDelegate.currentViewController=@"myFeedback";
     } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
         self.navigationItem.title=@"Property Feedback";
         myDelegate.currentViewController= @"propertyFeedback";

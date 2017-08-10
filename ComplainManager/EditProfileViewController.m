@@ -187,22 +187,56 @@
         if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textField.text.length >= 16 && range.length == 0) {
-            return NO;
+        if (string.length > 1) {
+            if (textField.text.length + string.length >= 16) {
+                //Remove string greater then 16 characters
+                _phoneNumberTextField.text = [string substringToIndex:16];
+                return NO;
+            }
+        } else {
+            if (textField.text.length >= 16 && range.length == 0) {
+                return NO;
+            }
+            else {
+                return YES;
+            }
         }
-        else {
-            return YES;
-        }
+        //        if (range.length > 0 && [string length] == 0) {
+        //            return YES;
+        //        }
+        //        if (textField.text.length >= 16 && range.length == 0) {
+        //            return NO;
+        //        }
+        //        else {
+        //            return YES;
+        //        }
     } else if (textField == _nameTextField) {
-        if (range.length > 0 && [string length] == 0){
+        if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textField.text.length >= 60 && range.length == 0) {
-            return NO;
+        if (string.length > 1) {
+            if (textField.text.length + string.length >= 60) {
+                //Remove string greater then 60 characters
+                _nameTextField.text = [string substringToIndex:60];
+                return NO;
+            }
+        } else {
+            if (textField.text.length >= 60 && range.length == 0) {
+                return NO;
+            }
+            else {
+                return YES;
+            }
         }
-        else {
-            return YES;
-        }
+        //        if (range.length > 0 && [string length] == 0){
+        //            return YES;
+        //        }
+        //        if (textField.text.length >= 60 && range.length == 0) {
+        //            return NO;
+        //        }
+        //        else {
+        //            return YES;
+        //        }
     }
     return YES;
 }

@@ -406,7 +406,14 @@
         CommentsModel *commentsModel = [commentsArray objectAtIndex:i];
         CGSize commentsSize = CGSizeMake(_commentsTableView.frame.size.width,1000);
         CGRect textRectHeight=[self setDynamicHeight:commentsSize textString:commentsModel.commnts];
-        float height = 42+textRectHeight.size.height;
+        
+        CGSize constrainedSize = CGSizeMake(_commentsTableView.frame.size.width - 120  , 300);
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Bold" size:14.0], NSFontAttributeName,
+                                              nil];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:commentsModel.CommmentsBy attributes:attributesDictionary];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
+        float height = 50+requiredHeight.size.height+textRectHeight.size.height;
         commentsCellHeight = commentsCellHeight + height;
         NSLog(@"commentsCellHeight %f =",commentsCellHeight);
     }
@@ -635,7 +642,14 @@
     CommentsModel *commentsModel = [commentsArray objectAtIndex:indexPath.row];
     CGSize commentsSize = CGSizeMake(_commentsTableView.frame.size.width,1000);
     CGRect textRectHeight=[self setDynamicHeight:commentsSize textString:commentsModel.commnts];
-    float height = 42+textRectHeight.size.height;
+    
+    CGSize constrainedSize = CGSizeMake(_commentsTableView.frame.size.width - 120  , 300);
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [UIFont fontWithName:@"Roboto-Bold" size:14.0], NSFontAttributeName,
+                                          nil];
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:commentsModel.CommmentsBy attributes:attributesDictionary];
+    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
+    float height = 40+requiredHeight.size.height+textRectHeight.size.height;
     return height;
 }
 #pragma mark - end
