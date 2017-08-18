@@ -14,6 +14,8 @@
 #import "CommentsModel.h"
 #import "UserService.h"
 #import "ImagePreviewViewController.h"
+#import "UserProfileViewController.h"
+
 #define viewWidth self.view.frame.size.width
 
 @interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate>
@@ -39,6 +41,15 @@
 @property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *mainContainerView;
+@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
+@property (weak, nonatomic) IBOutlet UIButton *nameButon;
+@property (weak, nonatomic) IBOutlet UILabel *nameSeparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *propertyLabel;
+@property (weak, nonatomic) IBOutlet UILabel *userPropertyLabel;
+@property (weak, nonatomic) IBOutlet UILabel *propertySeparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *feedbackNoLabel;
+@property (weak, nonatomic) IBOutlet UILabel *feedbackSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailSeparatorLabel;
 @property (weak, nonatomic) IBOutlet UILabel *categoryLabel;
@@ -165,6 +176,14 @@
 - (void)removeAutolayouts {
     _mainContainerView.hidden = NO;
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
+    _nameLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _userNameLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _nameButon.translatesAutoresizingMaskIntoConstraints = YES;
+    _nameSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _propertyLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _propertySeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _feedbackNoLabel.translatesAutoresizingMaskIntoConstraints = YES;
+    _feedbackSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _categoryLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _categorySeparatorLabel.translatesAutoresizingMaskIntoConstraints=YES;
     _locationLabel.translatesAutoresizingMaskIntoConstraints=YES;
@@ -250,13 +269,47 @@
 
 - (void)setViewFrames: (NSDictionary *)data {
     [self removeAutolayouts];
+    //Set name label frame
+    _nameLabel.frame = CGRectMake(_nameLabel.frame.origin.x, 20,110, _nameLabel.frame.size.height);
+    CGSize nameSize = CGSizeMake(viewWidth-130,500);
+    _userNameLabel.numberOfLines = 0;
+    textRect=[self setDynamicHeight:nameSize textString:[data objectForKey:@"SubmittedUserName"] textSize:18];
+    if(textRect.size.height < 40) {
+        _userNameLabel.frame = CGRectMake(_nameLabel.frame.origin.x + _nameLabel.frame.size.width+1, 20,viewWidth -130, _userNameLabel.frame.size.height);
+        _nameSeparatorLabel.frame = CGRectMake(10, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 1, viewWidth-20, 1);
+    } else {
+        _userNameLabel.frame = CGRectMake(_nameLabel.frame.origin.x + _nameLabel.frame.size.width+1, 20,viewWidth -130, textRect.size.height+5);
+        _nameSeparatorLabel.frame = CGRectMake(10, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 5, viewWidth-20, 1);
+    }
+    _userNameLabel.text = [data objectForKey:@"SubmittedUserName"];
+    _nameButon.frame = _userNameLabel.frame;
+    
+    //Set property label frame
+    _propertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,110, _propertyLabel.frame.size.height);
+    _userPropertyLabel.numberOfLines = 0;
+    textRect=[self setDynamicHeight:nameSize textString:[data objectForKey:@"PropertyName"] textSize:18];
+    if(textRect.size.height < 40) {
+        _userPropertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x + _propertyLabel.frame.size.width+1, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,viewWidth -130, _userNameLabel.frame.size.height);
+        _propertySeparatorLabel.frame = CGRectMake(10, _userPropertyLabel.frame.origin.y+_userPropertyLabel.frame.size.height + 1, viewWidth-20, 1);
+    } else {
+        _userPropertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x + _propertyLabel.frame.size.width+1, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,viewWidth -130, textRect.size.height+5);
+        _propertySeparatorLabel.frame = CGRectMake(10, _userPropertyLabel.frame.origin.y+_userPropertyLabel.frame.size.height + 5, viewWidth-20, 1);
+    }
+    _userPropertyLabel.text = [data objectForKey:@"PropertyName"];
+    
+    //Set feedback no label frame
+    NSAttributedString * feedbackNoString = [[NSString stringWithFormat:@"Feedback No %@",[data objectForKey:@"feedbackNo"]] setAttributrdString:@"Feedback No" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:0.9]];
+    _feedbackNoLabel.attributedText = feedbackNoString;
+    _feedbackNoLabel.frame = CGRectMake(_feedbackNoLabel.frame.origin.x, _userPropertyLabel.frame.origin.y+_userPropertyLabel.frame.size.height + 20, viewWidth-20, _feedbackNoLabel.frame.size.height);
+    _feedbackSeparatorLabel.frame = CGRectMake(_feedbackSeparatorLabel.frame.origin.x, _feedbackNoLabel.frame.origin.y+_feedbackNoLabel.frame.size.height + 1, viewWidth-20, 1);
+    
     //Set category label frame
-    NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category - %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category -" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
+    NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category        %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category " stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:0.9]];
     _categoryLabel.attributedText = categoryString;
-    _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, 20, viewWidth-20, _categoryLabel.frame.size.height);
+    _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, _feedbackNoLabel.frame.origin.y+_feedbackNoLabel.frame.size.height + 20, viewWidth-20, _categoryLabel.frame.size.height);
     _categorySeparatorLabel.frame = CGRectMake(_categorySeparatorLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 1, viewWidth-20, 1);
     //Set location label frame
-    NSAttributedString * locationString = [[NSString stringWithFormat:@"Location - %@",[data objectForKey:@"PropertyLocationName"]] setAttributrdString:@"Location -" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
+    NSAttributedString * locationString = [[NSString stringWithFormat:@"Location         %@",[data objectForKey:@"PropertyLocationName"]] setAttributrdString:@"Location " stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:0.9]];
     _locationLabel.attributedText = locationString;
     _locationLabel.frame = CGRectMake(_locationLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 20, viewWidth-20, _locationLabel.frame.size.height);
     _locationSeparatorLabel.frame = CGRectMake(_locationSeparatorLabel.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 1, viewWidth-20, 1);
@@ -310,7 +363,7 @@
     } // Show start job view
     [self setStartJobFraming:data];
     _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth,commentsViewHeight + 20);
-    mainContainerHeight = 20 + _descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 40;
+    mainContainerHeight = 20 + _userNameLabel.frame.size.height+21 + _userPropertyLabel.frame.size.height+21+_feedbackNoLabel.frame.size.height+21 +_descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 40;
     _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, viewWidth, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
@@ -666,6 +719,16 @@
 #pragma mark - end
 
 #pragma mark - IBActions
+- (IBAction)viewUserProfileAction:(id)sender {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        UserProfileViewController * detailView = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"UserProfileViewController"];
+        detailView.isTenantDetailScreen = NO;
+        detailView.isProfileDetailScreen = YES;
+        detailView.tenantUserId = [detailDict objectForKey:@"SubmittedBy"];
+        [self.navigationController pushViewController:detailView animated:YES];
+    }
+}
+
 - (IBAction)deleteImageAction:(id)sender {
     
     if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {

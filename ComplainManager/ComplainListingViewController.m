@@ -137,7 +137,6 @@
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
     AddComplainViewController * addComplain = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
-    addComplain.complainVC = self;
     [self.navigationController pushViewController:addComplain animated:YES];
 }
 

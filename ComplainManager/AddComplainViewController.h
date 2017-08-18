@@ -10,5 +10,4 @@
 #import "ComplainListingViewController.h"
 
 @interface AddComplainViewController : GlobalViewController
-@property (strong, nonatomic)ComplainListingViewController *complainVC;
 @end

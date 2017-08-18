@@ -93,9 +93,9 @@
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill in all the fields." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
-    else  if (_oldPasswordText.text.length<6 || _changePasswordText.text.length<6 || _confirmPasswordText.text.length<6) {
+    else  if (_oldPasswordText.text.length<8 || _changePasswordText.text.length<8 || _confirmPasswordText.text.length<8) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 6 characters." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 8 characters." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     //Password confirmation for new password entered

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1788E5AF008AF0001CABD06F /* libPods-ComplainManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9679971C0780180C9C56DF99 /* libPods-ComplainManager.a */; };
+		5D33C76E1F469DFE008307FC /* FeedbackPreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D33C76D1F469DFE008307FC /* FeedbackPreviewController.m */; };
 		5D3DA8221ED7F14A00AD0435 /* AddComplainModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8211ED7F14A00AD0435 /* AddComplainModel.m */; };
 		5D3DA8251ED824E600AD0435 /* ComplaintDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3DA8241ED824E600AD0435 /* ComplaintDetailViewController.m */; };
 		5D47F5E41EFBF30100E20697 /* SidebarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D47F5E31EFBF30100E20697 /* SidebarCell.m */; };
@@ -68,6 +69,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D33C76C1F469DFE008307FC /* FeedbackPreviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedbackPreviewController.h; sourceTree = "<group>"; };
+		5D33C76D1F469DFE008307FC /* FeedbackPreviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedbackPreviewController.m; sourceTree = "<group>"; };
 		5D3DA8201ED7F14A00AD0435 /* AddComplainModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddComplainModel.h; sourceTree = "<group>"; };
 		5D3DA8211ED7F14A00AD0435 /* AddComplainModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddComplainModel.m; sourceTree = "<group>"; };
 		5D3DA8231ED824E600AD0435 /* ComplaintDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplaintDetailViewController.h; sourceTree = "<group>"; };
@@ -195,6 +198,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D33C76B1F469DC6008307FC /* FeedbackPreview */ = {
+			isa = PBXGroup;
+			children = (
+				5D33C76C1F469DFE008307FC /* FeedbackPreviewController.h */,
+				5D33C76D1F469DFE008307FC /* FeedbackPreviewController.m */,
+			);
+			name = FeedbackPreview;
+			sourceTree = "<group>";
+		};
 		5D34CCE41F302C1700D0A765 /* ImagePreview */ = {
 			isa = PBXGroup;
 			children = (
@@ -513,6 +525,7 @@
 		5DCE18581ECC7A7200F542BE /* AddComplainModule */ = {
 			isa = PBXGroup;
 			children = (
+				5D33C76B1F469DC6008307FC /* FeedbackPreview */,
 				5DCE185E1ECC7F2700F542BE /* AddComplainView */,
 				5DB168A41ECEF66100E0A8E2 /* AddComplainCell */,
 			);
@@ -954,6 +967,7 @@
 				5D8F63A81EC9B22A00111138 /* SCLAlertViewStyleKit.m in Sources */,
 				5D3DA8221ED7F14A00AD0435 /* AddComplainModel.m in Sources */,
 				5D8F63A71EC9B22A00111138 /* SCLAlertViewResponder.m in Sources */,
+				5D33C76E1F469DFE008307FC /* FeedbackPreviewController.m in Sources */,
 				5D965A811ECD57D900748EAC /* AddComplainCell.m in Sources */,
 				5DBE049F1ECC54DE005EC7A2 /* ComplainListingViewController.m in Sources */,
 				5DD3165F1EC5AF91008FF487 /* ForgotPasswordViewController.m in Sources */,

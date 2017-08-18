@@ -12,12 +12,13 @@
 #import "ComplainService.h"
 #import "AddComplainModel.h"
 #import "ImagePreviewViewController.h"
+#import "FeedbackPreviewController.h"
 
 @interface AddComplainViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate,UITextFieldDelegate,UITextViewDelegate>
 {
     NSArray *textArray;
     NSMutableArray *imagesArray;
-    NSMutableArray *imagesNameArray;
+    //    NSMutableArray *imagesNameArray;
     NSArray *categoryArray;
     NSArray *locationArray;
     AddComplainModel *complainModel;
@@ -45,7 +46,6 @@
 @end
 
 @implementation AddComplainViewController
-@synthesize complainVC;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
@@ -83,7 +83,6 @@
 #pragma mark - UI customisation
 - (void)setDetailTextFrames {
     _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-    NSLog(@"mmm = %f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
     if  ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 40) {
         NSLog(@"%f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
         if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90)) {
@@ -147,6 +146,11 @@
     [self.keyboardControls setActiveField:textView];
     [self hidePickerWithAnimation];
     [textView becomeFirstResponder];
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        [UIView animateWithDuration:0.5f animations:^{
+            self.view.frame = CGRectOffset(self.view.frame, 0, -70);
+        }];
+    }
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
@@ -157,6 +161,11 @@
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
     [textView layoutIfNeeded];
+    if([[UIScreen mainScreen] bounds].size.height<=568) {
+        [UIView animateWithDuration:0.5f animations:^{
+            self.view.frame = CGRectOffset(self.view.frame, 0, 70);
+        }];
+    }
 }
 #pragma mark - end
 
@@ -334,15 +343,14 @@
 
 - (IBAction)registerButtonAction:(id)sender {
     [self resignKeyboard];
-    imagesNameArray = [NSMutableArray new];
     if([self performValidationsForAddComplain]) {
-        if (imagesArray.count < 1) {
-            [myDelegate showIndicator];
-            [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
-        } else {
-            [myDelegate showIndicator];
-            [self performSelector:@selector(uploadImage) withObject:nil afterDelay:.1];
-        }
+        NSDictionary *feedbackDataDict = [NSDictionary new];
+        feedbackDataDict = @{@"category":_categoryTextField.text,@"location":_locationTextField.text,@"description":_detailTextView.text,@"imageArray":imagesArray,@"selectedLocationId":selectedLocationId,@"selectedCategoryId":selectedCategoryId};
+        FeedbackPreviewController * preview = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"FeedbackPreviewController"];
+        preview.feedbackData = feedbackDataDict;
+        preview.view.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5f];
+        [preview setModalPresentationStyle:UIModalPresentationOverCurrentContext];
+        [self.navigationController presentViewController:preview animated:YES completion:nil];
     }
 }
 
@@ -485,7 +493,6 @@
     [[ComplainService sharedManager] getCategories:YES success:^(NSMutableArray *dataArray){
         categoryArray = dataArray;
         [self getLocations];
-        //        [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -502,49 +509,6 @@
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-    }] ;
-}
-
-//Upload image
-- (void)uploadImage {
-    for (int i = 0; i < imagesArray.count; i++) {
-        [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
-            [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
-            NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
-            if (imagesArray.count == imagesNameArray.count) {
-                [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
-            }
-        } failure:^(NSError *error) {
-            [myDelegate stopIndicator];
-            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
-        }] ;
-    }
-}
-
-//Add complaint
-- (void)addComplaint {
-    [[ComplainService sharedManager] addComplait:_detailTextView.text categoryId:selectedCategoryId imageNameArray:imagesNameArray PropertyLocationId:selectedLocationId success:^(id responseObject) {
-        [myDelegate stopIndicator];
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert addButton:@"OK" actionBlock:^(void) {
-            complainVC.refreshComplainScreen = true;
-            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
-                myDelegate.screenName = @"myFeedback";
-                myDelegate.selectedMenuIndex = 2;
-            } else {
-                myDelegate.screenName = @"dashboard";
-                myDelegate.selectedMenuIndex = 0;
-            }
-            [self.navigationController popViewControllerAnimated:YES];
-        }];
-        [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
-    } failure:^(NSError *error) {
-        [myDelegate stopIndicator];
-        if (error.localizedDescription !=  nil) {
-            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
-        }
     }] ;
 }
 #pragma mark - end

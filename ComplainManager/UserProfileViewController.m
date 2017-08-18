@@ -23,11 +23,12 @@
 @property (weak, nonatomic) IBOutlet UITableView *profileTableView;
 @property (weak, nonatomic) IBOutlet UIButton *editProfileButton;
 @property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
+@property (weak, nonatomic) IBOutlet UIButton *callButton;
 
 @end
 
 @implementation UserProfileViewController
-@synthesize isTenantDetailScreen;
+@synthesize isTenantDetailScreen,isProfileDetailScreen;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
@@ -41,6 +42,12 @@
     if (isTenantDetailScreen) {
         self.navigationItem.title=@"Tenant Details";
         _editProfileButton.hidden = YES;
+        _callButton.hidden = YES;
+        [self addBackButton];
+    } else if (isProfileDetailScreen) {
+        self.navigationItem.title=@"User Detail";
+        _editProfileButton.hidden = YES;
+        _callButton.hidden = NO;
         [self addBackButton];
     } else {
         self.navigationItem.title=@"My Profile";
@@ -89,6 +96,11 @@
     EditProfileViewController * editProfile = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"EditProfileViewController"];
     [self.navigationController pushViewController:editProfile animated:YES];
 }
+
+- (IBAction)callAction:(id)sender {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"tel:%@",@"+919820800032"]]];
+}
+
 #pragma mark - end
 
 #pragma mark - Table view methods
@@ -134,20 +146,20 @@
 #pragma mark - Web services
 - (void)getProfileDetail {
     NSString *userId;
-    if (isTenantDetailScreen) {
+    if (isTenantDetailScreen || isProfileDetailScreen) {
         userId = _tenantUserId;
     } else {
         userId = @"";
     }
-    [[UserService sharedManager] getProfileDetail:isTenantDetailScreen userId:userId success:^(id responseObject){
+    [[UserService sharedManager] getProfileDetail:(isTenantDetailScreen || isProfileDetailScreen) userId:userId success:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
-        if (!isTenantDetailScreen) {
+        if (!(isTenantDetailScreen || isProfileDetailScreen)) {
             [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
             [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
         }
         [self setProfileData];
         //Set profile detail data
-        if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
+        if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"] || isProfileDetailScreen)) {
             infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
         } else {
             infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
@@ -156,7 +168,7 @@
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        if (isTenantDetailScreen) {
+        if (isTenantDetailScreen || isProfileDetailScreen) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert addButton:@"OK" actionBlock:^(void) {
                 [self.navigationController popViewControllerAnimated:YES];
