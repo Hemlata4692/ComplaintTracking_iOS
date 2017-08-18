@@ -298,7 +298,7 @@ SCLTimerDisplay *buttonTimer;
             kTitleTop = kCircleHeightBackground / 2;
         }
     } else {
-        kCircleBackgroundTopPosition = -(kCircleHeightBackground / 2);
+        kCircleBackgroundTopPosition = - (kCircleHeightBackground / 2);
     }
     
     // Check if the rootViewController is modal, if so we need to get the modal size not the main screen size

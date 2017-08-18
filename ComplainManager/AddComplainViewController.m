@@ -11,6 +11,7 @@
 #import "AddComplainCell.h"
 #import "ComplainService.h"
 #import "AddComplainModel.h"
+#import "ImagePreviewViewController.h"
 
 @interface AddComplainViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate,UITextFieldDelegate,UITextViewDelegate>
 {
@@ -49,7 +50,7 @@
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title=@"Add Complaint";
+    self.navigationItem.title=@"Add Feedback";
     //Array initialisation
     imagesArray = [NSMutableArray new];
     categoryArray = [NSMutableArray new];
@@ -69,7 +70,9 @@
     //Set text view offset
     CGPoint offset = _detailTextView.contentOffset;
     [_detailTextView setContentOffset:offset];
-    _detailTextView.textContainerInset = UIEdgeInsetsZero;
+    
+    NSAttributedString * attributedString = [[NSString stringWithFormat:@"To help us attend to your feedback promptly, please add details here. (Max 500 characters)"] setAttributrdString:@"(Max 500 characters)" stringFont:[UIFont fontWithName:@"Roboto-Italic" size:14.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.5]];
+    _detailNotesLabel.attributedText = attributedString;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -78,6 +81,24 @@
 #pragma mark - end
 
 #pragma mark - UI customisation
+- (void)setDetailTextFrames {
+    _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
+    NSLog(@"mmm = %f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+    if  ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 40) {
+        NSLog(@"%f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90)) {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
+        } else {
+            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 90);
+        }
+        [self setViewFrames];
+    }
+    else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 40) {
+        _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, 30);
+        [self setViewFrames];
+    }
+}
+
 - (void)setViewFrames {
     _detailSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _pickerView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -86,9 +107,9 @@
     _addComplainCollectionView.translatesAutoresizingMaskIntoConstraints = YES;
     _registerButton.translatesAutoresizingMaskIntoConstraints = YES;
     _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
-    _detailNotesLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, _detailNotesLabel.frame.size.height);
-    _addComplainCollectionView.frame = CGRectMake(10, _detailNotesLabel.frame.origin.y +_detailNotesLabel.frame.size.height+20, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
-    _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+20, self.view.frame.size.width - 60, _registerButton.frame.size.height);
+    _detailNotesLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y +_detailTextView.frame.size.height+10, self.view.frame.size.width - 20, _detailNotesLabel.frame.size.height);
+    _addComplainCollectionView.frame = CGRectMake(10, _detailNotesLabel.frame.origin.y +_detailNotesLabel.frame.size.height+10, self.view.frame.size.width - 20, _addComplainCollectionView.frame.size.height);
+    _registerButton.frame = CGRectMake(30, _addComplainCollectionView.frame.origin.y +_addComplainCollectionView.frame.size.height+10, self.view.frame.size.width - 60, _registerButton.frame.size.height);
 }
 
 - (void)customiseView {
@@ -103,11 +124,20 @@
         if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textView.text.length >= 500 && range.length == 0) {
-            return NO;
-        }
-        else {
-            return YES;
+        if (string.length > 1) {
+            if (textView.text.length + string.length >= 500) {
+                //Remove string greater then 500 characters
+                _detailTextView.text = [string substringToIndex:500];
+                [self setDetailTextFrames];
+                return NO;
+            }
+        } else {
+            if (textView.text.length >= 500 && range.length == 0) {
+                return NO;
+            }
+            else {
+                return YES;
+            }
         }
     }
     return YES;
@@ -121,20 +151,11 @@
 
 - (void)textViewDidChange:(UITextView *)textView {
     if (textView == _detailTextView) {
-        _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
-        if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90) && ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 25)) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
-            _detailTextView.textContainerInset = UIEdgeInsetsZero;
-            [self setViewFrames];
-        }
-        else if([_detailTextView sizeThatFits:_detailTextView.frame.size].height <= 25) {
-            _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x, _detailLabel.frame.origin.y + _detailLabel.frame.size.height + 5, _detailTextView.frame.size.width, 25);
-            _detailSeparatorLabel.frame = CGRectMake(10, _detailTextView.frame.origin.y+_detailTextView.frame.size.height+5, self.view.frame.size.width - 20, 1);
-        }
+        [self setDetailTextFrames];
     }
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView{
+- (void)textViewDidEndEditing:(UITextView *)textView {
     [textView layoutIfNeeded];
 }
 #pragma mark - end
@@ -157,12 +178,18 @@
 }
 
 - (void)keyboardControlsDonePressed:(BSKeyboardControls *)keyboardControls {
-    [keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
+}
+
+- (void)resignKeyboard {
+    _detailTextView.text = [_detailTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self setDetailTextFrames];
+    [_keyboardControls.activeField resignFirstResponder];
 }
 #pragma mark - end
 
 #pragma mark - Collection view methods
--(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     //Max image selection 5
     if (imagesArray.count < 5) {
         return imagesArray.count + 1;
@@ -174,21 +201,46 @@
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier;
     AddComplainCell *cell;
-    if (indexPath.row != imagesArray.count) {
+    int indexPathRow;
+    BOOL isAddMore;
+    if (indexPath.row == 0 && imagesArray.count < 5) {
+        identifier = @"addMoreImages";
+        indexPathRow = (int)indexPath.row;
+        isAddMore = true;
+    } else if (indexPath.row > 0 && imagesArray.count < 5){
         identifier = @"complainImage";
-        cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.deleteImageButton.tag = indexPath.item;
-        [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
-        [cell displayData:(int)indexPath.row data:imagesArray isAddComplainScreen:true];
+        indexPathRow = (int)indexPath.row - 1;
+        isAddMore = false;
     }
     else {
-        identifier = @"addMoreImages";
-        cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.selectImageButton.tag = indexPath.item;
-        [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+        identifier = @"complainImage";
+        indexPathRow = (int)indexPath.row;
+        isAddMore = false;
+        
     }
+    cell = [_addComplainCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+    cell.selectImageButton.tag = indexPath.item;
+    [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    cell.deleteImageButton.tag = indexPath.item;
+    [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    [cell displayData:indexPathRow data:imagesArray isAddComplainScreen:true isAddMoreCell:isAddMore];
+    
     return cell;
 }
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    UIStoryboard * storyboard=storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    ImagePreviewViewController *imagePreviewView =[storyboard instantiateViewControllerWithIdentifier:@"ImagePreviewViewController"];
+    if (indexPath.row > 0 && imagesArray.count < 5){
+        imagePreviewView.selectedIndex=(int)indexPath.row-1;
+    }
+    else {
+        imagePreviewView.selectedIndex=(int)indexPath.row;
+    }
+    imagePreviewView.attachmentArray=[imagesArray mutableCopy];
+    [self.navigationController pushViewController:imagePreviewView animated:YES];
+}
+
 #pragma mark - end
 
 #pragma mark - Show actionsheet method
@@ -250,7 +302,8 @@
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
     UIImage *fixedImage = [image fixOrientation];
-    [imagesArray addObject:fixedImage];
+    //    [imagesArray addObject:fixedImage];
+    [imagesArray insertObject:fixedImage atIndex:0];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_addComplainCollectionView reloadData];
@@ -262,18 +315,25 @@
 #pragma mark - end
 
 #pragma mark - IBActions
--(IBAction)deleteImageAction:(id)sender {
-    [imagesArray removeObjectAtIndex:[sender tag]];
+- (IBAction)deleteImageAction:(id)sender {
+    
+    if ([sender tag] > 0 && imagesArray.count < 5){
+        [imagesArray removeObjectAtIndex:[sender tag]-1];
+    }
+    else {
+        [imagesArray removeObjectAtIndex:[sender tag]];
+    }
+    
     [_addComplainCollectionView reloadData];
 }
 
--(IBAction)selectImageAction:(id)sender {
+- (IBAction)selectImageAction:(id)sender {
     [self showActionSheet];
     [_addComplainCollectionView reloadData];
 }
 
 - (IBAction)registerButtonAction:(id)sender {
-    [self.keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
     imagesNameArray = [NSMutableArray new];
     if([self performValidationsForAddComplain]) {
         if (imagesArray.count < 1) {
@@ -287,7 +347,7 @@
 }
 
 - (IBAction)showPickerAction:(id)sender {
-    [_keyboardControls.activeField resignFirstResponder];
+    [self resignKeyboard];
     if ([sender tag] == 1) {
         if (locationArray.count < 1 ) {
             [self.view makeToast:@"No locations found."];
@@ -304,6 +364,7 @@
         isCategoryPicker = true;
     }
     [_pickerView reloadAllComponents];
+    [_pickerView selectRow:0 inComponent:0 animated:YES];
 }
 
 - (IBAction)pickerCancelAction:(id)sender {
@@ -333,8 +394,8 @@
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view {
     UILabel* pickerLabel = (UILabel*)view;
     if (!pickerLabel) {
-        pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,20)];
-        pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:15];
+        pickerLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0,600,40)];
+        pickerLabel.font = [UIFont fontWithName:@"Roboto-Regular" size:20];
         pickerLabel.textColor = [UIColor colorWithRed:147/255.0 green:148/255.0 blue:153/255.0 alpha:1.0];
         pickerLabel.textAlignment=NSTextAlignmentCenter;
     }
@@ -352,11 +413,11 @@
     return pickerLabel;
 }
 
--(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
     return 1;
 }
 
--(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
     if (isCategoryPicker) {
         return categoryArray.count;
     } else {
@@ -364,8 +425,8 @@
     }
 }
 
--(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    [_keyboardControls.activeField resignFirstResponder];
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
+    [self resignKeyboard];
     if (isCategoryPicker) {
         complainModel=[categoryArray objectAtIndex:row];
         return complainModel.categoryName;
@@ -407,7 +468,7 @@
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please select Location." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
-    }else  if ([_detailTextView.text isEqualToString:@""]) {
+    }else  if ([_detailTextView.text isEqualToString:@""] || [[_detailTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] isEqualToString:@""]) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Details." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
@@ -480,8 +541,10 @@
         [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
     }] ;
 }
 #pragma mark - end

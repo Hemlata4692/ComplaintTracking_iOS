@@ -12,6 +12,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *complainImageView;
 @property (weak, nonatomic) IBOutlet UIButton *deleteImageButton;
 @property (weak, nonatomic) IBOutlet UIButton *selectImageButton;
-- (void)displayData:(long)index data:(NSMutableArray *)imageArray isAddComplainScreen:(bool)isAddComplainScreen;
+- (void)displayData:(long)index data:(NSMutableArray *)imageArray isAddComplainScreen:(bool)isAddComplainScreen isAddMoreCell:(BOOL)isAddMoreCell;
 
 @end

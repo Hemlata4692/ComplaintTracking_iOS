@@ -102,16 +102,23 @@
     }
 }
 
+//Screen functionality for different feedback screens
 - (void)loadAppearMethod {
+    if ([self checkIfTenant]) {
+        _searchTextField.placeholder = @"Search by Category/Description";
+    } else {
+        _searchTextField.placeholder = @"Search by Username/Description";
+    }
     if ([myDelegate.screenName isEqualToString:@"myFeedback"]) {
         self.navigationItem.title=@"My Feedback";
-        myDelegate.currentViewController=@"other";
+        myDelegate.currentViewController=@"myFeedback";
     } else  if ([myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
         self.navigationItem.title=@"Property Feedback";
         myDelegate.currentViewController= @"propertyFeedback";
     } else {
         self.navigationItem.title=@"Dashboard";
         myDelegate.currentViewController=@"dashboard";
+        myDelegate.screenName = @"dashboard";
     }
     [[self navigationController] setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
@@ -119,18 +126,16 @@
         [self changeButtonState:0];
     }
     //If user is long term contractor
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"] || [myDelegate.screenName isEqualToString:@"propertyFeedback"]) {
         _addComplaintButton.hidden= YES;
     }
     //Add button shadow
     [_addComplaintButton addShadow:_addComplaintButton color:[UIColor grayColor]];
-    
 }
 #pragma mark - end
 
 #pragma mark - IBActions
 - (IBAction)addComplainAction:(id)sender {
-    //    Milestone 2 features
     AddComplainViewController * addComplain = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"AddComplainViewController"];
     addComplain.complainVC = self;
     [self.navigationController pushViewController:addComplain animated:YES];
@@ -142,6 +147,7 @@
 #pragma mark - end
 
 #pragma mark - Filter status data
+//Set status button UI
 - (void)changeButtonState:(int)buttonTag {
     if (buttonTag == 0) {
         //Set assigned view UI
@@ -156,6 +162,7 @@
     [self filterStatusArray:buttonTag];
 }
 
+//Filter data for diffrent status
 - (void)filterStatusArray:(int)buttonTag {
     _searchTextField.text = @"";
     isSearch = NO;
@@ -177,7 +184,7 @@
             }
         } else if (buttonTag == 2) {
             selectedButtonTag = 2;
-            if ([data.complainStatus isEqualToString:@"Complete"]) {
+            if ([data.complainStatus isEqualToString:@"Completed"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }
@@ -187,10 +194,9 @@
                     _noComplaintsLabel.text = @"No Records Found.";
                 }
             }
-            
         } else if (buttonTag == 1) {
             selectedButtonTag = 1;
-            if ([data.complainStatus isEqualToString:@"In process"]) {
+            if ([data.complainStatus containsString:@"Progress"]) {
                 _noComplaintsLabel.hidden = YES;
                 [filteredComplainListArray addObject:data];
             }  else {
@@ -203,6 +209,8 @@
         [_complainListingTable reloadData];
     }
 }
+
+//SEt background UI of status view
 - (void)setStatusViewDesign:(UIColor *)assignedBackgroundColor assignedTextColor:(UIColor *)assignedTextColor  progressBackgroundColor:(UIColor *)progressBackgroundColor progressTextColor:(UIColor *)progressTextColor complteBackgroundColor:(UIColor *)complteBackgroundColor completeTextColor:(UIColor *)completeTextColor {
     //Assigned UI
     _assignedView.backgroundColor = assignedBackgroundColor;
@@ -232,7 +240,12 @@
     else if(string.length) {
         isSearch = YES;
         searchKey = [textField.text stringByAppendingString:string];
-        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterName;
+        if ([self checkIfTenant]) {
+            filterName = [NSPredicate predicateWithFormat:@"feedbackCategory CONTAINS[cd] %@", searchKey];
+        } else {
+            filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        }
         NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
         NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
         NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
@@ -240,7 +253,12 @@
     }
     else if((textField.text.length-1)!=0) {
         searchKey = [textField.text substringWithRange:NSMakeRange(0, textField.text.length-1)];
-        NSPredicate *filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        NSPredicate *filterName;
+        if ([self checkIfTenant]) {
+            filterName = [NSPredicate predicateWithFormat:@"feedbackCategory CONTAINS[cd] %@", searchKey];
+        } else {
+            filterName = [NSPredicate predicateWithFormat:@"userName CONTAINS[cd] %@", searchKey];
+        }
         NSPredicate *filterDescription = [NSPredicate predicateWithFormat:@"complainDescription CONTAINS[cd] %@", searchKey];
         NSArray *subPredicates = [NSArray arrayWithObjects:filterName,filterDescription, nil];
         NSPredicate *orPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:subPredicates];
@@ -254,9 +272,22 @@
     return YES;
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [textField resignFirstResponder];
     return YES;
+}
+#pragma mark - end
+
+#pragma mark - Check if feedback added by self
+- (BOOL)checkIfTenant {
+    if (([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) && ![myDelegate.currentViewController isEqualToString:@"propertyFeedback"]) {
+        return YES;
+    } else if (([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) && [myDelegate.screenName isEqualToString:@"myFeedback"]) {
+        return YES;
+    }
+    else {
+        return NO;
+    }
 }
 #pragma mark - end
 
@@ -270,7 +301,12 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *simpleTableIdentifier = @"ComplainCell";
+    NSString *simpleTableIdentifier;
+    if ([self checkIfTenant]) {
+        simpleTableIdentifier = @"TenantCell";
+    } else {
+        simpleTableIdentifier = @"ComplainCell";
+    }
     ComplainListingCell *complainCell = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
     if (complainCell == nil) {
         complainCell = [[ComplainListingCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
@@ -297,6 +333,59 @@
     complainDetail.complainId = data.complainId;
     complainDetail.complainVC = self;
     [self.navigationController pushViewController:complainDetail animated:YES];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    ComplainListDataModel *data;
+    if (isSearch) {
+        data=[searchArray objectAtIndex:indexPath.row];
+    } else {
+        data=[filteredComplainListArray objectAtIndex:indexPath.row];
+    }
+    float cellHeight;
+    float totalCellHeight;
+    CGSize size = CGSizeMake(_complainListingTable.frame.size.width-100,150);
+    CGSize constrainedSize = CGSizeMake(_complainListingTable.frame.size.width-100  , 150);
+  
+    if ([self checkIfTenant]) {
+        cellHeight = 25;
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Medium" size:18.0], NSFontAttributeName,nil];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"Category - %@",data.feedbackCategory] attributes:attributesDictionary];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading context:nil];
+        CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
+        if (textRectDesc.size.height < 45) {
+            totalCellHeight = cellHeight+requiredHeight.size.height+textRectDesc.size.height+20;
+        } else {
+            totalCellHeight = cellHeight+requiredHeight.size.height+65;
+        }
+        if (totalCellHeight <= 110) {
+            return 110;
+        } else {
+            return totalCellHeight;
+        }
+    }
+    else {
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Regular" size:18.0], NSFontAttributeName,nil];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@ filed a feedback",data.userName] attributes:attributesDictionary];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
+        CGRect textRectDesc=[self setDynamicHeight:size textString:data.complainDescription textSize:17];
+        if (textRectDesc.size.height < 40) {
+            totalCellHeight = 10 +requiredHeight.size.height+3+20+3+textRectDesc.size.height+10;
+        } else {
+            totalCellHeight = 10+requiredHeight.size.height+3+20+3 +50;
+        }
+        return totalCellHeight;
+    }
+}
+
+#pragma mark - end
+
+#pragma mark - Set dynamic height
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
+    CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:textSize]} context:nil];
+    return textHeight;
 }
 #pragma mark - end
 
@@ -335,12 +424,12 @@
             if ([data.complainStatus isEqualToString:@"Pending"]) {
                 [pendingArray addObject:data];
                 _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)pendingArray.count] ;
-            } else if ([data.complainStatus isEqualToString:@"Complete"]) {
-                [progressArray addObject:data];
-                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
-            } else if ([data.complainStatus isEqualToString:@"In process"]) {
+            } else if ([data.complainStatus isEqualToString:@"Completed"]) {
                 [completeArray addObject:data];
-                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
+                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
+            } else if ([data.complainStatus containsString:@"Progress"]) {
+                [progressArray addObject:data];
+                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
             }
         }
         //If no feedbacks
@@ -354,8 +443,10 @@
         [_refreshControl endRefreshing];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
         if ([error.localizedDescription containsString:@"Internet"] || [error.localizedDescription containsString:@"network connection"]) {
             _noComplaintsLabel.text = @"No Internet Connection.";
         } else  {

@@ -10,11 +10,15 @@
 #import "ComplainListDataModel.h"
 @interface ComplainListingCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *feedbackCategory;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *complainDescriptionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complainTimeLabel;
-@property (weak, nonatomic) IBOutlet UILabel *complainStatusLabel;
+@property (weak, nonatomic) IBOutlet UIView *dateContainerView;
+@property (weak, nonatomic) IBOutlet UILabel *dateLabel;
+@property (weak, nonatomic) IBOutlet UILabel *monthLabel;
+@property (weak, nonatomic) IBOutlet UILabel *yearLabel;
 - (void)displayComplainListData :(ComplainListDataModel *)complainList indexPath:(int)indexPath rectSize:(CGSize)rectSize;
 
 @end

@@ -36,8 +36,10 @@
     [super viewWillAppear:YES];
     //If user logged in first time?Navigate to chnage password:Dashboard
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
             myDelegate.selectedMenuIndex = 4;
+        } else   if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+            myDelegate.selectedMenuIndex = 3;
         } else {
             myDelegate.selectedMenuIndex = 2;
         }
@@ -119,11 +121,11 @@
     UIView *headerView=[[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.bounds.size.width, aspectHeight)];
     headerView.backgroundColor=[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0];
     //Profile image view
-    UIImageView *ProfileImgView = [[UIImageView alloc] initWithFrame:CGRectMake((tableView.bounds.size.width/2)-(profileViewHeight/2), 15, profileViewHeight, profileViewHeight)];
+    UIImageView *ProfileImgView = [[UIImageView alloc] initWithFrame:CGRectMake((tableView.bounds.size.width/2)- (profileViewHeight/2), 15, profileViewHeight, profileViewHeight)];
     ProfileImgView.contentMode = UIViewContentModeScaleAspectFill;
     ProfileImgView.clipsToBounds = YES;
     ProfileImgView.backgroundColor=[UIColor whiteColor];
-    [ProfileImgView setImageWithURL:[NSURL URLWithString:[UserDefaultManager getValue:@"userImage"]] placeholderImage:[UIImage imageNamed:@"userPlaceholder"]];
+    [ProfileImgView setImageWithURL:[NSURL URLWithString:[[UserDefaultManager getValue:@"userImage"] stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] placeholderImage:[UIImage imageNamed:@"userPlaceholder"]];
     ProfileImgView.layer.cornerRadius = ProfileImgView.frame.size.width / 2;
     ProfileImgView.layer.masksToBounds = YES;
     //Name labeluserPlaceholder
@@ -156,7 +158,17 @@
     emailLabel.numberOfLines = 1;
     emailLabel.textColor=[UIColor whiteColor];
     emailLabel.font = [UIFont fontWithName:@"Roboto-Light" size:15];
-    emailLabel.text = [UserDefaultManager getValue:@"email"];
+    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]) {
+        emailLabel.text = @"Tenant";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+        emailLabel.text = @"Council Member";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
+        emailLabel.text = @"Incharge";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+        emailLabel.text = @"Building Manager";
+    } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+        emailLabel.text = @"Long Term Contractor";
+    }
     [headerView addSubview:nameLabel];
     [headerView addSubview:emailLabel];
     [headerView addSubview:ProfileImgView];
@@ -164,7 +176,7 @@
 }
 
 //Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin

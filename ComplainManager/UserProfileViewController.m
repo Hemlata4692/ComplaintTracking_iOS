@@ -69,7 +69,7 @@
 #pragma mark - Set profile data
 - (void)setProfileData {
     NSString *tempImageString = [userData objectForKey:@"userimage"];
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[tempImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     [_profileImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         _profileImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -116,12 +116,12 @@
     CGSize size;
     size = CGSizeMake(_profileTableView.frame.size.width-20,150);
     textRect=[self setDynamicHeight:size textString:titleTextStr];
-    return 35+textRect.size.height;
+    return 40+textRect.size.height;
 }
 #pragma mark - end
 
 #pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
@@ -148,11 +148,7 @@
         [self setProfileData];
         //Set profile detail data
         if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
-            if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"] && (!isTenantDetailScreen)) {
-                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];
-            } else {
-                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
-            }
+            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
         } else {
             infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
         }

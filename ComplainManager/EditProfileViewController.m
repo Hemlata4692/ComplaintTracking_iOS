@@ -45,11 +45,7 @@
     //Set text view offset
     self.navigationItem.title = @"Edit Profile";
     //Adding textfield to array
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"]  || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        textFieldArray = @[_nameTextField,_phoneNumberTextField,_addressTextView];
-    } else {
-        textFieldArray = @[_nameTextField,_phoneNumberTextField];
-    }
+    textFieldArray = @[_nameTextField,_phoneNumberTextField];
     [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textFieldArray]];
     [self.keyboardControls setDelegate:self];
     //Add back button
@@ -80,7 +76,7 @@
     userImageName = @"";
     // profile image url
     NSString *tempImageString = [UserDefaultManager getValue:@"userImage"];
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[tempImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]
                                                   cachePolicy:NSURLRequestReturnCacheDataElseLoad
                                               timeoutInterval:60];
     [_userProfileImage setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
@@ -104,10 +100,8 @@
         if (textRect.size.height <= 35) {
             _addressTextView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
             _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
-        } else if (textRect.size.height <= 90) {
-            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height +5);
         } else {
-            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 75);
+            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, textRect.size.height +5);
         }
         if ([[userData objectForKey:@"unitnumber"] isEqualToString:@""]) {
             _unitNoTextField.text = @"NA";
@@ -142,7 +136,7 @@
 #pragma mark - end
 
 #pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
@@ -165,21 +159,6 @@
 #pragma mark - end
 
 #pragma mark - Textview delegates
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)string {
-    if (textView == _addressTextView) {
-        if (range.length > 0 && [string length] == 0) {
-            return YES;
-        }
-        if (textView.text.length >= 200 && range.length == 0) {
-            return NO;
-        }
-        else {
-            return YES;
-        }
-    }
-    return YES;
-}
-
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
     if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
@@ -187,32 +166,6 @@
     }
     else {
         [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:NO];
-    }
-}
-
-- (void)textViewDidChange:(UITextView *)textView {
-    if (textView == _addressTextView) {
-        _addressTextView.translatesAutoresizingMaskIntoConstraints = YES;
-        if (([_addressTextView sizeThatFits:_addressTextView.frame.size].height < 80) && ([_addressTextView sizeThatFits:_addressTextView.frame.size].height > 40)) {
-            _addressTextView.textContainerInset = UIEdgeInsetsZero;
-            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x,_phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, [_addressTextView sizeThatFits:_addressTextView.frame.size].height);
-            if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
-                [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-            }
-            else {
-                [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+15) animated:NO];
-            }
-        }
-        else if([_addressTextView sizeThatFits:_addressTextView.frame.size].height <= 40) {
-            textView.textContainerInset = UIEdgeInsetsMake(8, 0, 0, 0);
-            _addressTextView.frame = CGRectMake(_addressTextView.frame.origin.x, _phoneNumberTextField.frame.origin.y + _phoneNumberTextField.frame.size.height + 10, self.view.frame.size.width - 20, 40);
-            if (textView.frame.origin.y+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
-                [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-            }
-            else {
-                [_scrollView setContentOffset:CGPointMake(0, ((textView.frame.origin.y+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:NO];
-            }
-        }
     }
 }
 #pragma mark - end
@@ -228,28 +181,62 @@
     }
 }
 
--(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if (textField == _phoneNumberTextField) {
         if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textField.text.length >= 16 && range.length == 0) {
-            return NO;
+        if (string.length > 1) {
+            if (textField.text.length + string.length >= 16) {
+                //Remove string greater then 16 characters
+                _phoneNumberTextField.text = [string substringToIndex:16];
+                return NO;
+            }
+        } else {
+            if (textField.text.length >= 16 && range.length == 0) {
+                return NO;
+            }
+            else {
+                return YES;
+            }
         }
-        else {
-            return YES;
-        }
+        //        if (range.length > 0 && [string length] == 0) {
+        //            return YES;
+        //        }
+        //        if (textField.text.length >= 16 && range.length == 0) {
+        //            return NO;
+        //        }
+        //        else {
+        //            return YES;
+        //        }
     } else if (textField == _nameTextField) {
-        if (range.length > 0 && [string length] == 0){
+        if (range.length > 0 && [string length] == 0) {
             return YES;
         }
-        if (textField.text.length >= 60 && range.length == 0) {
-            return NO;
+        if (string.length > 1) {
+            if (textField.text.length + string.length >= 60) {
+                //Remove string greater then 60 characters
+                _nameTextField.text = [string substringToIndex:60];
+                return NO;
+            }
+        } else {
+            if (textField.text.length >= 60 && range.length == 0) {
+                return NO;
+            }
+            else {
+                return YES;
+            }
         }
-        else {
-            return YES;
-        }
+        //        if (range.length > 0 && [string length] == 0){
+        //            return YES;
+        //        }
+        //        if (textField.text.length >= 60 && range.length == 0) {
+        //            return NO;
+        //        }
+        //        else {
+        //            return YES;
+        //        }
     }
     return YES;
 }
@@ -346,17 +333,7 @@
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Phone Number." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
-    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        if ([_addressTextView.text isEqualToString:@""] ) {
-            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-            [alert showWarning:self title:@"Alert" subTitle:@"Please fill the Address." closeButtonTitle:@"OK" duration:0.0f];
-            return NO;
-        }
-        else {
-            return YES;
-        }
-    }
-    else {
+    } else {
         if ((_phoneNumberTextField.text.length<8)) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showWarning:self title:@"Alert" subTitle:@"Phone Number should be between 8 to 16 digits." closeButtonTitle:@"OK" duration:0.0f];
@@ -415,8 +392,10 @@
         [self editUserProfile];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
     }] ;
 }
 
@@ -435,8 +414,10 @@
         [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
     }] ;
 }
 #pragma mark - end

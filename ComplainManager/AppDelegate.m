@@ -144,7 +144,11 @@
             }
             else {
                 detailNotification = false;
-                [self showNotificationAlert:[dict objectForKey:@"alert"]];
+                if ([myDelegate.currentViewController isEqualToString:@"propertyFeedback"] || [myDelegate.currentViewController isEqualToString:@"dashboard"] || [myDelegate.currentViewController isEqualToString:@"myFeedback"])  {
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"ReloadComplainListing" object:nil];
+                } else {
+                    [self showNotificationAlert:[dict objectForKey:@"alert"]];
+                }
             }
         } else {
             if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {

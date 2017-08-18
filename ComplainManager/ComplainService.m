@@ -70,6 +70,7 @@
                     complainDataModel.categoryName =[complainDict objectForKey:@"CategoryName"];
                     complainDataModel.complainTime =[complainDict objectForKey:@"SubmittedOn"];
                     complainDataModel.userName =[complainDict objectForKey:@"UserName"];
+                    complainDataModel.feedbackCategory =[complainDict objectForKey:@"CategoryName"];
                     [dataArray addObject:complainDataModel];
                 }
                 success(dataArray);
@@ -175,14 +176,17 @@
 
 #pragma mark - Complaint detail
 - (void)getComplaitDetail:(NSString *)complainId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSString *isBuildingManager;
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
-        isBuildingManager = @"true";
-    } else {
-        isBuildingManager = @"false";
-    }
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"propertyId":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
+//    NSString *isBuildingManager;
+//    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
+//        isBuildingManager = @"true";
+//    } else {
+//        isBuildingManager = @"false";
+//    }
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId};
     NSLog(@"complain requestDict %@",requestDict);
+
+//    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"propertyId":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
+//    NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetComplainDetail parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);
@@ -222,7 +226,7 @@
 #pragma mark - Job status
 - (void)changeJobStatus:(NSString *)complainId jobStatus:(NSString *)jobStatus imageNameArray:(NSMutableArray *)imageNameArray success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict;
-    if ([jobStatus isEqualToString:@"Complete"]) {
+    if ([jobStatus isEqualToString:@"Completed"] || [jobStatus isEqualToString:@"REOPEN"]) {
         requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"complainStatus":jobStatus, @"ImageName":imageNameArray};
         
     } else {

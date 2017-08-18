@@ -17,5 +17,5 @@
 @synthesize complainTime;
 @synthesize categoryName;
 @synthesize complainId;
-
+@synthesize feedbackCategory;
 @end

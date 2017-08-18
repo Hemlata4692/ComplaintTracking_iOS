@@ -44,7 +44,7 @@
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         currentAngle = START_DEGREE_OFFSET;
-        radius = r-(width/2);
+        radius = r- (width/2);
         lineWidth = width;
         self.color = [UIColor whiteColor];
         self.userInteractionEnabled = NO;

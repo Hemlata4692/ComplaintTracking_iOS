@@ -13,8 +13,10 @@
 #import <AVFoundation/AVFoundation.h>
 #import "CommentsModel.h"
 #import "UserService.h"
+#import "ImagePreviewViewController.h"
+#define viewWidth self.view.frame.size.width
 
-@interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
+@interface ComplaintDetailViewController ()<UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,BSKeyboardControlsDelegate>
 {
     CGRect textRect;
     CGSize size;
@@ -28,6 +30,10 @@
     NSMutableDictionary *detailDict;
     float commentsViewHeight;
     float commentsCellHeight;
+    int indexPathRow;
+    BOOL isAddMore;
+    NSString *identifier;
+    NSString *jobComplainStatus;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
@@ -53,6 +59,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UILabel *complaintStatusLabel;
 @property (weak, nonatomic) IBOutlet UIButton *reonpenJobButton;
+@property (weak, nonatomic) IBOutlet UILabel *textLimitLabel;
+@property (nonatomic, strong) BSKeyboardControls *keyboardControls;
 
 @end
 
@@ -64,7 +72,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self addBackButton];
-    self.navigationItem.title=@"Complaint Details";
+    self.navigationItem.title=@"Feedback Details";
+    jobComplainStatus = @"";
     [self loadInitialisations];
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
@@ -76,6 +85,10 @@
 }
 
 - (void)loadInitialisations {
+    NSArray *textArray = @[_addCommentTextView];
+    //Add BSKeyboard
+    [self setKeyboardControls:[[BSKeyboardControls alloc] initWithFields:textArray]];
+    [self.keyboardControls setDelegate:self];
     staffImageArray = [[NSMutableArray alloc]init];
     complainImageArray = [[NSMutableArray alloc]init];
     imagesNameArray = [[NSMutableArray alloc]init];
@@ -85,8 +98,6 @@
     if (myDelegate.detailNotification) {
         myDelegate.detailNotification = false;
         complainId = myDelegate.feedbackId;
-        NSLog(@"detail complainId %@",complainId);
-        NSLog(@"getComplaintDetails");
     }
 }
 
@@ -108,6 +119,49 @@
 #pragma mark - end
 
 #pragma mark - View customisation
+- (void) setCommentTextFraming {
+    if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height > 50) {
+        if (([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height < 80)) {
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
+            messageHeight = [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height + 8;
+        } else {
+            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, 80);
+            messageHeight = 80;
+        }
+        _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
+        _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight +10 );
+        [self commonAddCommentsTextViewFrames ];
+        _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
+    }
+    else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
+        messageHeight = 40;
+        _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
+        _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
+        _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
+        [self commonAddCommentsTextViewFrames ];
+        _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
+    }
+    if ((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+        [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    }
+    else {
+        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+50) animated:NO];
+    }
+    NSString *string = _addCommentTextView.text;
+    NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if (_addCommentTextView.text.length>=1) {
+        if (trimmedString.length>=1) {
+            _sendCommentButton.enabled=YES;
+        }
+        else if (trimmedString.length==0) {
+            _sendCommentButton.enabled=NO;
+        }
+    }
+    else if (_addCommentTextView.text.length==0) {
+        _sendCommentButton.enabled=NO;
+    }
+}
+
 - (void)removeAutolayouts {
     _mainContainerView.hidden = NO;
     _mainContainerView.translatesAutoresizingMaskIntoConstraints=YES;
@@ -124,6 +178,7 @@
     _commentsCountLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _addCommentContainerView.translatesAutoresizingMaskIntoConstraints = YES;
     _addCommentTextView.translatesAutoresizingMaskIntoConstraints = YES;
+    _textLimitLabel.translatesAutoresizingMaskIntoConstraints = YES;
     _sendCommentButton.translatesAutoresizingMaskIntoConstraints = YES;
     _commentsTableView.translatesAutoresizingMaskIntoConstraints = YES;
     _completeJobAction.translatesAutoresizingMaskIntoConstraints = YES;
@@ -132,11 +187,12 @@
 }
 
 - (void)setStartJobFraming : (NSDictionary *)data {
+    [_startJobButton setCornerRadius:3];
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
         if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Pending"]) {
             [self commonCollectionViewFrames:1];
             //Start job button frame
-            _startJobButton.frame = CGRectMake(30, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, self.view.frame.size.width-60, _startJobButton.frame.size.height);
+            _startJobButton.frame = CGRectMake(30, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 20, viewWidth-60, _startJobButton.frame.size.height);
             _commentsContainerView.hidden = YES;
             if ([userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
                 _startJobButton.hidden = NO;
@@ -144,9 +200,9 @@
             } else {
                 [self setCommonUserStatusViewFrames];
             }
-        } else if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"])) {
+        } else if ([[data objectForKey:@"ComplainStatus"] containsString:@"Progress"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"])) {
             // Show In progress view if feedback assigned to user
-            if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+            if ([[data objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
                 if ([[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]] && [userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
                     [self commonCollectionViewFrames:2];
                     [self setCommonStatusFrames];
@@ -159,25 +215,26 @@
                 else {
                     [self commonCollectionViewFrames:1];
                     if ([userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
+                        NSLog(@"myDelegate.screenName = %@",myDelegate.screenName);
                         if ([myDelegate.screenName isEqualToString:@"dashboard"]) {
                             //Show assigned alert if feedback asssigned to other.
                             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-                            [alert showWarning:nil title:@"Alert" subTitle:@"Feedback already assigned to other staff member." closeButtonTitle:@"OK" duration:0.0f];
+                            [alert showWarning:nil title:@"Alert" subTitle:@"Job already assigned to other staff member." closeButtonTitle:@"OK" duration:0.0f];
                         }
                     }
                     //Show informatory view
                     [self setCommonUserStatusViewFrames];
                     _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
-                    _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
+                    _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, viewWidth-20, _commentsCountLabel.frame.size.height);
                     if (commentsArray.count < 1) {
-                        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, 0);
+                        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, 0);
                     }
                     else {
-                        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, commentsCellHeight + 20);
+                        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
                     }
                     commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
                 }
-            } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
+            } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
                 [self commonCollectionViewFrames:2];
                 // If feedback status is completed
                 [self setCommonStatusFrames];
@@ -193,33 +250,33 @@
 
 - (void)setViewFrames: (NSDictionary *)data {
     [self removeAutolayouts];
-      //Set category label frame
-    NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category - %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category -" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
+    //Set category label frame
+    NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category - %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category -" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
     _categoryLabel.attributedText = categoryString;
-    _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, 20, self.view.frame.size.width-20, _categoryLabel.frame.size.height);
-    _categorySeparatorLabel.frame = CGRectMake(_categorySeparatorLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+    _categoryLabel.frame = CGRectMake(_categoryLabel.frame.origin.x, 20, viewWidth-20, _categoryLabel.frame.size.height);
+    _categorySeparatorLabel.frame = CGRectMake(_categorySeparatorLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 1, viewWidth-20, 1);
     //Set location label frame
-    NSAttributedString * locationString = [[NSString stringWithFormat:@"Location - %@",[data objectForKey:@"PropertyLocationName"]] setAttributrdString:@"Location -" stringFont:[UIFont fontWithName:@"Roboto-Regular" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
+    NSAttributedString * locationString = [[NSString stringWithFormat:@"Location - %@",[data objectForKey:@"PropertyLocationName"]] setAttributrdString:@"Location -" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:0.9]];
     _locationLabel.attributedText = locationString;
-    _locationLabel.frame = CGRectMake(_locationLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 15, self.view.frame.size.width-20, _locationLabel.frame.size.height);
-    _locationSeparatorLabel.frame = CGRectMake(_locationSeparatorLabel.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
-    size = CGSizeMake(self.view.frame.size.width-20,500);
+    _locationLabel.frame = CGRectMake(_locationLabel.frame.origin.x, _categoryLabel.frame.origin.y+_categoryLabel.frame.size.height + 20, viewWidth-20, _locationLabel.frame.size.height);
+    _locationSeparatorLabel.frame = CGRectMake(_locationSeparatorLabel.frame.origin.x, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 1, viewWidth-20, 1);
+    size = CGSizeMake(viewWidth-20,500);
     //Detail text view frame
     _descriptionLabel.numberOfLines = 0;
     textRect=[self setDynamicHeight:size textString:[data objectForKey:@"FullDescription"] textSize:18];
     if(textRect.size.height < 40) {
-        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 15, self.view.frame.size.width-20, 40);
-        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 1, self.view.frame.size.width-20, 1);
+        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 20, viewWidth-20, 40);
+        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 1, viewWidth-20, 1);
     } else {
-        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 15, self.view.frame.size.width-20, textRect.size.height+5);
-        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 5, self.view.frame.size.width-20, 1);
+        _descriptionLabel.frame = CGRectMake(10, _locationLabel.frame.origin.y+_locationLabel.frame.size.height + 20, viewWidth-20, textRect.size.height+5);
+        _detailSeparatorLabel.frame = CGRectMake(10, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 5, viewWidth-20, 1);
     }
     _descriptionLabel.text = [data objectForKey:@"FullDescription"];
     complainImageArray = [data objectForKey:@"ImageName"];
     [_imageCollectionView reloadData];
     if (commentsArray.count < 1) {
         _commentsCountLabel.hidden = YES;
-        _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20,0);
+        _commentsCountLabel.frame = CGRectMake(10,0, viewWidth-20,0);
     } else {
         _commentsCountLabel.hidden = NO;
         if (commentsArray.count == 1) {
@@ -228,10 +285,10 @@
             _commentsCountLabel.text = [NSString stringWithFormat:@"%lu comments",(unsigned long)commentsArray.count];
         }
     }
-    if ([[data objectForKey:@"ComplainStatus"] containsString:@"process"]) {
+    if ([[data objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
         _complaintStatusLabel.text = @"In Progress";
         _complaintStatusLabel.textColor = [UIColor colorWithRed:0/255.0 green:152/255.0 blue:206/255.0 alpha:1.0];
-    } else if ([[data objectForKey:@"ComplainStatus"] containsString:@"Complete"]){
+    } else if ([[data objectForKey:@"ComplainStatus"] containsString:@"Completed"]){
         _complaintStatusLabel.text = [data objectForKey:@"ComplainStatus"];
         _complaintStatusLabel.textColor = [UIColor colorWithRed:3/255.0 green:207/255.0 blue:4/255.0 alpha:1.0];
     } else {
@@ -239,34 +296,34 @@
         _complaintStatusLabel.textColor = [UIColor colorWithRed:246/255.0 green:56/255.0 blue:82/255.0 alpha:1.0];
     }
     //Comments container view frame
-    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
+    if ([[data objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"t"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
         [self commonCollectionViewFrames:1];
         [self setCommonUserStatusViewFrames];
-        _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, self.view.frame.size.width-20, _commentsCountLabel.frame.size.height);
+        _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 15, viewWidth-20, _commentsCountLabel.frame.size.height);
         if (commentsArray.count < 1) {
-            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, 0);
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, 0);
         }
         else {
-            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, commentsCellHeight + 20);
+            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
         }
         commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
     } // Show start job view
     [self setStartJobFraming:data];
-    _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 10, self.view.frame.size.width,commentsViewHeight + 20);
-    mainContainerHeight = 20 + _descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 20;
-    _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
+    _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth,commentsViewHeight + 20);
+    mainContainerHeight = 20 + _descriptionLabel.frame.size.height+21+_categoryLabel.frame.size.height+21+_locationLabel.frame.size.height+21+_imageCollectionView.frame.size.height +20 +_commentsContainerView.frame.size.height + 40;
+    _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, viewWidth, mainContainerHeight);
     _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
 
 - (void)commonCollectionViewFrames:(int)displayCount {
     if (displayCount == 1) {
         if (complainImageArray.count<1) {
-            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, self.view.frame.size.width-20, 0);
+            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height, viewWidth-20, 0);
         } else {
-            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+            _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 25, viewWidth-20, 110);
         }
     } else {
-        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 15, self.view.frame.size.width-20, 80);
+        _imageCollectionView.frame = CGRectMake(_imageCollectionView.frame.origin.x, _descriptionLabel.frame.origin.y+_descriptionLabel.frame.size.height + 25, viewWidth-20, 110);
     }
 }
 
@@ -277,7 +334,7 @@
     _addCommentContainerView.hidden=YES;
     _startJobButton.hidden=YES;
     _completeJobAction.hidden=YES;
-    _UserStatusView.frame = CGRectMake(10,0, self.view.frame.size.width-20, _UserStatusView.frame.size.height);
+    _UserStatusView.frame = CGRectMake(10,0, viewWidth-20, _UserStatusView.frame.size.height);
     [_UserStatusView setBottomBorder:_UserStatusView];
     _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
     _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
@@ -289,19 +346,20 @@
     _UserStatusView.hidden=YES;
     _commentsContainerView.hidden=NO;
     _addCommentContainerView.hidden=NO;
-    _commentsCountLabel.frame = CGRectMake(10,0, self.view.frame.size.width-20, 30);
+    _commentsCountLabel.frame = CGRectMake(10,0, viewWidth-20, 30);
     _addCommentTextView.text = @"";
     [_addCommentTextView setPlaceholder:@" Add Comment"];
     [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:15.0]];
     messageHeight = 40;
     if (commentsArray.count < 1) {
-        _commentsCountLabel.frame = CGRectMake(10,-10, self.view.frame.size.width-20,0);
+        _commentsCountLabel.frame = CGRectMake(10,-10, viewWidth-20,0);
     }
-    _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width, messageHeight + 10);
-    _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 48, messageHeight);
+    _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
+    _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
+    _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
     [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
     [_addCommentTextView setCornerRadius:3];
-    _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+0.5, 0, 40, 40);
+    _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 2 , 40, 40);
     if ([_addCommentTextView.text isEqualToString:@""] || _addCommentTextView.text.length == 0) {
         _sendCommentButton.enabled = NO;
     }
@@ -309,34 +367,34 @@
         _sendCommentButton.enabled = YES;
     }
     if (commentsArray.count < 1) {
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 5,self.view.frame.size.width-20, 0);
+        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, 0);
     } else {
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 5,self.view.frame.size.width-20, commentsCellHeight + 20);
+        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, commentsCellHeight + 5);
     }
 }
 
 //Set comments text frames
 - (void)commonAddCommentsTextViewFrames {
     if (commentsArray.count < 1) {
-        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,self.view.frame.size.width-20, 0);
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]  && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
-            _reonpenJobButton.frame = CGRectMake(30, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, 0);
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]  && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+            _reonpenJobButton.frame = CGRectMake(30, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 25,viewWidth-60, _completeJobAction.frame.size.height);
         } else {
-            _completeJobAction.frame = CGRectMake(30, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+            _completeJobAction.frame = CGRectMake(30, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 25,viewWidth-60, _completeJobAction.frame.size.height);
         }
     }
     else {
-        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 5,self.view.frame.size.width-20, commentsCellHeight + 20);
-        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]  && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
-            _reonpenJobButton.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+        _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, commentsCellHeight + 5);
+        if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]  && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+            _reonpenJobButton.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 25,viewWidth-60, _completeJobAction.frame.size.height);
         } else {
-            _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 10,self.view.frame.size.width-60, _completeJobAction.frame.size.height);
+            _completeJobAction.frame = CGRectMake(30, _commentsTableView.frame.origin.y + _commentsTableView.frame.size.height + 25,viewWidth-60, _completeJobAction.frame.size.height);
         }
     }
 }
 
 //Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString textSize:(int)textSize{
     CGRect textHeight = [textString boundingRectWithSize:rectSize options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:textSize]} context:nil];
     return textHeight;
 }
@@ -345,89 +403,93 @@
 - (void)getCommentsTableHeight {
     commentsCellHeight = 0;
     for (int i = 0; i < commentsArray.count; i++) {
-        CGRect textRectHeight;
         CommentsModel *commentsModel = [commentsArray objectAtIndex:i];
-        NSString * titleTextStr = commentsModel.commnts;
-        CGSize commentsSize;
-        commentsSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,500);
-        textRectHeight=[self setDynamicHeight:commentsSize textString:titleTextStr];
-        float height = 30+textRectHeight.size.height;
+        CGSize commentsSize = CGSizeMake(_commentsTableView.frame.size.width,1000);
+        CGRect textRectHeight=[self setDynamicHeight:commentsSize textString:commentsModel.commnts];
+        
+        CGSize constrainedSize = CGSizeMake(_commentsTableView.frame.size.width - 120  , 300);
+        NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [UIFont fontWithName:@"Roboto-Bold" size:14.0], NSFontAttributeName,
+                                              nil];
+        NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:commentsModel.CommmentsBy attributes:attributesDictionary];
+        CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
+        float height = 50+requiredHeight.size.height+textRectHeight.size.height;
         commentsCellHeight = commentsCellHeight + height;
+        NSLog(@"commentsCellHeight %f =",commentsCellHeight);
     }
+    [self setViewFrames:detailDict];
+    [_commentsTableView reloadData];
 }
 #pragma mark - end
 
 #pragma mark - Textfield delegates
 - (void)textViewDidBeginEditing:(UITextView *)textView {
+    [self.keyboardControls setActiveField:textView];
     if ((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
         [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
     else {
-        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:NO];
+        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+50)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:YES];
     }
 }
 
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    if (textView == _addCommentTextView) {
-        if([text isEqualToString:@"\n"]) {
-            [textView resignFirstResponder];
-            [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-            return NO;
-        }
-    }
-    if (range.length > 0 && [text length] == 0)
-    {
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if (range.length > 0 && [text length] == 0) {
         return YES;
     }
-    if (textView.text.length >= 500 && range.length == 0)
-    {
-        return NO;
+    if (text.length > 1) {
+        if (textView.text.length + text.length >= 500) {
+            _addCommentTextView.text = [text substringToIndex:500];
+            [self setCommentTextFraming];
+            return NO;
+        }
+    } else {
+        if (textView.text.length >= 500 && range.length == 0) {
+            return NO;
+        }
+        else {
+            return YES;
+        }
     }
     return YES;
 }
 
+
+//    if (range.length > 0 && [text length] == 0) {
+//        return YES;
+//    }
+//    if (textView.text.length >= 500 && range.length == 0) {
+//        return NO;
+//    }
+//    return YES;
+//}
+
 - (void)textViewDidChange:(UITextView *)textView {
-    if (textView == _addCommentTextView) {
-        if (([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height < 80) && ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height > 50)) {
-            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 48, [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height+8);
-            messageHeight = [_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height + 8;
-            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width, messageHeight +10 );
-            [self commonAddCommentsTextViewFrames ];
-            _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 10, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-        }
-        else if ([_addCommentTextView sizeThatFits:_addCommentTextView.frame.size].height <= 50) {
-            messageHeight = 40;
-            _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 48, messageHeight);
-            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 10,self.view.frame.size.width, messageHeight + 10);
-            [self commonAddCommentsTextViewFrames ];
-            _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 10, self.view.frame.size.width, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
-        }
-        if ((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
-            [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
-        }
-        else {
-            [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+15) animated:NO];
-        }
-        NSString *string = textView.text;
-        NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        if (textView.text.length>=1) {
-            if (trimmedString.length>=1) {
-                _sendCommentButton.enabled=YES;
-            }
-            else if (trimmedString.length==0) {
-                _sendCommentButton.enabled=NO;
-            }
-        }
-        else if (textView.text.length==0) {
-            _sendCommentButton.enabled=NO;
-        }
-    }
+    [self setCommentTextFraming];
+}
+#pragma mark - end
+
+#pragma mark - Keyboard controls delegate
+- (void)keyboardControls:(BSKeyboardControls *)keyboardControls selectedField:(UIView *)field inDirection:(BSKeyboardControlsDirection)direction {
+    UIView *view;
+    view = field.superview.superview.superview;
+}
+
+- (void)keyboardControlsDonePressed:(BSKeyboardControls *)keyboardControls {
+    [self resignKeyboard];
+}
+
+- (void)resignKeyboard {
+    _addCommentTextView.text = [_addCommentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self setCommentTextFraming];
+    [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
+    [_keyboardControls.activeField resignFirstResponder];
 }
 #pragma mark - end
 
 #pragma mark - Collection view methds
--(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if ([[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"In process"]) {
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
         if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
             return complainImageArray.count;
         } else {
@@ -437,7 +499,7 @@
                 return complainImageArray.count;
             }
         }
-    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Complete"]) {
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
         if  (staffImageArray.count < 3){
             return complainImageArray.count + 1;
         } else {
@@ -448,24 +510,115 @@
         return complainImageArray.count;
     }
 }
+- (void)addImageStaticValues:(BOOL)isAddImage indexPath:(NSIndexPath *)indexPath {
+    if (isAddImage) {
+        if (indexPath.row == 0 && staffImageArray.count < 3) {
+            identifier = @"addMoreImages";
+            indexPathRow = (int)indexPath.row;
+            isAddMore = true;
+        } else if (indexPath.row > 0 && staffImageArray.count < 3){
+            identifier = @"complainImage";
+            indexPathRow = (int)indexPath.row - 1;
+            isAddMore = false;
+        }
+        else {
+            identifier = @"complainImage";
+            indexPathRow = (int)indexPath.row;
+            isAddMore = false;
+        }
+    } else {
+        identifier = @"complainImage";
+        indexPathRow = (int)indexPath.row;
+        isAddMore = false;
+    }
+}
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView1 cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *identifier;
     AddComplainCell *cell;
-    if (indexPath.row != complainImageArray.count) {
-        identifier = @"complainImage";
-        cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.deleteImageButton.tag = indexPath.item;
-        [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
-        [cell displayData:(int)indexPath.row data:complainImageArray isAddComplainScreen:false];
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
+            [self addImageStaticValues:false indexPath:indexPath];
+        } else {
+            if  (staffImageArray.count < 3){
+                if (indexPath.row == 0 && staffImageArray.count < 3) {
+                    [self addImageStaticValues:true indexPath:indexPath];
+                } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                    [self addImageStaticValues:true indexPath:indexPath];
+                }
+                else {
+                    [self addImageStaticValues:false indexPath:indexPath];
+                }
+            } else {
+                [self addImageStaticValues:false indexPath:indexPath];
+            }
+        }
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+        if  (staffImageArray.count < 3){
+            if (indexPath.row == 0 && staffImageArray.count < 3) {
+                [self addImageStaticValues:true indexPath:indexPath];
+            } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                [self addImageStaticValues:true indexPath:indexPath];
+            }
+            else {
+                [self addImageStaticValues:false indexPath:indexPath];
+            }
+        } else {
+            [self addImageStaticValues:false indexPath:indexPath];
+        }
     }
     else {
-        identifier = @"addMoreImages";
-        cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
-        cell.selectImageButton.tag = indexPath.item;
-        [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self addImageStaticValues:false indexPath:indexPath];
     }
+    
+    cell = [_imageCollectionView dequeueReusableCellWithReuseIdentifier:identifier forIndexPath:indexPath];
+    cell.selectImageButton.tag = indexPath.item;
+    [cell.selectImageButton addTarget:self action:@selector(selectImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    cell.deleteImageButton.tag = indexPath.item;
+    [cell.deleteImageButton addTarget:self action:@selector(deleteImageAction:) forControlEvents:UIControlEventTouchUpInside];
+    [cell displayData:indexPathRow data:complainImageArray isAddComplainScreen:false isAddMoreCell:isAddMore];
     return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    UIStoryboard * storyboard=storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    ImagePreviewViewController *imagePreviewView =[storyboard instantiateViewControllerWithIdentifier:@"ImagePreviewViewController"];
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
+            imagePreviewView.selectedIndex=(int)indexPath.row;
+        } else {
+            if  (staffImageArray.count < 3){
+                if (indexPath.row == 0 && staffImageArray.count < 3) {
+                    imagePreviewView.selectedIndex=(int)indexPath.row-1;
+                } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                    imagePreviewView.selectedIndex=(int)indexPath.row-1;
+                }
+                else {
+                    imagePreviewView.selectedIndex=(int)indexPath.row;
+                }
+            } else {
+                imagePreviewView.selectedIndex=(int)indexPath.row;
+            }
+        }
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+        if  (staffImageArray.count < 3){
+            if (indexPath.row == 0 && staffImageArray.count < 3) {
+                imagePreviewView.selectedIndex=(int)indexPath.row-1;
+            } else if (indexPath.row > 0 && staffImageArray.count < 3){
+                imagePreviewView.selectedIndex=(int)indexPath.row-1;
+            }
+            else {
+                imagePreviewView.selectedIndex=(int)indexPath.row;
+            }
+        } else {
+            imagePreviewView.selectedIndex=(int)indexPath.row;
+        }
+    }
+    else {
+        imagePreviewView.selectedIndex=(int)indexPath.row;
+    }
+    
+    imagePreviewView.attachmentArray=[complainImageArray mutableCopy];
+    [self.navigationController pushViewController:imagePreviewView animated:YES];
 }
 #pragma mark - end
 
@@ -481,50 +634,92 @@
         complainCell = [[ComplainDetailCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
     CommentsModel *commentsModel = [commentsArray objectAtIndex:indexPath.row];
-    [complainCell displayCommentsListData:commentsModel indexPath:indexPath.row];
+    [complainCell displayCommentsListData:commentsModel indexPath:indexPath.row rectSize:_commentsTableView.frame.size];
     return complainCell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CGRect textRectHeight;
     CommentsModel *commentsModel = [commentsArray objectAtIndex:indexPath.row];
-    NSString * titleTextStr = commentsModel.commnts;
-    CGSize commentsSize;
-    commentsSize = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,500);
-    textRectHeight=[self setDynamicHeight:commentsSize textString:titleTextStr];
-    return 35+textRectHeight.size.height;
+    CGSize commentsSize = CGSizeMake(_commentsTableView.frame.size.width,1000);
+    CGRect textRectHeight=[self setDynamicHeight:commentsSize textString:commentsModel.commnts];
+    
+    CGSize constrainedSize = CGSizeMake(_commentsTableView.frame.size.width - 120  , 300);
+    NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [UIFont fontWithName:@"Roboto-Bold" size:14.0], NSFontAttributeName,
+                                          nil];
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] initWithString:commentsModel.CommmentsBy attributes:attributesDictionary];
+    CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
+    float height = 40+requiredHeight.size.height+textRectHeight.size.height;
+    return height;
 }
 #pragma mark - end
 
 #pragma mark - Set dynamic height
--(CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
+- (CGRect)setDynamicHeight:(CGSize)rectSize textString:(NSString *)textString {
     CGRect textHeight = [textString
                          boundingRectWithSize:rectSize
                          options:NSStringDrawingUsesLineFragmentOrigin
-                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:15]}
+                         attributes:@{NSFontAttributeName:[UIFont fontWithName:@"Roboto-Regular" size:16]}
                          context:nil];
     return textHeight;
 }
 #pragma mark - end
 
 #pragma mark - IBActions
--(IBAction)deleteImageAction:(id)sender {
-    if ([staffImageArray containsObject:[complainImageArray objectAtIndex:[sender tag]]]) {
-        [staffImageArray removeObject:[complainImageArray objectAtIndex:[sender tag]]];
+- (IBAction)deleteImageAction:(id)sender {
+    
+    if ([[detailDict objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+        if (myDelegate.isDetailJobStarted || (![[detailDict objectForKey:@"AssignTo"] isEqualToString:[UserDefaultManager getValue:@"userId"]]) || (![userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]])){
+            [self removeImage:(int)[sender tag]];
+        } else {
+            if  (staffImageArray.count < 3){
+                if ([sender tag] == 0 && staffImageArray.count < 3) {
+                    [self removeImage:(int)[sender tag]-1];
+                } else if ([sender tag] > 0 && staffImageArray.count < 3){
+                    [self removeImage:(int)[sender tag]-1];
+                }
+                else {
+                    [self removeImage:(int)[sender tag]];
+                }
+            } else {
+                [self removeImage:(int)[sender tag]];
+            }
+        }
+    } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[detailDict objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
+        if  (staffImageArray.count < 3){
+            if ([sender tag] && staffImageArray.count < 3) {
+                [self removeImage:(int)[sender tag]-1];
+            } else if ([sender tag] > 0 && staffImageArray.count < 3){
+                [self removeImage:(int)[sender tag]-1];
+            }
+            else {
+                [self removeImage:(int)[sender tag]];
+            }
+        } else {
+            [self removeImage:(int)[sender tag]];
+        }
     }
-    [complainImageArray removeObjectAtIndex:[sender tag]];
+    else {
+        [self removeImage:(int)[sender tag]];
+    }
     [_imageCollectionView reloadData];
 }
-
--(IBAction)selectImageAction:(id)sender {
+- (void) removeImage:(int)buttonTag {
+    if ([staffImageArray containsObject:[complainImageArray objectAtIndex:buttonTag]]) {
+        [staffImageArray removeObject:[complainImageArray objectAtIndex:buttonTag]];
+    }
+    [complainImageArray removeObjectAtIndex:buttonTag];
+}
+- (IBAction)selectImageAction:(id)sender {
     [self showActionSheet];
 }
 
 - (IBAction)startJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
+        jobComplainStatus = @"In Progress";
         [myDelegate showIndicator];
-        [self performSelector:@selector(changeComplainStatus:) withObject:@"In process" afterDelay:.1];
+        [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to start this job?" closeButtonTitle:@"No" duration:0.0f];
 }
@@ -532,18 +727,20 @@
 - (IBAction)completeJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
+        jobComplainStatus = @"Completed";
         [myDelegate showIndicator];
         if (staffImageArray.count >= 1) {
             [self performSelector:@selector(uploadImage:) withObject:staffImageArray afterDelay:.1];
             
         } else {
-            [self performSelector:@selector(changeComplainStatus:) withObject:@"Complete" afterDelay:.1];
+            [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
         }
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you have completed this job?" closeButtonTitle:@"No" duration:0.0f];
 }
 
 - (IBAction)sendCommentAction:(id)sender {
+    [self resignKeyboard];
     [myDelegate showIndicator];
     [self performSelector:@selector(addComments) withObject:nil afterDelay:.1];
 }
@@ -551,11 +748,12 @@
 - (IBAction)reopenJobAction:(id)sender {
     SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
     [alert addButton:@"Yes" actionBlock:^(void) {
+        jobComplainStatus = @"REOPEN";
         [myDelegate showIndicator];
         if (staffImageArray.count >= 1) {
             [self performSelector:@selector(uploadImage:) withObject:staffImageArray afterDelay:.1];
         } else {
-            [self performSelector:@selector(changeComplainStatus:) withObject:@"Reopen" afterDelay:.1];
+            [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
         }
     }];
     [alert showWarning:nil title:@"Alert" subTitle:@"Are you sure you want to reopen this job?" closeButtonTitle:@"No" duration:0.0f];
@@ -622,8 +820,8 @@
 #pragma mark - ImagePicker delegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)info {
     UIImage *fixedImage = [image fixOrientation];
-    [staffImageArray addObject:fixedImage];
-    [complainImageArray addObject:fixedImage];
+    [staffImageArray insertObject:fixedImage atIndex:0];
+    [complainImageArray insertObject:fixedImage atIndex:0];
     [picker dismissViewControllerAnimated:YES completion:NULL];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [_imageCollectionView reloadData];
@@ -645,8 +843,8 @@
         commentsArray = [responseObject objectForKey:@"comments"];
         userCategoriesArray = [responseObject objectForKey:@"userCategoryArray"];
         [self getCommentsTableHeight];
-        [self setViewFrames:detailDict];
-        [_commentsTableView reloadData];
+        //        [self setViewFrames:detailDict];
+        //        [_commentsTableView reloadData];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
         _mainContainerView.hidden = YES;
@@ -661,16 +859,16 @@
 
 //Change complain status
 - (void)changeComplainStatus:(NSString *)complainStatus {
-    if ([complainStatus isEqualToString:@"In process"]) {
+    if ([complainStatus containsString:@"Progress"]) {
         myDelegate.isDetailJobStarted = true;
     }
     [[ComplainService sharedManager] changeJobStatus:complainId jobStatus:complainStatus imageNameArray:imagesNameArray success:^(id responseObject) {
         myDelegate.isDetailJobStarted = false;
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
         [alert addButton:@"OK" actionBlock:^(void) {
-            if ([complainStatus isEqualToString:@"In process"]) {
+            if ([complainStatus containsString:@"Progress"]) {
                 [detailDict removeObjectForKey:@"ComplainStatus"];
-                [detailDict setObject:@"In process" forKey:@"ComplainStatus"];
+                [detailDict setObject:@"In Progress" forKey:@"ComplainStatus"];
                 [detailDict setObject:[UserDefaultManager getValue:@"userId"] forKey:@"AssignTo"];
                 [self setViewFrames:detailDict];
             } else {
@@ -683,7 +881,7 @@
                 [myDelegate.window makeKeyAndVisible];
             }
         }];
-        [alert showWarning:nil title:@"Alert" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
+        [alert showWarning:nil title:@"" subTitle:[responseObject objectForKey:@"message"] closeButtonTitle:nil duration:0.0f];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
@@ -755,9 +953,8 @@
     for (int i = 0; i < imagesArray.count; i++) {
         [[ComplainService sharedManager] uploadImage:[imagesArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
             [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
-            NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
             if (imagesArray.count == imagesNameArray.count) {
-                [self performSelector:@selector(changeComplainStatus:) withObject:@"Complete" afterDelay:.1];
+                [self performSelector:@selector(changeComplainStatus:) withObject:jobComplainStatus afterDelay:.1];
             }
         } failure:^(NSError *error) {
             [myDelegate stopIndicator];
@@ -769,7 +966,6 @@
 
 //Add comments
 - (void)addComments {
-    [_addCommentTextView resignFirstResponder];
     [[ComplainService sharedManager] addComment:complainId comments:_addCommentTextView.text success:^(id responseObject){
         [myDelegate stopIndicator];
         CommentsModel *commentModel = [[CommentsModel alloc]init];
@@ -779,12 +975,12 @@
         commentModel.CommmentsBy =[commentDict objectForKey:@"CommmentsBy"];
         [commentsArray insertObject:commentModel atIndex:0];
         [self getCommentsTableHeight];
-        [_commentsTableView reloadData];
-        [self setViewFrames:detailDict];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
     }] ;
 }
 #pragma mark - end

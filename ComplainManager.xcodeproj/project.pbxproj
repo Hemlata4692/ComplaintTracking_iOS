@@ -13,6 +13,7 @@
 		5D47F5E41EFBF30100E20697 /* SidebarCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D47F5E31EFBF30100E20697 /* SidebarCell.m */; };
 		5D4E1C021ED2EE44008B68F4 /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4E1C011ED2EE44008B68F4 /* UIView+Toast.m */; };
 		5D4E1C0E1ED30687008B68F4 /* ComplainDetailCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D4E1C0D1ED30687008B68F4 /* ComplainDetailCell.m */; };
+		5D61ADC91F2F3FA600AC1DF2 /* ImagePreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D61ADC81F2F3FA600AC1DF2 /* ImagePreviewViewController.m */; };
 		5D7549811ECC5FBA00A775E4 /* NSString+CustomString.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D7549801ECC5FBA00A775E4 /* NSString+CustomString.m */; };
 		5D864D0A1ECADE97007FFC16 /* ComplainListDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D864D091ECADE96007FFC16 /* ComplainListDataModel.m */; };
 		5D864D0E1ECAFEA5007FFC16 /* ComplainService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D864D0D1ECAFEA5007FFC16 /* ComplainService.m */; };
@@ -77,6 +78,8 @@
 		5D4E1C011ED2EE44008B68F4 /* UIView+Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Toast.m"; sourceTree = "<group>"; };
 		5D4E1C0C1ED30687008B68F4 /* ComplainDetailCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainDetailCell.h; sourceTree = "<group>"; };
 		5D4E1C0D1ED30687008B68F4 /* ComplainDetailCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainDetailCell.m; sourceTree = "<group>"; };
+		5D61ADC71F2F3FA600AC1DF2 /* ImagePreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePreviewViewController.h; sourceTree = "<group>"; };
+		5D61ADC81F2F3FA600AC1DF2 /* ImagePreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePreviewViewController.m; sourceTree = "<group>"; };
 		5D75497F1ECC5FBA00A775E4 /* NSString+CustomString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CustomString.h"; sourceTree = "<group>"; };
 		5D7549801ECC5FBA00A775E4 /* NSString+CustomString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CustomString.m"; sourceTree = "<group>"; };
 		5D864D081ECADE96007FFC16 /* ComplainListDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplainListDataModel.h; sourceTree = "<group>"; };
@@ -192,6 +195,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5D34CCE41F302C1700D0A765 /* ImagePreview */ = {
+			isa = PBXGroup;
+			children = (
+				5D61ADC71F2F3FA600AC1DF2 /* ImagePreviewViewController.h */,
+				5D61ADC81F2F3FA600AC1DF2 /* ImagePreviewViewController.m */,
+			);
+			name = ImagePreview;
+			sourceTree = "<group>";
+		};
 		5D3DA81F1ED7F11600AD0435 /* AddComplainModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -425,6 +437,7 @@
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5D34CCE41F302C1700D0A765 /* ImagePreview */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
 				5DCE18581ECC7A7200F542BE /* AddComplainModule */,
@@ -967,6 +980,7 @@
 				5D984B4E1EF3D8540074E29C /* ProfileDataModel.m in Sources */,
 				5DD316341EC5ADF8008FF487 /* UserDefaultManager.m in Sources */,
 				5DD316491EC5AEE4008FF487 /* UIPlaceHolderTextView.m in Sources */,
+				5D61ADC91F2F3FA600AC1DF2 /* ImagePreviewViewController.m in Sources */,
 				5DD3166A1EC5C2E9008FF487 /* UserService.m in Sources */,
 				5D4E1C0E1ED30687008B68F4 /* ComplainDetailCell.m in Sources */,
 				5D8F63A51EC9B22A00111138 /* SCLAlertView.m in Sources */,

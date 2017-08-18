@@ -19,7 +19,7 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-
+    
     // Configure the view for the selected state
 }
 #pragma mark - end
@@ -27,9 +27,7 @@
 #pragma mark - Display cell data
 - (void)displayTenantsListData :(TenantsListModel *)dataModel indexPath:(int)indexPath rectSize:(CGSize)rectSize {
     //Display tenants image
-    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:dataModel.tenantsImageString]
-                                                  cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                              timeoutInterval:60];
+    NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:[dataModel.tenantsImageString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]] cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:60];
     __weak UIImageView *weakRef = tenantsImageView;
     [tenantsImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"userPlaceholder"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         weakRef.contentMode = UIViewContentModeScaleAspectFill;

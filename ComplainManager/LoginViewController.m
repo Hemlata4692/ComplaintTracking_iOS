@@ -95,9 +95,9 @@
         [alert showWarning:self title:@"Alert" subTitle:@"Please fill the valid email address." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
-    else  if (_passwordTextField.text.length < 6) {
+    else  if (_passwordTextField.text.length < 8) {
         SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 6 characters." closeButtonTitle:@"OK" duration:0.0f];
+        [alert showWarning:self title:@"Alert" subTitle:@"The password must have at least 8 characters." closeButtonTitle:@"OK" duration:0.0f];
         return NO;
     }
     else {
@@ -163,8 +163,10 @@
         [myDelegate.window setBackgroundColor:[UIColor whiteColor]];
         [myDelegate.window makeKeyAndVisible];
     } failure:^(NSError *error) {
-        SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
-        [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        if (error.localizedDescription !=  nil) {
+            SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
+            [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
+        }
     }] ;
 }
 #pragma mark - end

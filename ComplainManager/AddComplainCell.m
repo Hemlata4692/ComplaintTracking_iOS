@@ -12,25 +12,27 @@
 @synthesize complainImageView,deleteImageButton;
 
 #pragma mark - Load nib
-- (void)displayData:(long)index data:(NSMutableArray *)imageArray isAddComplainScreen:(bool)isAddComplainScreen {
-    if (isAddComplainScreen) {
-        complainImageView.image = [imageArray objectAtIndex:index];
-    } else {
-        if ([[imageArray objectAtIndex:index] isKindOfClass:[NSString class]]) {
-            deleteImageButton.hidden = YES;
-            NSString *tempImageString = [imageArray objectAtIndex:index];
-            NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString]
-                                                          cachePolicy:NSURLRequestReturnCacheDataElseLoad
-                                                      timeoutInterval:60];
-            [complainImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"placeholderListing"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-                complainImageView.contentMode = UIViewContentModeScaleAspectFill;
-                complainImageView.clipsToBounds = YES;
-                complainImageView.image = image;
-            } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-            }];
-        } else {
-            deleteImageButton.hidden = NO;
+- (void)displayData:(long)index data:(NSMutableArray *)imageArray isAddComplainScreen:(bool)isAddComplainScreen isAddMoreCell:(BOOL)isAddMoreCell {
+    if (!isAddMoreCell) {
+        [self setCornerRadius:3];
+        if (isAddComplainScreen) {
             complainImageView.image = [imageArray objectAtIndex:index];
+        } else {
+            if ([[imageArray objectAtIndex:index] isKindOfClass:[NSString class]]) {
+                deleteImageButton.hidden = YES;
+                NSString *tempImageString = [imageArray objectAtIndex:index];
+                NSURLRequest *imageRequest = [NSURLRequest requestWithURL:[NSURL URLWithString:tempImageString] cachePolicy:NSURLRequestReturnCacheDataElseLoad
+                                                          timeoutInterval:60];
+                [complainImageView setImageWithURLRequest:imageRequest placeholderImage:[UIImage imageNamed:@"placeholderListing"] success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+                    complainImageView.contentMode = UIViewContentModeScaleAspectFill;
+                    complainImageView.clipsToBounds = YES;
+                    complainImageView.image = image;
+                } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+                }];
+            } else {
+                deleteImageButton.hidden = NO;
+                complainImageView.image = [imageArray objectAtIndex:index];
+            }
         }
     }
 }
