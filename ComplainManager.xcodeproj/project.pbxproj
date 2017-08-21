@@ -19,6 +19,7 @@
 		5D864D0A1ECADE97007FFC16 /* ComplainListDataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D864D091ECADE96007FFC16 /* ComplainListDataModel.m */; };
 		5D864D0E1ECAFEA5007FFC16 /* ComplainService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D864D0D1ECAFEA5007FFC16 /* ComplainService.m */; };
 		5D864D191ECB170C007FFC16 /* GlobalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D864D181ECB170C007FFC16 /* GlobalViewController.m */; };
+		5D882FE61F4A95B60062BE98 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D882FE51F4A95B60062BE98 /* SettingsViewController.m */; };
 		5D8F63A51EC9B22A00111138 /* SCLAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F63971EC9B22A00111138 /* SCLAlertView.m */; };
 		5D8F63A61EC9B22A00111138 /* SCLButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F63991EC9B22A00111138 /* SCLButton.m */; };
 		5D8F63A71EC9B22A00111138 /* SCLAlertViewResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D8F639B1EC9B22A00111138 /* SCLAlertViewResponder.m */; };
@@ -91,6 +92,8 @@
 		5D864D0D1ECAFEA5007FFC16 /* ComplainService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ComplainService.m; sourceTree = "<group>"; };
 		5D864D171ECB170C007FFC16 /* GlobalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalViewController.h; sourceTree = "<group>"; };
 		5D864D181ECB170C007FFC16 /* GlobalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalViewController.m; sourceTree = "<group>"; };
+		5D882FE41F4A95B60062BE98 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		5D882FE51F4A95B60062BE98 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		5D8F63961EC9B22A00111138 /* SCLAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLAlertView.h; sourceTree = "<group>"; };
 		5D8F63971EC9B22A00111138 /* SCLAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SCLAlertView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5D8F63981EC9B22A00111138 /* SCLButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCLButton.h; sourceTree = "<group>"; };
@@ -299,6 +302,15 @@
 			name = GlobalViewController;
 			sourceTree = "<group>";
 		};
+		5D882FE31F4A95900062BE98 /* SettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				5D882FE41F4A95B60062BE98 /* SettingsViewController.h */,
+				5D882FE51F4A95B60062BE98 /* SettingsViewController.m */,
+			);
+			name = SettingsView;
+			sourceTree = "<group>";
+		};
 		5D8F63951EC9B21800111138 /* AlertView */ = {
 			isa = PBXGroup;
 			children = (
@@ -449,6 +461,7 @@
 		5DBE04991ECC54AB005EC7A2 /* DashboardModule */ = {
 			isa = PBXGroup;
 			children = (
+				5D882FE31F4A95900062BE98 /* SettingsView */,
 				5D34CCE41F302C1700D0A765 /* ImagePreview */,
 				5DBE049A1ECC54CF005EC7A2 /* ComplainListing */,
 				5DB168A01ECEF5F900E0A8E2 /* ComplainDetails */,
@@ -997,6 +1010,7 @@
 				5D61ADC91F2F3FA600AC1DF2 /* ImagePreviewViewController.m in Sources */,
 				5DD3166A1EC5C2E9008FF487 /* UserService.m in Sources */,
 				5D4E1C0E1ED30687008B68F4 /* ComplainDetailCell.m in Sources */,
+				5D882FE61F4A95B60062BE98 /* SettingsViewController.m in Sources */,
 				5D8F63A51EC9B22A00111138 /* SCLAlertView.m in Sources */,
 				5DD316111EC5AC80008FF487 /* main.m in Sources */,
 			);

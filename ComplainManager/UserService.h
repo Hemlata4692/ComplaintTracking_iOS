@@ -42,4 +42,14 @@
 //logout
 - (void)logout:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
 //end
+
+//Get notification settings
+- (void)getNotificationSettings:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
+
+//Update notification settings
+- (void)updateNotificationSettings:(BOOL)notification email:(BOOL)email success:(void (^)(id data))success failure:(void (^)(NSError *error))failure;
+//end
+
 @end

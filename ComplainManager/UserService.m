@@ -19,6 +19,8 @@
 #define kUrlGetProfile                  @"ViewProfile"
 #define kUrlDeviceToken                 @"SendNotification"
 #define kUrlEditProfile                 @"UpdateProfile"
+#define kUrlGetSettings                 @"getSettings"
+#define kUrlUpdateSettings              @"UpdateSettings"
 
 @implementation UserService
 
@@ -186,6 +188,47 @@
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"deviceId":myDelegate.deviceToken};
     NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlLogout parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+
+#pragma mark- Get notification settings
+- (void)getNotificationSettings:(void (^)(id data))success failure:(void (^)(NSError *error))failure{
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSLog(@"requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlGetSettings parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+
+
+#pragma mark- Update notification settings
+- (void)updateNotificationSettings:(BOOL)notification email:(BOOL)email success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSLog(@"requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlUpdateSettings parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
