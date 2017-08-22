@@ -11,7 +11,8 @@
 
 @interface SettingsViewController ()
 {
-    BOOL notification, email;
+    BOOL  notification, email;
+    BOOL isEmail;
 }
 @property (weak, nonatomic) IBOutlet UIView *notificationView;
 @property (weak, nonatomic) IBOutlet UIView *emailView;
@@ -28,14 +29,11 @@
     self.navigationItem.title = @"Settings";
     // Ad menu button
     [self addMenuButton];
-    [self uiCustomisation];
     //Get status
+    email = false;
+    notification = false;
     [myDelegate showIndicator];
     [self performSelector:@selector(getNotificationStatus) withObject:nil afterDelay:.1];
-}
-- (void) uiCustomisation {
-    [_notificationView setViewBorder:_notificationView color:[UIColor lightGrayColor]];
-    [_emailView setViewBorder:_emailView color:[UIColor lightGrayColor]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -46,22 +44,40 @@
 
 #pragma mark - Switch actions
 - (IBAction)notificationChangeAction:(id)sender {
+    isEmail = false;
     if([sender isOn]){
         notification = true;
     } else{
         notification = false;
     }
+    [myDelegate showIndicator];
+    [self performSelector:@selector(updateNotificationStatus) withObject:nil afterDelay:.1];
 }
+
 - (IBAction)emailChangeAction:(id)sender {
+    isEmail = true;
     if([sender isOn]){
         email = true;
     } else{
         email = false;
     }
-}
-- (void) callService {
     [myDelegate showIndicator];
     [self performSelector:@selector(updateNotificationStatus) withObject:nil afterDelay:.1];
+}
+#pragma mark - end
+
+#pragma mark - Set notification/email status
+- (void)setStatus {
+    if (email) {
+        [_emailSwitch setOn:YES animated:YES];
+    } else {
+        [_emailSwitch setOn:NO animated:YES];
+    }
+    if (notification) {
+        [_notificationSwitch setOn:YES animated:YES];
+    } else {
+        [_notificationSwitch setOn:NO animated:YES];
+    }
 }
 #pragma mark - end
 
@@ -69,7 +85,9 @@
 - (void)getNotificationStatus {
     [[UserService sharedManager] getNotificationSettings:^(id responseObject) {
         [myDelegate stopIndicator];
-      
+        notification = [[responseObject objectForKey:@"WebNotification"] boolValue];
+        email = [[responseObject objectForKey:@"EmailNotification"] boolValue];
+        [self setStatus];
     } failure:^(NSError *error) {
         if (error.localizedDescription !=  nil) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -81,14 +99,30 @@
 - (void)updateNotificationStatus {
     [[UserService sharedManager] updateNotificationSettings:notification email:email success:^(id responseObject) {
         [myDelegate stopIndicator];
-        
     } failure:^(NSError *error) {
+        if (isEmail) {
+            if (email) {
+                [_emailSwitch setOn:NO animated:YES];
+                email = false;
+            } else {
+                [_emailSwitch setOn:YES animated:YES];
+                email = true;
+            }
+        } else {
+            if (notification) {
+                [_notificationSwitch setOn:NO animated:YES];
+                notification = false;
+            } else {
+                [_notificationSwitch setOn:YES animated:YES];
+                notification = true;
+            }
+        }
         if (error.localizedDescription !=  nil) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert showWarning:nil title:@"Alert" subTitle:error.localizedDescription closeButtonTitle:@"OK" duration:0.0f];
         }
     }] ;
-  
+    
 }
 #pragma mark - end
 

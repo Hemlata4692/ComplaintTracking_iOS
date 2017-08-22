@@ -205,13 +205,7 @@
 
 #pragma mark - Check if user is council member
 - (BOOL)showUserRole {
-    if (![[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        if ([[userData objectForKey:@"userroleid"] intValue] == 5 && ( isTenantDetailScreen || isProfileDetailScreen)) {
-            showUserRole = YES ;
-        } else {
-            showUserRole = NO ;
-        }
-    } else if (isTenantDetailScreen) {
+    if ([[userData objectForKey:@"userroleid"] intValue] == 5 && ( isTenantDetailScreen || isProfileDetailScreen)) {
         showUserRole = YES ;
     } else {
         showUserRole = NO ;

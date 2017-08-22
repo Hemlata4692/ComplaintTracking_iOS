@@ -71,6 +71,7 @@
                     complainDataModel.complainTime =[complainDict objectForKey:@"SubmittedOn"];
                     complainDataModel.userName =[complainDict objectForKey:@"UserName"];
                     complainDataModel.feedbackCategory =[complainDict objectForKey:@"CategoryName"];
+                    [UserDefaultManager setValue:[complainDict objectForKey:@"PropertyId"] key:@"PropertyId"];
                     [dataArray addObject:complainDataModel];
                 }
                 success(dataArray);

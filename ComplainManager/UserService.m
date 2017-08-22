@@ -19,8 +19,8 @@
 #define kUrlGetProfile                  @"ViewProfile"
 #define kUrlDeviceToken                 @"SendNotification"
 #define kUrlEditProfile                 @"UpdateProfile"
-#define kUrlGetSettings                 @"getSettings"
-#define kUrlUpdateSettings              @"UpdateSettings"
+#define kUrlGetSettings                 @"NotificationEmailConfiguration"
+#define kUrlUpdateSettings              @"ChangeNotificationEmailStatus"
 
 @implementation UserService
 
@@ -205,7 +205,7 @@
 
 #pragma mark- Get notification settings
 - (void)getNotificationSettings:(void (^)(id data))success failure:(void (^)(NSError *error))failure{
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"]};
     NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetSettings parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
@@ -226,7 +226,9 @@
 
 #pragma mark- Update notification settings
 - (void)updateNotificationSettings:(BOOL)notification email:(BOOL)email success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"]};
+    NSString *eString = (email) ? @"True" : @"False";
+    NSString *nString = (notification) ? @"True" : @"False";
+    NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"],@"EmailNotification":eString ,@"WebNotification":nString};
     NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlUpdateSettings parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
