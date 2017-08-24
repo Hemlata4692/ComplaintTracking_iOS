@@ -29,6 +29,8 @@
     NSArray *infoArray;
     if (([[userData objectForKey:@"userroleid"] intValue] == 4 || [[userData objectForKey:@"userroleid"] intValue] == 3)) {
         infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Property",@"MCST Number", nil];
+    } else  if ([[userData objectForKey:@"userroleid"] intValue] == 2 || [[userData objectForKey:@"userroleid"] intValue] == 1) {
+        infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Role", nil];
     } else {
         if (showUserRole) {
             infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company Name",@"Property",@"MCST Number",@"MCST Council Member", nil];

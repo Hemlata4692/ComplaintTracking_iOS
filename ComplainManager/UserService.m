@@ -124,7 +124,7 @@
 
 #pragma mark- Tenants Listing
 - (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
-    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"PropertyId":[UserDefaultManager getValue:@"propertyId"]};
+    NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"PropertyId":[[UserDefaultManager getValue:@"propertyId"] objectAtIndex:0]};
     NSLog(@"Tenants list requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlTenantsList parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];

@@ -36,6 +36,7 @@
     [super viewDidLoad];
     userData = [[NSDictionary alloc]init];
     infoDetailArray = [[NSArray alloc]init];
+
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -160,18 +161,31 @@
     }
     [[UserService sharedManager] getProfileDetail:(isTenantDetailScreen || isProfileDetailScreen) userId:userId success:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
+        NSArray *propertyArray = [userData objectForKey:@"property"];
+        NSArray *mcstNoArray = [userData objectForKey:@"mcstnumber"];
+        NSString * propertyStr = [propertyArray componentsJoinedByString:@", "];
+        NSString * mcstNoStr = [mcstNoArray componentsJoinedByString:@", "];
+        NSLog(@"property,mcst %@, %@",propertyStr, mcstNoStr);
+
+        if (! (isTenantDetailScreen || isProfileDetailScreen)) {
+            //If My profile data changed (name/ image)
+            [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
+            [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
+        }
         [self setProfileData];
         //Set profile detail data
         if ([[userData objectForKey:@"contactNumber"] isEqualToString:@""]) {
             _callButton.hidden = YES;
         }
         if (([[userData objectForKey:@"userroleid"] intValue] == 4 || [[userData objectForKey:@"userroleid"] intValue] == 3)) {
-            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
+            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],propertyStr,mcstNoStr, nil];
+        } else  if ([[userData objectForKey:@"userroleid"] intValue] == 2 || [[userData objectForKey:@"userroleid"] intValue] == 1) {
+            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"userrolename"], nil];
         } else {
             if ([self showUserRole]) {
-                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"],@"", nil];
+                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],propertyStr,mcstNoStr,@"", nil];
             } else {
-                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
+                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],propertyStr,mcstNoStr, nil];
             }
         }
         [_profileTableView reloadData];

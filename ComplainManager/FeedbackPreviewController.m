@@ -72,15 +72,15 @@
     CGRect textRect=[self setDynamicHeight:size textString:_descriptionLabel.text];
     _descriptionLabel.numberOfLines = 0;
     if (textRect.size.height < 40) {
-        _descriptionLabel.frame =CGRectMake(10, _locationLabel.frame.origin.y + _locationLabel.frame.size.height+10,  self.view.frame.size.width - 60, 40);
+        _descriptionLabel.frame =CGRectMake(10, _locationLabel.frame.origin.y + _locationLabel.frame.size.height+30,  self.view.frame.size.width - 60, 40);
     } else {
-        _descriptionLabel.frame =CGRectMake(10, _locationLabel.frame.origin.y + _locationLabel.frame.size.height+10,  self.view.frame.size.width - 60, textRect.size.height+5);
+        _descriptionLabel.frame =CGRectMake(10, _locationLabel.frame.origin.y + _locationLabel.frame.size.height+30,  self.view.frame.size.width - 60, textRect.size.height+5);
     }
     float dataContainerHeight;
     if (imageArray.count > 0) {
-        dataContainerHeight = 110 + _descriptionLabel.frame.size.height + 10 + _imageCollectionView.frame.size.height + 10;
+        dataContainerHeight = 110 + _descriptionLabel.frame.size.height + 10 + _imageCollectionView.frame.size.height + 70;
     } else {
-        dataContainerHeight = 110 + _descriptionLabel.frame.size.height + 10;
+        dataContainerHeight = 110 + _descriptionLabel.frame.size.height + 70;
     }
     _dataContainerView.frame = CGRectMake(_dataContainerView.frame.origin.x, _dataContainerView.frame.origin.y, self.view.frame.size.width - 40, dataContainerHeight);
     if (dataContainerHeight + 140 >= self.view.frame.size.height) {

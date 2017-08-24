@@ -345,7 +345,7 @@
     float totalCellHeight;
     CGSize size = CGSizeMake(_complainListingTable.frame.size.width-100,150);
     CGSize constrainedSize = CGSizeMake(_complainListingTable.frame.size.width-100  , 150);
-  
+    
     if ([self checkIfTenant]) {
         cellHeight = 25;
         NSDictionary *attributesDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -408,39 +408,45 @@
     else {
         previousScreen = @"DASHBOARD";
     }
-    [[ComplainService sharedManager] getComplainListing:previousScreen success:^(NSMutableArray *dataArray){
+    [[ComplainService sharedManager] getComplainListing:previousScreen success:^(NSDictionary *dataDict){
         [complainListArray removeAllObjects];
-        complainListArray = dataArray;
-        //Show feedback status counts
-        NSMutableArray *pendingArray = [[NSMutableArray alloc]init];
-        NSMutableArray *progressArray = [[NSMutableArray alloc]init];
-        NSMutableArray *completeArray = [[NSMutableArray alloc]init];
-        _assignedCounterLabel.text = @"0";
-        _progressCounterLabel.text = @"0";
-        _completeProgressLabel.text = @"0";
-        for (int i = 0; i < complainListArray.count; i++) {
-            ComplainListDataModel *data=[complainListArray objectAtIndex:i];
-            if ([data.complainStatus isEqualToString:@"Pending"]) {
-                [pendingArray addObject:data];
-                _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)pendingArray.count] ;
-            } else if ([data.complainStatus isEqualToString:@"Completed"]) {
-                [completeArray addObject:data];
-                _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
-            } else if ([data.complainStatus containsString:@"Progress"]) {
-                [progressArray addObject:data];
-                _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
+        complainListArray = [dataDict objectForKey:@"dataArray"];
+        if ([[UserDefaultManager getValue:@"propertyId"] isEqualToArray:[dataDict objectForKey:@"propertyId"]]) {
+            //Show feedback status counts
+            NSMutableArray *pendingArray = [[NSMutableArray alloc]init];
+            NSMutableArray *progressArray = [[NSMutableArray alloc]init];
+            NSMutableArray *completeArray = [[NSMutableArray alloc]init];
+            _assignedCounterLabel.text = @"0";
+            _progressCounterLabel.text = @"0";
+            _completeProgressLabel.text = @"0";
+            for (int i = 0; i < complainListArray.count; i++) {
+                ComplainListDataModel *data=[complainListArray objectAtIndex:i];
+                if ([data.complainStatus isEqualToString:@"Pending"]) {
+                    [pendingArray addObject:data];
+                    _assignedCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)pendingArray.count] ;
+                } else if ([data.complainStatus isEqualToString:@"Completed"]) {
+                    [completeArray addObject:data];
+                    _completeProgressLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)completeArray.count] ;
+                } else if ([data.complainStatus containsString:@"Progress"]) {
+                    [progressArray addObject:data];
+                    _progressCounterLabel.text = [NSString stringWithFormat:@"%lu",(unsigned long)progressArray.count] ;
+                }
             }
-        }
-        //If no feedbacks
-        if (complainListArray.count<1) {
-            _noComplaintsLabel.hidden = NO;
+            //If no feedbacks
+            if (complainListArray.count<1) {
+                _noComplaintsLabel.hidden = NO;
+            } else {
+                _noComplaintsLabel.hidden = YES;
+            }
+            //Filter array
+            [self filterStatusArray:selectedButtonTag];
+            [_refreshControl endRefreshing];
+            [myDelegate stopIndicator];
         } else {
-            _noComplaintsLabel.hidden = YES;
+            [UserDefaultManager setValue:[dataDict objectForKey:@"propertyId"] key:@"propertyId"];
+            [self getComplainListing];
         }
-        //Filter array
-        [self filterStatusArray:selectedButtonTag];
-        [_refreshControl endRefreshing];
-        [myDelegate stopIndicator];
+        
     } failure:^(NSError *error) {
         if (error.localizedDescription !=  nil) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];

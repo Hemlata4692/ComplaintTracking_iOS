@@ -89,6 +89,7 @@
     [myDelegate showIndicator];
     [self performSelector:@selector(getComplaintDetails) withObject:nil afterDelay:.1];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(receivedNotification) name:@"ReloadFeedbackDetails" object:nil];
+    _addCommentTextView.autocorrectionType = UITextAutocorrectionTypeYes;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -152,11 +153,11 @@
         [self commonAddCommentsTextViewFrames ];
         _commentsContainerView.frame = CGRectMake(0, _imageCollectionView.frame.origin.y+_imageCollectionView.frame.size.height + 15, viewWidth, _completeJobAction.frame.origin.y +_completeJobAction.frame.size.height+10);
     }
-    if ((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+    if ((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-104)-256) {
         [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
     else {
-        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-64-256))+50) animated:NO];
+        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +_addCommentTextView.frame.origin.y)+_addCommentTextView.frame.size.height+10)- ([UIScreen mainScreen].bounds.size.height-104-256))+70) animated:NO];
     }
     NSString *string = _addCommentTextView.text;
     NSString *trimmedString = [string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -275,7 +276,7 @@
     _userNameLabel.numberOfLines = 0;
     textRect=[self setDynamicHeight:nameSize textString:[data objectForKey:@"SubmittedUserName"] textSize:18];
     if(textRect.size.height < 40) {
-        _userNameLabel.frame = CGRectMake(_nameLabel.frame.origin.x + _nameLabel.frame.size.width+1, 20,viewWidth -130, _userNameLabel.frame.size.height);
+        _userNameLabel.frame = CGRectMake(_nameLabel.frame.origin.x + _nameLabel.frame.size.width+1, 20,viewWidth -130, 40);
         _nameSeparatorLabel.frame = CGRectMake(10, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 1, viewWidth-20, 1);
     } else {
         _userNameLabel.frame = CGRectMake(_nameLabel.frame.origin.x + _nameLabel.frame.size.width+1, 20,viewWidth -130, textRect.size.height+5);
@@ -283,26 +284,23 @@
     }
     _userNameLabel.text = [data objectForKey:@"SubmittedUserName"];
     _nameButon.frame = _userNameLabel.frame;
-    
     //Set property label frame
     _propertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,110, _propertyLabel.frame.size.height);
     _userPropertyLabel.numberOfLines = 0;
     textRect=[self setDynamicHeight:nameSize textString:[data objectForKey:@"PropertyName"] textSize:18];
     if(textRect.size.height < 40) {
-        _userPropertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x + _propertyLabel.frame.size.width+1, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,viewWidth -130, _userNameLabel.frame.size.height);
+        _userPropertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x + _propertyLabel.frame.size.width+1, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,viewWidth -130, 40);
         _propertySeparatorLabel.frame = CGRectMake(10, _userPropertyLabel.frame.origin.y+_userPropertyLabel.frame.size.height + 1, viewWidth-20, 1);
     } else {
         _userPropertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x + _propertyLabel.frame.size.width+1, _userNameLabel.frame.origin.y+_userNameLabel.frame.size.height + 20,viewWidth -130, textRect.size.height+5);
         _propertySeparatorLabel.frame = CGRectMake(10, _userPropertyLabel.frame.origin.y+_userPropertyLabel.frame.size.height + 5, viewWidth-20, 1);
     }
     _userPropertyLabel.text = [data objectForKey:@"PropertyName"];
-    
     //Set feedback no label frame
     NSAttributedString * feedbackNoString = [[NSString stringWithFormat:@"Feedback No %@",[data objectForKey:@"feedbackNo"]] setAttributrdString:@"Feedback No" stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:0.9]];
     _feedbackNoLabel.attributedText = feedbackNoString;
     _feedbackNoLabel.frame = CGRectMake(_feedbackNoLabel.frame.origin.x, _userPropertyLabel.frame.origin.y+_userPropertyLabel.frame.size.height + 20, viewWidth-20, _feedbackNoLabel.frame.size.height);
     _feedbackSeparatorLabel.frame = CGRectMake(_feedbackSeparatorLabel.frame.origin.x, _feedbackNoLabel.frame.origin.y+_feedbackNoLabel.frame.size.height + 1, viewWidth-20, 1);
-    
     //Set category label frame
     NSAttributedString * categoryString = [[NSString stringWithFormat:@"Category        %@",[data objectForKey:@"CategoryName"]] setAttributrdString:@"Category " stringFont:[UIFont fontWithName:@"Roboto-Medium" size:18.0] selectedColor:[UIColor colorWithRed:108/255.0 green:108/255.0 blue:108/255.0 alpha:0.9]];
     _categoryLabel.attributedText = categoryString;
@@ -478,11 +476,11 @@
 #pragma mark - Textfield delegates
 - (void)textViewDidBeginEditing:(UITextView *)textView {
     [self.keyboardControls setActiveField:textView];
-    if ((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-64)-256) {
+    if ((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+15<([UIScreen mainScreen].bounds.size.height-104)-256) {
         [_scrollView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
     else {
-        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+50)- ([UIScreen mainScreen].bounds.size.height-64-256))+5) animated:YES];
+        [_scrollView setContentOffset:CGPointMake(0, (((_commentsContainerView.frame.origin.y +textView.frame.origin.y)+textView.frame.size.height+70)- ([UIScreen mainScreen].bounds.size.height-104-256))+5) animated:YES];
     }
 }
 
