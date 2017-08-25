@@ -219,6 +219,14 @@
                 _commentsContainerView.hidden = YES;
             } else {
                 [self setCommonUserStatusViewFrames];
+                _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 15, viewWidth-20, _commentsCountLabel.frame.size.height);
+                if (commentsArray.count < 1) {
+                    _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, 0);
+                }
+                else {
+                    _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
+                }
+                commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
             }
         } else if ([[data objectForKey:@"ComplainStatus"] containsString:@"Progress"] || ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"])) {
             // Show In progress view if feedback assigned to user
@@ -242,17 +250,58 @@
                             [alert showWarning:nil title:@"Alert" subTitle:@"Job already assigned to other staff member." closeButtonTitle:@"OK" duration:0.0f];
                         }
                     }
-                    //Show informatory view
-                    [self setCommonUserStatusViewFrames];
-                    _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
-                    _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, viewWidth-20, _commentsCountLabel.frame.size.height);
-                    if (commentsArray.count < 1) {
-                        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, 0);
+                    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] containsString:@"Progress"]) {
+                        _startJobButton.hidden = YES;
+                        _UserStatusView.hidden=NO;
+                        _commentsContainerView.hidden=NO;
+                        _addCommentContainerView.hidden=NO;
+                        _completeJobAction.hidden = YES;
+                        _UserStatusView.frame = CGRectMake(10,0, viewWidth-20, _UserStatusView.frame.size.height);
+                        [_UserStatusView setBottomBorder:_UserStatusView];
+                        _statusLabel.frame = CGRectMake(10,0, _UserStatusView.frame.size.width-150, _statusLabel.frame.size.height);
+                        _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
+                        
+                        _commentsCountLabel.frame = CGRectMake(10,_UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, viewWidth-20, 30);
+                        _addCommentTextView.text = @"";
+                        [_addCommentTextView setPlaceholder:@" Add Comment"];
+                        [_addCommentTextView setFont:[UIFont fontWithName:@"Roboto-Regular" size:15.0]];
+                        messageHeight = 40;
+                        if (commentsArray.count < 1) {
+                            _commentsCountLabel.frame = CGRectMake(10,-10, viewWidth-20,0);
+                            _addCommentContainerView.frame = CGRectMake(0, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 15,viewWidth, messageHeight + 10);
+                        } else {
+                            _addCommentContainerView.frame = CGRectMake(0, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 15,viewWidth, messageHeight + 10);
+                        }
+                        _addCommentTextView.frame = CGRectMake(10, 2, _addCommentContainerView.frame.size.width - 65, messageHeight);
+                        _textLimitLabel.frame = CGRectMake(10, _addCommentTextView.frame.origin.y + _addCommentTextView.frame.size.height+5, _addCommentContainerView.frame.size.width - 65, _textLimitLabel.frame.size.height);
+                        [_addCommentTextView setViewBorder:_addCommentTextView color:[UIColor clearColor]];
+                        [_addCommentTextView setCornerRadius:3];
+                        _sendCommentButton.frame = CGRectMake(_addCommentTextView.frame.origin.x+_addCommentTextView.frame.size.width+5, 2 , 40, 40);
+                        if ([_addCommentTextView.text isEqualToString:@""] || _addCommentTextView.text.length == 0) {
+                            _sendCommentButton.enabled = NO;
+                        }
+                        else {
+                            _sendCommentButton.enabled = YES;
+                        }
+                        if (commentsArray.count < 1) {
+                            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, 0);
+                        } else {
+                            _commentsTableView.frame = CGRectMake(10, _addCommentContainerView.frame.origin.y + _addCommentContainerView.frame.size.height + 15,viewWidth-20, commentsCellHeight + 5);
+                        }
+                        commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+ _addCommentContainerView.frame.size.height + 20 +_commentsTableView.frame.size.height+10;
+                    } else {
+                        //Show informatory view
+                        [self setCommonUserStatusViewFrames];
+                        _complaintStatusLabel.frame = CGRectMake(150,0, _UserStatusView.frame.size.width-160, _complaintStatusLabel.frame.size.height);
+                        _commentsCountLabel.frame = CGRectMake(10, _UserStatusView.frame.origin.y + _UserStatusView.frame.size.height + 10, viewWidth-20, _commentsCountLabel.frame.size.height);
+                        if (commentsArray.count < 1) {
+                            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, 0);
+                        }
+                        else {
+                            _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
+                        }
+                        commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
                     }
-                    else {
-                        _commentsTableView.frame = CGRectMake(10, _commentsCountLabel.frame.origin.y + _commentsCountLabel.frame.size.height + 5,viewWidth-20, commentsCellHeight + 5);
-                    }
-                    commentsViewHeight = _UserStatusView.frame.size.height+20+_commentsCountLabel.frame.size.height+20+_commentsTableView.frame.size.height+10;
                 }
             } else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] && [[data objectForKey:@"ComplainStatus"] isEqualToString:@"Completed"]) {
                 [self commonCollectionViewFrames:2];
