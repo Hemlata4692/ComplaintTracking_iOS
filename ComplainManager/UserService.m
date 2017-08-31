@@ -21,6 +21,7 @@
 #define kUrlEditProfile                 @"UpdateProfile"
 #define kUrlGetSettings                 @"NotificationEmailConfiguration"
 #define kUrlUpdateSettings              @"ChangeNotificationEmailStatus"
+#define kUrlUpdateReminderDay           @"ChangeReminderDays"
 
 @implementation UserService
 
@@ -231,6 +232,25 @@
     NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"],@"EmailNotification":eString ,@"WebNotification":nString};
     NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlUpdateSettings parameters:requestDict success:^(id responseObject) {
+        responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
+        NSLog(@"response %@",responseObject);
+        if([[Webservice sharedManager] isStatusOK:responseObject]) {
+            success(responseObject);
+        } else {
+            [myDelegate stopIndicator];
+            failure(nil);
+        }
+    } failure:^(NSError *error) {
+        [myDelegate stopIndicator];
+        failure(error);
+    }];
+}
+#pragma mark- end
+#pragma mark- Update notification status
+- (void)updateReminderDaySettings:(NSString *)reminderday success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
+    NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"],@"Reminderday":reminderday};
+    NSLog(@"requestDict %@",requestDict);
+    [[Webservice sharedManager] post:kUrlUpdateReminderDay parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
         NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
