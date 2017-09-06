@@ -139,7 +139,6 @@
     for (int i = 0; i < imageArray.count; i++) {
         [[ComplainService sharedManager] uploadImage:[imageArray objectAtIndex:i] screenName:@"COMPLAIN" success:^(id responseObject){
             [imagesNameArray addObject:[responseObject objectForKey:@"list"]];
-            NSLog(@"imagesNameArray.count = %lu",(unsigned long)imagesNameArray.count);
             if (imageArray.count == imagesNameArray.count) {
                 [self performSelector:@selector(addComplaint) withObject:nil afterDelay:.1];
             }

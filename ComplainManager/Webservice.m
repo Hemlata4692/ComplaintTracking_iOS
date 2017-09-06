@@ -45,12 +45,10 @@
     [manager POST:path parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         success(responseObject);
     } failure:^(NSURLSessionDataTask * task, NSError * _Nonnull error) {
-        NSLog(@"error.localizedDescription %@",error.localizedDescription);
         [myDelegate stopIndicator];
         if (error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] != nil) {
             NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey]
                                                                  options:kNilOptions error:&error];
-            NSLog(@"json %@",json);
             if (myDelegate.isDetailJobStarted) {
                 failure(error);
             } else {

@@ -47,10 +47,8 @@
 //Login
 - (void)userLogin:(NSString *)email password:(NSString *)password success:(void (^)(id))success failure:(void (^)(NSError *))failure {
     NSDictionary *requestDict = @{@"email":email,@"password":password,@"deviceId":myDelegate.deviceToken,@"devicetype":@"iOS"};
-    NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlLogin parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -70,7 +68,6 @@
     NSDictionary *requestDict = @{@"email":email};
     [[Webservice sharedManager] post:kUrlForgotPassword parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"responseObject = %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -87,10 +84,8 @@
 #pragma mark- Edit user profile
 - (void)editProfile:(NSString *)name address:(NSString *)address mobileNumber:(NSString *)mobileNumber image:(NSString *)image success:(void (^)(id))success failure:(void (^)(NSError *))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"Name":name,@"Phone":mobileNumber, @"AddressBlock":address,@"Image":image};
-    NSLog(@"edit dict = %@",requestDict);
     [[Webservice sharedManager] post:kUrlEditProfile parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"responseObject = %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -126,10 +121,8 @@
 #pragma mark- Tenants Listing
 - (void)getTenantsListing:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"PropertyId":[[UserDefaultManager getValue:@"propertyId"] objectAtIndex:0]};
-    NSLog(@"Tenants list requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlTenantsList parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"Tenants list response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             id array =[responseObject objectForKey:@"list"];
             if (([array isKindOfClass:[NSArray class]])) {
@@ -167,10 +160,8 @@
     } else {
         requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"ProfileType":@"UProfile"};
     }
-    NSLog(@"Profile requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetProfile parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"Profile response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -187,10 +178,8 @@
 #pragma mark- logout
 - (void)logout:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"deviceId":myDelegate.deviceToken};
-    NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlLogout parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -207,10 +196,8 @@
 #pragma mark- Get notification settings
 - (void)getNotificationSettings:(void (^)(id data))success failure:(void (^)(NSError *error))failure{
     NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"]};
-    NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetSettings parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -230,10 +217,8 @@
     NSString *eString = (email) ? @"True" : @"False";
     NSString *nString = (notification) ? @"True" : @"False";
     NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"],@"EmailNotification":eString ,@"WebNotification":nString};
-    NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlUpdateSettings parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -249,10 +234,8 @@
 #pragma mark- Update notification status
 - (void)updateReminderDaySettings:(NSString *)reminderday success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"Id":[UserDefaultManager getValue:@"userId"],@"Reminderday":reminderday};
-    NSLog(@"requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlUpdateReminderDay parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {

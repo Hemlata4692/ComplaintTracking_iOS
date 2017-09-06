@@ -84,7 +84,6 @@
 - (void)setDetailTextFrames {
     _detailTextView.translatesAutoresizingMaskIntoConstraints = YES;
     if  ([_detailTextView sizeThatFits:_detailTextView.frame.size].height > 40) {
-        NSLog(@"%f",[_detailTextView sizeThatFits:_detailTextView.frame.size].height);
         if (([_detailTextView sizeThatFits:_detailTextView.frame.size].height < 90)) {
             _detailTextView.frame = CGRectMake(_detailTextView.frame.origin.x,_detailLabel.frame.origin.y + _detailLabel.frame.size.height + 1, _detailTextView.frame.size.width, [_detailTextView sizeThatFits:_detailTextView.frame.size].height);
         } else {

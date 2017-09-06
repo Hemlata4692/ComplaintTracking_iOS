@@ -165,8 +165,6 @@
         NSArray *mcstNoArray = [userData objectForKey:@"mcstnumber"];
         NSString * propertyStr = [propertyArray componentsJoinedByString:@", "];
         NSString * mcstNoStr = [mcstNoArray componentsJoinedByString:@", "];
-        NSLog(@"property,mcst %@, %@",propertyStr, mcstNoStr);
-
         if (! (isTenantDetailScreen || isProfileDetailScreen)) {
             //If My profile data changed (name/ image)
             [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];

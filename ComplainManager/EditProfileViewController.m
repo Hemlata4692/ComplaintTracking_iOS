@@ -129,8 +129,6 @@
     NSArray *mcstNoArray = [userData objectForKey:@"mcstnumber"];
     NSString * propertyStr = [propertyArray componentsJoinedByString:@", "];
     NSString * mcstNoStr = [mcstNoArray componentsJoinedByString:@", "];
-    NSLog(@"property,mcst %@, %@",propertyStr, mcstNoStr);
-
     if ([propertyStr isEqualToString:@""]) {
         _propertyLabel.text = @"NA";
     } else {

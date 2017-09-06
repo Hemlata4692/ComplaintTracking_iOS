@@ -49,13 +49,10 @@
         isBuildingManager = @"false";
     }
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"DisplayBoard":screenName,@"UserRoleId":[UserDefaultManager getValue:@"RoleId"],@"PropertyIds":[UserDefaultManager getValue:@"propertyId"],@"IsBuildingManager":isBuildingManager};
-    NSLog(@"complainListing requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlComplainList parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"complainListing response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             [UserDefaultManager setValue:[responseObject objectForKey:@"userImage"] key:@"userImage"];
-//            [UserDefaultManager setValue:[responseObject objectForKey:@"propertyId"] key:@"propertyId"];
             id array =[responseObject objectForKey:@"list"];
             if (([array isKindOfClass:[NSArray class]])) {
                 NSArray * complainArray = [responseObject objectForKey:@"list"];
@@ -94,10 +91,8 @@
     NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
     NSString *  encodedImage = [imageData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"ImageType":screenName,@"Images":encodedImage};
-    NSLog(@"image requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlUploadImage parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"complainListing response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -114,7 +109,6 @@
 #pragma mark - Category listing
 - (void)getCategories:(BOOL)isCategoryService success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"propertyId":[[UserDefaultManager getValue:@"propertyId"] objectAtIndex:0]};
-    NSLog(@"Categories requestDict %@",requestDict);
     NSString *method;
     if (isCategoryService) {
         method = kUrlCategoryListing;
@@ -123,7 +117,6 @@
     }
     [[Webservice sharedManager] post:method parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"Categories response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             id array =[responseObject objectForKey:@"list"];
             if (([array isKindOfClass:[NSArray class]])) {
@@ -159,10 +152,8 @@
 #pragma mark - Add complaint
 - (void)addComplait:(NSString *)complainDescription categoryId:(NSString *)categoryId imageNameArray:(NSMutableArray *)imageNameArray PropertyLocationId:(NSString *)PropertyLocationId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"fullDescription":complainDescription,@"categoryId":categoryId,@"imageName":imageNameArray,@"PropertyLocationId":PropertyLocationId,@"propertyId":[[UserDefaultManager getValue:@"propertyId"] objectAtIndex:0]};
-    NSLog(@"add feedback requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlAddComplain parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -179,10 +170,8 @@
 #pragma mark - Complaint detail
 - (void)getComplaitDetail:(NSString *)complainId success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId};
-    NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlGetComplainDetail parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             NSMutableDictionary *detailDict = [NSMutableDictionary new];
             detailDict = [responseObject objectForKey:@"Details"];
@@ -225,10 +214,8 @@
     } else {
         requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"complainStatus":jobStatus};
     }
-    NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlJobStatus parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {
@@ -245,10 +232,8 @@
 #pragma mark - Add comment
 - (void)addComment:(NSString *)complainId comments:(NSString *)comments success:(void (^)(id data))success failure:(void (^)(NSError *error))failure {
     NSDictionary *requestDict = @{@"userId":[UserDefaultManager getValue:@"userId"],@"complainId":complainId,@"commments":comments};
-    NSLog(@"complain requestDict %@",requestDict);
     [[Webservice sharedManager] post:kUrlAddComments parameters:requestDict success:^(id responseObject) {
         responseObject=(NSMutableDictionary *)[NullValueChecker checkDictionaryForNullValue:[responseObject mutableCopy]];
-        NSLog(@"response %@",responseObject);
         if([[Webservice sharedManager] isStatusOK:responseObject]) {
             success(responseObject);
         } else {

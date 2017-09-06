@@ -243,7 +243,6 @@
                 else {
                     [self commonCollectionViewFrames:1];
                     if ([userCategoriesArray containsObject:[detailDict objectForKey:@"CategoryId"]]) {
-                        NSLog(@"myDelegate.screenName = %@",myDelegate.screenName);
                         if ([myDelegate.screenName isEqualToString:@"dashboard"]) {
                             //Show assigned alert if feedback asssigned to other.
                             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
@@ -541,7 +540,6 @@
         CGRect requiredHeight = [string boundingRectWithSize:constrainedSize options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading|NSStringDrawingTruncatesLastVisibleLine context:nil];
         float height = 50+requiredHeight.size.height+textRectHeight.size.height;
         commentsCellHeight = commentsCellHeight + height;
-        NSLog(@"commentsCellHeight %f =",commentsCellHeight);
     }
     [self setViewFrames:detailDict];
     [_commentsTableView reloadData];
@@ -1024,7 +1022,6 @@
         if (myDelegate.isDetailJobStarted) {
             if (error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] != nil) {
                 NSDictionary* json = [NSJSONSerialization JSONObjectWithData:(NSData *)error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey] options:kNilOptions error:&error];
-                NSLog(@"json %@",json);
                 [self isStatusOK:json];
             }
         }
