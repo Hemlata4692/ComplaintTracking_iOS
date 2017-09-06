@@ -149,12 +149,6 @@
         } else  if ([[data objectForKey:@"RoleId"] intValue] == 3 ) {
             [UserDefaultManager setValue:@"ltc" key:@"role"];
         }
-        NSLog(@"AuthenticationToken %@",[UserDefaultManager getValue:@"AuthenticationToken"]);
-        NSLog(@"role %@",[UserDefaultManager getValue:@"role"]);
-        NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
-        NSLog(@"name %@",[UserDefaultManager getValue:@"name"]);
-        NSLog(@"contactNumber %@",[UserDefaultManager getValue:@"contactNumber"]);
-        NSLog(@"isFirstTime %@",[UserDefaultManager getValue:@"isFirstTime"]);
         //Navigate to dashboard
         UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UIViewController * objReveal = [storyboard instantiateViewControllerWithIdentifier:@"SWRevealViewController"];

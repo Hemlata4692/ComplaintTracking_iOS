@@ -16,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *propertyIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *tenantsIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *changePasswordIcon;
+@property (weak, nonatomic) IBOutlet UIImageView *settingIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *logoutIcon;
 - (void)displayCellData:(NSArray *)menuItems index:(int)index;
 @end

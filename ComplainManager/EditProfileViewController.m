@@ -17,6 +17,7 @@
     UIImage *userImage;
     NSString *userImageName;
     NSDictionary *userData;
+    float mainContainerHeight;
 }
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -28,13 +29,15 @@
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *addressTextView;
 @property (weak, nonatomic) IBOutlet UITextField *unitNoTextField;
 @property (weak, nonatomic) IBOutlet UITextField *companyTextField;
-@property (weak, nonatomic) IBOutlet UITextField *propertyTextField;
-@property (weak, nonatomic) IBOutlet UITextField *mcstNumberTextField;
+@property (weak, nonatomic) IBOutlet UILabel *propertyLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mcstNoLabel;
 @property (weak, nonatomic) IBOutlet UIButton *signUpButton;
 @property (nonatomic, strong) BSKeyboardControls *keyboardControls;
 @property (weak, nonatomic) IBOutlet UIView *unitContainerView;
 @property (weak, nonatomic) IBOutlet UIView *propertyContainerView;
 @property (weak, nonatomic) IBOutlet UILabel *addressSeparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *propertySeparatorLabel;
+@property (weak, nonatomic) IBOutlet UILabel *mcstNoSeparatorLabel;
 
 @end
 
@@ -63,9 +66,9 @@
     [super viewWillAppear:YES];
     [[self navigationController] setNavigationBarHidden:NO animated:YES];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
-    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
-        _scrollView.scrollEnabled = NO;
-    }
+    //    if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"]) {
+    //        _scrollView.scrollEnabled = NO;
+    //    }
 }
 #pragma mark - end
 
@@ -122,16 +125,57 @@
         _unitContainerView.frame = CGRectMake(10, _addressTextView.frame.origin.y+_addressTextView.frame.size.height, self.view.frame.size.width - 20, 0);
         _propertyContainerView.frame = CGRectMake(10, _unitContainerView.frame.origin.y+_unitContainerView.frame.size.height , self.view.frame.size.width - 20, _propertyContainerView.frame.size.height);
     }
-    if ([[userData objectForKey:@"property"] isEqualToString:@""]) {
-        _propertyTextField.text = @"NA";
+    NSArray *propertyArray = [userData objectForKey:@"property"];
+    NSArray *mcstNoArray = [userData objectForKey:@"mcstnumber"];
+    NSString * propertyStr = [propertyArray componentsJoinedByString:@", "];
+    NSString * mcstNoStr = [mcstNoArray componentsJoinedByString:@", "];
+    if ([propertyStr isEqualToString:@""]) {
+        _propertyLabel.text = @"NA";
     } else {
-        _propertyTextField.text=[userData objectForKey:@"property"];
+        _propertyLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        _propertySeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        CGRect textRect;
+        CGSize size;
+        size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,500);
+        textRect=[self setDynamicHeight:size textString:propertyStr];
+        if (textRect.size.height <= 35) {
+            _propertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x,0, self.view.frame.size.width - 20, 40);
+            _propertySeparatorLabel.frame = CGRectMake(_propertySeparatorLabel.frame.origin.x,_propertyLabel.frame.origin.y+_propertyLabel.frame.size.height+1, self.view.frame.size.width - 20, 1);
+        } else {
+            _propertyLabel.frame = CGRectMake(_propertyLabel.frame.origin.x,0, self.view.frame.size.width - 20, textRect.size.height +5);
+            _propertySeparatorLabel.frame = CGRectMake(_propertySeparatorLabel.frame.origin.x,_propertyLabel.frame.origin.y+_propertyLabel.frame.size.height+5, self.view.frame.size.width - 20, 1);
+        }
+        _propertyLabel.text=propertyStr;
     }
-    if ([[userData objectForKey:@"mcstnumber"] isEqualToString:@""]) {
-        _mcstNumberTextField.text = @"NA";
+    if ([mcstNoStr isEqualToString:@""]) {
+        _mcstNoLabel.text = @"NA";
     } else {
-        _mcstNumberTextField.text=[userData objectForKey:@"mcstnumber"];
+        _mcstNoLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        _mcstNoSeparatorLabel.translatesAutoresizingMaskIntoConstraints = YES;
+        CGRect textRect;
+        CGSize size;
+        size = CGSizeMake([[UIScreen mainScreen] bounds].size.width-20,500);
+        textRect=[self setDynamicHeight:size textString:mcstNoStr];
+        if (textRect.size.height <= 35) {
+            _mcstNoLabel.frame = CGRectMake(_mcstNoLabel.frame.origin.x,_propertyLabel.frame.origin.y+_propertyLabel.frame.size.height+ 10, self.view.frame.size.width - 20, 40);
+            _mcstNoSeparatorLabel.frame = CGRectMake(_mcstNoSeparatorLabel.frame.origin.x,_mcstNoLabel.frame.origin.y+_mcstNoLabel.frame.size.height+1, self.view.frame.size.width - 20, 1);
+        } else {
+            _mcstNoLabel.frame = CGRectMake(_mcstNoLabel.frame.origin.x,_propertyLabel.frame.origin.y+_propertyLabel.frame.size.height+10, self.view.frame.size.width - 20, textRect.size.height +5);
+            _mcstNoSeparatorLabel.frame = CGRectMake(_mcstNoSeparatorLabel.frame.origin.x,_mcstNoLabel.frame.origin.y+_mcstNoLabel.frame.size.height+5, self.view.frame.size.width - 20, 1);
+        }
+        _mcstNoLabel.text=mcstNoStr;
     }
+    _mainContainerView.translatesAutoresizingMaskIntoConstraints = YES;
+    float propertyContainerHeight = _propertyLabel.frame.size.height + _propertyLabel.frame.size.height + 90;
+    _propertyContainerView.translatesAutoresizingMaskIntoConstraints = YES;
+    _propertyContainerView.frame = CGRectMake(10, _unitContainerView.frame.origin.y+_unitContainerView.frame.size.height , self.view.frame.size.width - 20, propertyContainerHeight);
+    if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
+        mainContainerHeight = propertyContainerHeight + 20 + _userProfileImage.frame.size.height + 180 + _addressTextView.frame.size.height + 92 +20;
+    } else {
+        mainContainerHeight = propertyContainerHeight + 20 + _userProfileImage.frame.size.height + 200;
+    }
+    _mainContainerView.frame = CGRectMake(_mainContainerView.frame.origin.x, _mainContainerView.frame.origin.y, self.view.frame.size.width, mainContainerHeight);
+    _scrollView.contentSize = CGSizeMake(0,mainContainerHeight+20);
 }
 #pragma mark - end
 

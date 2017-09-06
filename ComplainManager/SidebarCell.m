@@ -9,7 +9,7 @@
 #import "SidebarCell.h"
 
 @implementation SidebarCell
-@synthesize dashboardIcon,myProfileIcon,propertyIcon,tenantsIcon,changePasswordIcon,logoutIcon;
+@synthesize dashboardIcon,myProfileIcon,propertyIcon,tenantsIcon,changePasswordIcon,logoutIcon,settingIcon;
 #pragma mark - Load nib
 - (void)awakeFromNib {
     [super awakeFromNib];
@@ -45,6 +45,8 @@
             tenantsIcon.image = [UIImage imageNamed:@"tenantsIconSelected"];
         } else if ([label.text isEqualToString:@"Change Password"]) {
             changePasswordIcon.image = [UIImage imageNamed:@"changePasswordIconSelected"];
+        } else if ([label.text isEqualToString:@"Settings"]) {
+            settingIcon.image = [UIImage imageNamed:@"setting_white"];
         } else if ([label.text isEqualToString:@"Logout"]) {
             logoutIcon.image = [UIImage imageNamed:@"logoutIconSelected"];
         }
@@ -64,6 +66,8 @@
             tenantsIcon.image = [UIImage imageNamed:@"tenantsIcon"];
         } else if ([label.text isEqualToString:@"Change Password"]) {
             changePasswordIcon.image = [UIImage imageNamed:@"changePasswordIcon"];
+        } else if ([label.text isEqualToString:@"Settings"]) {
+            settingIcon.image = [UIImage imageNamed:@"setting"];
         } else if ([label.text isEqualToString:@"Logout"]) {
             logoutIcon.image = [UIImage imageNamed:@"logoutIcon"];
         }

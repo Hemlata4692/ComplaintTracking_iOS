@@ -9,184 +9,43 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplaintDetailViewController.m"
-            timestampString = "523984214.604303"
+            filePath = "ComplainManager/SettingsViewController.m"
+            timestampString = "525867999.836096"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "-setStartJobFraming:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplaintDetailViewController.m"
-            timestampString = "523984219.69034"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
-            landmarkName = "-setStartJobFraming:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplaintDetailViewController.m"
-            timestampString = "524051203.755469"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "839"
-            endingLineNumber = "839"
-            landmarkName = "-getComplaintDetails"
+            startingLineNumber = "201"
+            endingLineNumber = "201"
+            landmarkName = "-textFieldDidBeginEditing:"
             landmarkType = "7">
             <Locations>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "-[ComplaintDetailViewController getComplaintDetails]"
+                  symbolName = "-[SettingsViewController textFieldDidBeginEditing:]"
                   moduleName = "ComplainManager"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.349502"
+                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/SettingsViewController.m"
+                  timestampString = "525866766.770909"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "825"
-                  endingLineNumber = "825"
-                  offsetFromSymbolStart = "145">
+                  startingLineNumber = "176"
+                  endingLineNumber = "176"
+                  offsetFromSymbolStart = "126">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__52-[ComplaintDetailViewController getComplaintDetails]_block_invoke"
+                  symbolName = "__51-[SettingsViewController textFieldDidBeginEditing:]_block_invoke"
                   moduleName = "ComplainManager"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.353093"
+                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/SettingsViewController.m"
+                  timestampString = "525866766.775468"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "825"
-                  endingLineNumber = "825"
-                  offsetFromSymbolStart = "16">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplainService.m"
-            timestampString = "523984277.410744"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "192"
-            endingLineNumber = "192"
-            landmarkName = "-getComplaitDetail:success:failure:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplaintDetailViewController.m"
-            timestampString = "524051203.755469"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "848"
-            endingLineNumber = "848"
-            landmarkName = "-getComplaintDetails"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "-[ComplaintDetailViewController getComplaintDetails]"
-                  moduleName = "ComplainManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.366996"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "834"
-                  endingLineNumber = "834"
-                  offsetFromSymbolStart = "314">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__52-[ComplaintDetailViewController getComplaintDetails]_block_invoke"
-                  moduleName = "ComplainManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.370377"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "834"
-                  endingLineNumber = "834"
-                  offsetFromSymbolStart = "418">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__copy_helper_block_.443"
-                  moduleName = "ComplainManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.373904"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "834"
-                  endingLineNumber = "834"
-                  offsetFromSymbolStart = "51">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__destroy_helper_block_.444"
-                  moduleName = "ComplainManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.377541"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "834"
-                  endingLineNumber = "834"
-                  offsetFromSymbolStart = "29">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "__52-[ComplaintDetailViewController getComplaintDetails]_block_invoke.447"
-                  moduleName = "ComplainManager"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/monika/Documents/ComplaintTracking_iOS/ComplainManager/ComplaintDetailViewController.m"
-                  timestampString = "524032666.38101"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "834"
-                  endingLineNumber = "834"
+                  startingLineNumber = "177"
+                  endingLineNumber = "177"
                   offsetFromSymbolStart = "19">
                </Location>
             </Locations>
@@ -198,13 +57,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "ComplainManager/ComplaintDetailViewController.m"
-            timestampString = "524051203.755469"
+            filePath = "ComplainManager/SettingsViewController.m"
+            timestampString = "525867999.836096"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "900"
-            endingLineNumber = "900"
-            landmarkName = "-isStatusOK:"
+            startingLineNumber = "228"
+            endingLineNumber = "228"
+            landmarkName = "-performValidations"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ComplainManager/SettingsViewController.m"
+            timestampString = "525866399.744345"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "-getNotificationStatus"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

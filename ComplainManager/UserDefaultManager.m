@@ -15,6 +15,7 @@
     [[NSUserDefaults standardUserDefaults]setObject:value forKey:key];
     [[NSUserDefaults standardUserDefaults]synchronize];
 }
+
 //Get value in user defaults
 +(id)getValue : (NSString *)key {
     return [[NSUserDefaults standardUserDefaults]objectForKey:key];

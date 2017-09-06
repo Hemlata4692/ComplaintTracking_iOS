@@ -111,12 +111,8 @@ const NSInteger UncaughtExceptionHandlerReportAddressCount = 5;
     NSString *country = [countryLocale displayNameForKey:NSLocaleCountryCode value:countryCode];
     NSDateFormatter *dateFormatter=[[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:@"dd-MM-yyyy HH:mm:ss"];
-    NSLog(@"%@",[dateFormatter stringFromDate:[NSDate date]]);
-    
     NSString *crashString=[NSString stringWithFormat:@"Device: %@\nScreen name: %@\nVersion: %@ (%@)\nNetwork type: %@\niOS version: %@\nTime zone: %@,\nCountry Code: %@\nCountry name: %@\nTimestamp: %@\nException: %@",[[UIDevice currentDevice] name],strClass,
                            majorVersion, minorVersion,networkType,[[UIDevice currentDevice] systemVersion],tz.description,countryCode,country,[dateFormatter stringFromDate:[NSDate date]],exceptionText];
-    NSLog(@"%@,\n%@, \nVersion %@ (%@),\n%@,\n%@,\n%@,\n%@,\n%@,\n%@,\n%@,\n%@",[[UIDevice currentDevice] name],strClass,
-           majorVersion, minorVersion,networkType,[[UIDevice currentDevice] systemVersion],tz.description,countryLocale,countryCode,country,[dateFormatter stringFromDate:[NSDate date]],exceptionText);
     [self callCrashWebservice:crashString];
 }
 
@@ -133,27 +129,21 @@ const NSInteger UncaughtExceptionHandlerReportAddressCount = 5;
     NSString *networkType=@"";
     switch ([[dataNetworkItemView valueForKey:@"dataNetworkType"]integerValue]) {
         case 0:
-//            NSLog(@"No wifi or cellular");
             networkType=@"No wifi or cellular";
             break;
         case 1:
-//            NSLog(@"2G");
             networkType=@"2G";
             break;
         case 2:
-//            NSLog(@"3G");
             networkType=@"3G";
             break;
         case 3:
-//            NSLog(@"4G");
             networkType=@"4G";
             break;
         case 4:
-//            NSLog(@"LTE");
             networkType=@"LTE";
             break;
         case 5:
-//            NSLog(@"Wifi");
             networkType=@"Wifi";
             break;
         default:
@@ -180,7 +170,6 @@ const NSInteger UncaughtExceptionHandlerReportAddressCount = 5;
     [request setHTTPBody:postData];
     
     NSURLSessionDataTask *postDataTask = [session dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                              NSLog(@"data is %@",[[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding]);
                                               dismissed = YES;
                                           }];
     [postDataTask resume];
@@ -188,9 +177,7 @@ const NSInteger UncaughtExceptionHandlerReportAddressCount = 5;
 
 - (void)handleException:(NSException *)exception {
     
-	[self validateAndSaveCriticalApplicationData];
-    NSLog(@"Debug details follow:\nname--:%@\n%@fghfghf\n%@\n%@",[exception name],[exception reason],[[exception userInfo] objectForKey:UncaughtExceptionHandlerAddressesKey],[exception userInfo]);
-    
+	[self validateAndSaveCriticalApplicationData];    
     exceptionText=[NSString stringWithFormat:@"%@\n%@\n%@",[exception name],[exception reason],[exception userInfo]];
 	CFRunLoopRef runLoop = CFRunLoopGetCurrent();
 	CFArrayRef allModes = CFRunLoopCopyAllModes(runLoop);

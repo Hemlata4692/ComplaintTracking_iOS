@@ -16,6 +16,7 @@
 {
     NSDictionary *userData;
     NSArray *infoDetailArray;
+    BOOL showUserRole;
 }
 @property (weak, nonatomic) IBOutlet UIView *profileView;
 @property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
@@ -23,17 +24,19 @@
 @property (weak, nonatomic) IBOutlet UITableView *profileTableView;
 @property (weak, nonatomic) IBOutlet UIButton *editProfileButton;
 @property (weak, nonatomic) IBOutlet UILabel *noRecordLabel;
+@property (weak, nonatomic) IBOutlet UIButton *callButton;
 
 @end
 
 @implementation UserProfileViewController
-@synthesize isTenantDetailScreen;
+@synthesize isTenantDetailScreen,isProfileDetailScreen,tenantUserId;
 
 #pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
     userData = [[NSDictionary alloc]init];
     infoDetailArray = [[NSArray alloc]init];
+
 }
 
 - (void) viewWillAppear:(BOOL)animated {
@@ -41,6 +44,17 @@
     if (isTenantDetailScreen) {
         self.navigationItem.title=@"Tenant Details";
         _editProfileButton.hidden = YES;
+        _callButton.hidden = YES;
+        [self addBackButton];
+    } else if (isProfileDetailScreen) {
+        self.navigationItem.title=@"User Details";
+        if ([[UserDefaultManager getValue:@"userId"] isEqualToString:tenantUserId]) {
+            _editProfileButton.hidden = YES;
+            _callButton.hidden = YES;
+        } else {
+            _editProfileButton.hidden = YES;
+            _callButton.hidden = NO;
+        }
         [self addBackButton];
     } else {
         self.navigationItem.title=@"My Profile";
@@ -89,6 +103,12 @@
     EditProfileViewController * editProfile = [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:@"EditProfileViewController"];
     [self.navigationController pushViewController:editProfile animated:YES];
 }
+
+- (IBAction)callAction:(id)sender {
+    NSString *phoneNumber = [@"telprompt://" stringByAppendingString:[userData objectForKey:@"contactNumber"]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
+}
+
 #pragma mark - end
 
 #pragma mark - Table view methods
@@ -106,7 +126,7 @@
         profileCell = [[ProfileTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
     }
     // Display data on cells
-    [profileCell displayProfileData:indexPath.row userData:userData infoString:[infoDetailArray objectAtIndex:indexPath.row]];
+    [profileCell displayProfileData:indexPath.row userData:userData infoString:[infoDetailArray objectAtIndex:indexPath.row] showUserRole:[self showUserRole]];
     return profileCell;
 }
 
@@ -134,29 +154,43 @@
 #pragma mark - Web services
 - (void)getProfileDetail {
     NSString *userId;
-    if (isTenantDetailScreen) {
-        userId = _tenantUserId;
+    if (isTenantDetailScreen || isProfileDetailScreen) {
+        userId = tenantUserId;
     } else {
         userId = @"";
     }
-    [[UserService sharedManager] getProfileDetail:isTenantDetailScreen userId:userId success:^(id responseObject){
+    [[UserService sharedManager] getProfileDetail:(isTenantDetailScreen || isProfileDetailScreen) userId:userId success:^(id responseObject){
         userData = [responseObject objectForKey:@"data"];
-        if (!isTenantDetailScreen) {
+        NSArray *propertyArray = [userData objectForKey:@"property"];
+        NSArray *mcstNoArray = [userData objectForKey:@"mcstnumber"];
+        NSString * propertyStr = [propertyArray componentsJoinedByString:@", "];
+        NSString * mcstNoStr = [mcstNoArray componentsJoinedByString:@", "];
+        if (! (isTenantDetailScreen || isProfileDetailScreen)) {
+            //If My profile data changed (name/ image)
             [UserDefaultManager setValue:[userData objectForKey:@"userimage"] key:@"userImage"];
             [UserDefaultManager setValue:[userData objectForKey:@"name"] key:@"name"];
         }
         [self setProfileData];
         //Set profile detail data
-        if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
-            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
+        if ([[userData objectForKey:@"contactNumber"] isEqualToString:@""]) {
+            _callButton.hidden = YES;
+        }
+        if (([[userData objectForKey:@"userroleid"] intValue] == 4 || [[userData objectForKey:@"userroleid"] intValue] == 3)) {
+            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],propertyStr,mcstNoStr, nil];
+        } else  if ([[userData objectForKey:@"userroleid"] intValue] == 2 || [[userData objectForKey:@"userroleid"] intValue] == 1) {
+            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"userrolename"], nil];
         } else {
-            infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"property"],[userData objectForKey:@"mcstnumber"], nil];
+            if ([self showUserRole]) {
+                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],propertyStr,mcstNoStr,@"", nil];
+            } else {
+                infoDetailArray = [NSArray arrayWithObjects:[userData objectForKey:@"email"],[userData objectForKey:@"contactNumber"],[userData objectForKey:@"address"],[userData objectForKey:@"unitnumber"],[userData objectForKey:@"company"],propertyStr,mcstNoStr, nil];
+            }
         }
         [_profileTableView reloadData];
         [myDelegate stopIndicator];
     } failure:^(NSError *error) {
         [myDelegate stopIndicator];
-        if (isTenantDetailScreen) {
+        if (isTenantDetailScreen || isProfileDetailScreen) {
             SCLAlertView *alert = [[SCLAlertView alloc] initWithNewWindow];
             [alert addButton:@"OK" actionBlock:^(void) {
                 [self.navigationController popViewControllerAnimated:YES];
@@ -181,4 +215,14 @@
 }
 #pragma mark - end
 
+#pragma mark - Check if user is council member
+- (BOOL)showUserRole {
+    if ([[userData objectForKey:@"userroleid"] intValue] == 5 && ( isTenantDetailScreen || isProfileDetailScreen)) {
+        showUserRole = YES ;
+    } else {
+        showUserRole = NO ;
+    }
+    return showUserRole;
+}
+#pragma mark - end
 @end

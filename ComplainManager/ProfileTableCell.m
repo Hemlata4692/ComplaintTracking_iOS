@@ -25,12 +25,19 @@
 #pragma mark - end
 
 #pragma mark - Display data
-- (void)displayProfileData:(long)index userData:(NSDictionary *)userData infoString:(NSString *)infoString {
+- (void)displayProfileData:(long)index userData:(NSDictionary *)userData infoString:(NSString *)infoString showUserRole:(BOOL)showUserRole {
     NSArray *infoArray;
-    if (!([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"ltc"])) {
-                  infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company Name",@"Property",@"MCST Number", nil];
-    } else {
+    if (([[userData objectForKey:@"userroleid"] intValue] == 4 || [[userData objectForKey:@"userroleid"] intValue] == 3)) {
         infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Property",@"MCST Number", nil];
+    } else  if ([[userData objectForKey:@"userroleid"] intValue] == 2 || [[userData objectForKey:@"userroleid"] intValue] == 1) {
+        infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Role", nil];
+    } else {
+        if (showUserRole) {
+            infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company Name",@"Property",@"MCST Number",@"MCST Council Member", nil];
+            
+        } else {
+            infoArray = [NSArray arrayWithObjects:@"Email",@"Phone Number",@"Address",@"Unit No",@"Company Name",@"Property",@"MCST Number", nil];
+        }
     }
     CGRect textRect;
     CGSize size;

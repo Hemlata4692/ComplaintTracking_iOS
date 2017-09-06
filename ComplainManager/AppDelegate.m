@@ -102,7 +102,6 @@
 
 #pragma mark - UNUserNotificationCenter Delegate // >= iOS 10
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void(^)())completionHandler{
-    NSLog(@"User Info = %@",response.notification.request.content.userInfo);
     [self notificationRecivedDictionary:response.notification.request.content.userInfo];
 }
 #pragma mark - end
@@ -112,27 +111,21 @@
     NSString *tokenString = [[token description] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
     tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
     deviceToken = tokenString;
-    NSLog(@"My device token is: %@", deviceToken);
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
-    NSLog(@"Failed to get token, error: %@", error);
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult))completionHandler
-{
-    NSLog(@"Received notification: %@", userInfo);
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void(^)(UIBackgroundFetchResult))completionHandler {
     [self notificationRecivedDictionary:userInfo];
 }
 
 - (void)notificationRecivedDictionary:(NSDictionary *)userInfo {
     [UIApplication sharedApplication].applicationIconBadgeNumber=0;
     NSDictionary *dict = [userInfo objectForKey:@"aps"] ;
-    NSLog(@"dict === %@",dict);
     if ([[userInfo objectForKey:@"notifactionTag"] containsString:@"Detail"]) {
         detailNotification = true;
         feedbackId = [userInfo objectForKey:@"feedbackId"];
-        NSLog(@"feedbackId %@",feedbackId);
     } else {
         detailNotification = false;
     }
@@ -208,7 +201,6 @@
     isDetailJobStarted = false;
     detailNotification = false;
     //Navigation to view
-    NSLog(@"userId %@",[UserDefaultManager getValue:@"userId"]);
     UIStoryboard * storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"userId"]!=nil) {
         myDelegate.currentViewController=@"dashboard";

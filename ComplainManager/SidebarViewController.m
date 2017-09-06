@@ -46,18 +46,18 @@
     }
     //If user role is MCST building manager and MCST In charger
     if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"]) {
-        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback",@"Property Feedback", @"Change Password", @"Logout"];
+        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback",@"Property Feedback", @"Change Password", @"Settings", @"Logout"];
     }
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
-        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Logout"];
+        menuItems = @[@"Dashboard", @"My Profile", @"My Feedback", @"Change Password", @"Settings", @"Logout"];
     }
     //If user role is council member
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-        menuItems = @[@"Dashboard", @"My Profile",@"Property Feedback",@"Tenants", @"Change Password", @"Logout"];
+        menuItems = @[@"Dashboard", @"My Profile",@"Property Feedback",@"Tenants", @"Change Password", @"Settings", @"Logout"];
     }
     //If user role is tenants/long term contractor
     else {
-        menuItems = @[@"Dashboard", @"My Profile", @"Change Password", @"Logout"];
+        menuItems = @[@"Dashboard", @"My Profile", @"Change Password", @"Settings", @"Logout"];
     }
     self.tableView.scrollEnabled=NO;
     [self.revealViewController.frontViewController.view setUserInteractionEnabled:NO];
@@ -199,32 +199,28 @@
         else if (indexPath.row == 3) {
             myDelegate.screenName = @"propertyFeedback";
         }
-        else if (indexPath.row == 5) {
+        else if (indexPath.row == 6) {
             [self logoutUser];
         }
     } else  if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
         if (indexPath.row == 2) {
             myDelegate.screenName = @"propertyFeedback";
         }
-        else if (indexPath.row == 5) {
+        else if (indexPath.row == 6) {
             [self logoutUser];
         }
     }
     else if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"ic"]) {
         if (indexPath.row == 2) {
             myDelegate.screenName = @"myFeedback";
-        } else if (indexPath.row == 4) {
+        } else if (indexPath.row == 5) {
             [self logoutUser];
         }
     }
     else {
-        if (indexPath.row == 3) {
+        if (indexPath.row == 4) {
             [self logoutUser];
         }
-    }
-    
-    if (indexPath.row != (menuItems.count-1)) {
-        myDelegate.selectedMenuIndex = indexPath.row;
     }
 }
 #pragma mark - end
@@ -246,12 +242,12 @@
     //If first time user clicks other tabs
     if ([[UserDefaultManager getValue:@"isFirstTime"] intValue] == 1) {
         if ([[UserDefaultManager getValue:@"role"] isEqualToString:@"bm"] || [[UserDefaultManager getValue:@"role"] isEqualToString:@"cm"]) {
-            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3 ||[sender tag] == 4){
+            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3 ||[sender tag] == 4 ||[sender tag] == 5){
                 [self.view makeToast:@"Please change the password before entering into other fields."];
                 return NO;
             }
         } else {
-            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2){
+            if ([sender tag] == 0 || [sender tag] == 1 || [sender tag] == 2 ||[sender tag] == 3){
                 [self.view makeToast:@"Please change the password before entering into other fields."];
                 return NO;
             }
