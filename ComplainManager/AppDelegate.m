@@ -110,21 +110,7 @@
 
 #pragma mark - PushNotification delegate
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)token {
-    [FIRMessaging messaging].APNSToken = token;
-//    NSString *tokenString = [[token description] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
-//    tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
-//    deviceToken = tokenString;
     deviceToken = [FIRMessaging messaging].FCMToken;
-    NSLog(@"----------------------------------deviceToken1 = %@",deviceToken);
-
-    
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ROFL"
-                                                    message:deviceToken
-                                                   delegate:self
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {

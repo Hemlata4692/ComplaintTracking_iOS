@@ -28,7 +28,7 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Need to access camera</string>
+	<string>You can change your profile picture using camera.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>You can change your profile picture using your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription - 2</key>
@@ -58,8 +58,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 </dict>
 </plist>

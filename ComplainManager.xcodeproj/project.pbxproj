@@ -1140,8 +1140,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dev.snapnfix;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "324b76a5-bee9-4e9b-8ea0-60d52178da28";
-				PROVISIONING_PROFILE_SPECIFIER = SnapNFic_Adhoc_6Sep_2017;
+				PROVISIONING_PROFILE = "4ea2156c-70e5-4c4e-bc1d-6602cede42da";
+				PROVISIONING_PROFILE_SPECIFIER = snapNfix_live_6Sep_2017;
 			};
 			name = Debug;
 		};
@@ -1161,8 +1161,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.dev.snapnfix;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "324b76a5-bee9-4e9b-8ea0-60d52178da28";
-				PROVISIONING_PROFILE_SPECIFIER = SnapNFic_Adhoc_6Sep_2017;
+				PROVISIONING_PROFILE = "4ea2156c-70e5-4c4e-bc1d-6602cede42da";
+				PROVISIONING_PROFILE_SPECIFIER = snapNfix_live_6Sep_2017;
 			};
 			name = Release;
 		};
