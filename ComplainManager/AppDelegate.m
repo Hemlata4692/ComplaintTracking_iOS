@@ -12,6 +12,8 @@
 #import "UserService.h"
 #import "ComplainListingViewController.h"
 #import "ComplaintDetailViewController.h"
+#import "Firebase.h"
+
 #define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 @interface AppDelegate () {
@@ -108,9 +110,21 @@
 
 #pragma mark - PushNotification delegate
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)token {
-    NSString *tokenString = [[token description] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
-    tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
-    deviceToken = tokenString;
+    [FIRMessaging messaging].APNSToken = token;
+//    NSString *tokenString = [[token description] stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+//    tokenString = [tokenString stringByReplacingOccurrencesOfString:@" " withString:@""];
+//    deviceToken = tokenString;
+    deviceToken = [FIRMessaging messaging].FCMToken;
+    NSLog(@"----------------------------------deviceToken1 = %@",deviceToken);
+
+    
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"ROFL"
+                                                    message:deviceToken
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
@@ -187,6 +201,7 @@
 
 #pragma mark - Appdelegate methods
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0]];
@@ -194,6 +209,8 @@
     //Push notification
     deviceToken = @"";
     [self registerForRemoteNotification];
+    [FIRApp configure];
+
     //Call crashlytics method
     [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
     //Check internet connectivity

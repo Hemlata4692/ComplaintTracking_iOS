@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '802040F147FCA85E26B2973AA84E6B83'
+               BlueprintIdentifier = '09522805540BF8BAAF10A9F12CE289D7'
                BlueprintName = 'Pods-ComplainManager'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libPods-ComplainManager.a'>

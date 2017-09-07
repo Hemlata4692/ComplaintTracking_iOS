@@ -12,7 +12,8 @@
 //#define BASE_URL                          @"http://ranosys.info/complianttracking/api/ComplaintsManager/"
 //#define BASE_URL                          @"http://ranosys.info/feedbacktrackingqa/api/ComplaintsManager/"
 #define BASE_URL                            @"http://www.snapnfix.com/api/ComplaintsManager/"
-
+//com.dev.snapnfix - Live
+//com.ranosys.ComplaintsTracking - Testing
 @interface Webservice : NSObject
 
 @property(nonatomic,retain) AFHTTPSessionManager *manager;
