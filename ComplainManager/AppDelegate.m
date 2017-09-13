@@ -12,7 +12,6 @@
 #import "UserService.h"
 #import "ComplainListingViewController.h"
 #import "ComplaintDetailViewController.h"
-#import "Firebase.h"
 
 #define SYSTEM_VERSION_GRATERTHAN_OR_EQUALTO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
@@ -109,8 +108,21 @@
 #pragma mark - end
 
 #pragma mark - PushNotification delegate
+- (void)messaging:(nonnull FIRMessaging *)messaging didRefreshRegistrationToken:(nonnull NSString *)fcmToken {
+    // Note that this callback will be fired everytime a new token is generated, including the first
+    // time. So if you need to retrieve the token as soon as it is available this is where that
+    // should be done.
+    deviceToken = fcmToken;
+    if (deviceToken == nil || deviceToken == NULL) {
+        deviceToken = @"";
+    }
+}
+
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)token {
     deviceToken = [FIRMessaging messaging].FCMToken;
+    if (deviceToken == nil || deviceToken == NULL) {
+        deviceToken = @"";
+    }
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error {
@@ -187,7 +199,7 @@
 
 #pragma mark - Appdelegate methods
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-
+    
     // Navigation bar customisation
     [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
     [[UINavigationBar appearance] setBarTintColor:[UIColor colorWithRed:1/255.0 green:152/255.0 blue:207/255.0 alpha:1.0]];
@@ -196,7 +208,7 @@
     deviceToken = @"";
     [self registerForRemoteNotification];
     [FIRApp configure];
-
+    FIRMessaging.messaging.delegate=self;
     //Call crashlytics method
     [self performSelector:@selector(installUncaughtExceptionHandler) withObject:nil afterDelay:0];
     //Check internet connectivity

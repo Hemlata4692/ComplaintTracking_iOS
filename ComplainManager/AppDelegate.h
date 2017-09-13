@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <UserNotifications/UserNotifications.h>
 #import "GlobalViewController.h"
-@interface AppDelegate : UIResponder <UIApplicationDelegate,UNUserNotificationCenterDelegate>
+#import "Firebase.h"
+
+@interface AppDelegate : UIResponder <UIApplicationDelegate,UNUserNotificationCenterDelegate,FIRMessagingDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 @property (nonatomic,retain) UINavigationController *navigationController;
